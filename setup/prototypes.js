@@ -43,17 +43,13 @@ express.response.error = function(data) {
  * Sequelize
  */
 
-Sequelize.genericHashId = () => {
+Sequelize.generateGenericIdAttribute = ({ hashPrefix }) => {
   return {
-    type: Sequelize.STRING,
-    unique: true,
+    type: Sequelize.INTEGER(10).UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
+    get() {
+      return `${hashPrefix}_${hashIdHelpers.encode(this.getDataValue('id'))}`;
+    }
   };
-}
-
-Sequelize.assignHashId = async function(instance, options) {
-  const { transaction } = options;
-
-  await instance.update({
-    hashId: hashIdHelpers.encode(instance.id),
-  }, { transaction });
-}
+};

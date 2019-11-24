@@ -104,7 +104,7 @@ describe('Rooms', () => {
       done('todo');
     });
 
-    it('401s when deleting user does not have permission', done => {
+    it('401s when authorized user does not have permission', done => {
       done('todo');
     });
 

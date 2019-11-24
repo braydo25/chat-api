@@ -3,12 +3,7 @@
  */
 
 const ChannelMessageModel = database.define('channelMessage', {
-  id: {
-    type: Sequelize.INTEGER(10).UNSIGNED,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  hashId: Sequelize.genericHashId(),
+  id: Sequelize.generateGenericIdAttribute({ hashPrefix: 'cm' }),
   channelId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
@@ -22,12 +17,6 @@ const ChannelMessageModel = database.define('channelMessage', {
     allowNull: false,
   },
 });
-
-/*
- * Instance Hooks
- */
-
-ChannelMessageModel.afterCreate(Sequelize.assignHashId);
 
 /*
  * Export

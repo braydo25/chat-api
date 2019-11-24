@@ -10,10 +10,6 @@ describe('User Rooms', () => {
       done('todo');
     });
 
-    it('400s when provided room name that already exists', done => {
-      done('todo');
-    });
-
     helpers.it401sWhenUserAuthorizationIsInvalid('post', '/users/@me/rooms');
   });
 
@@ -34,7 +30,7 @@ describe('User Rooms', () => {
    */
 
   describe('DELETE /users/@me/rooms', () => {
-    it('204s and removes user from room', done => {
+    it('204s and removes authorized user from room', done => {
       done('todo');
     });
 

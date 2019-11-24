@@ -3,12 +3,7 @@
  */
 
 const RoomUserModel = database.define('roomUser', {
-  id: {
-    type: Sequelize.INTEGER(10).UNSIGNED,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  hashId: Sequelize.genericHashId(),
+  id: Sequelize.generateGenericIdAttribute({ hashPrefix: 'ru' }),
   roomId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
@@ -18,12 +13,6 @@ const RoomUserModel = database.define('roomUser', {
     allowNull: false,
   },
 });
-
-/*
- * Instance Hooks
- */
-
-RoomUserModel.afterCreate(Sequelize.assignHashId);
 
 /*
  * Export

@@ -3,12 +3,7 @@
  */
 
 const ChannelMessageReactionModel = database.define('channelMessageReaction', {
-  id: {
-    type: Sequelize.INTEGER(10).UNSIGNED,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  hashId: Sequelize.genericHashId(),
+  id: Sequelize.generateGenericIdAttribute({ hashPrefix: 'cmr' }),
   channelMessageId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
@@ -22,12 +17,6 @@ const ChannelMessageReactionModel = database.define('channelMessageReaction', {
     allowNull: false,
   },
 });
-
-/*
- * Instance Hooks
- */
-
-ChannelMessageReactionModel.afterCreate(Sequelize.assignHashId);
 
 /*
  * Export

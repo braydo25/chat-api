@@ -18,14 +18,6 @@ describe('Channel Message Reactions', () => {
   });
 
   /*
-   * GET
-   */
-
-  describe('GET /channels/{channelHashId}/messages/{channelMessage.hashId}/reactions', () => {
-//    helpers.it401sWhenUserAuthorizationIsInvalid('get', `/channels/${testRoomOneChannelOne.hashId}/messages/${testRoomOneChannelOneMessageOne}/reactions`);
-  });
-
-  /*
    * DELETE
    */
 

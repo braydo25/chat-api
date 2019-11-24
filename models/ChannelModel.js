@@ -3,12 +3,7 @@
  */
 
 const ChannelModel = database.define('channel', {
-  id: {
-    type: Sequelize.INTEGER(10).UNSIGNED,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  hashId: Sequelize.genericHashId(),
+  id: Sequelize.generateGenericIdAttribute({ hashPrefix: 'c' }),
   roomId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
@@ -21,12 +16,6 @@ const ChannelModel = database.define('channel', {
     type: Sequelize.STRING,
   },
 });
-
-/*
- * Instance Hooks
- */
-
-ChannelModel.afterCreate(Sequelize.assignHashId);
 
 /*
  * Export

@@ -1,14 +1,10 @@
+const hashIdHelpers = rootRequire('/libs/hashIdHelpers');
 /*
  * Model Definition
  */
 
 const UserModel = database.define('user', {
-  id: {
-    type: Sequelize.INTEGER(10).UNSIGNED,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  hashId: Sequelize.genericHashId(),
+  id: Sequelize.generateGenericIdAttribute({ hashPrefix: 'u' }),
   accessToken: {
     type: Sequelize.UUID,
     unique: true,
@@ -29,12 +25,6 @@ const UserModel = database.define('user', {
     type: Sequelize.STRING,
   },
 });
-
-/*
- * Instance Hooks
- */
-
-UserModel.afterCreate(Sequelize.assignHashId);
 
 /*
  * Export
