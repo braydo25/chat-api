@@ -1,4 +1,9 @@
 const awsHelpers = rootRequire('/libs/awsHelpers');
+const hashIdHelpers = rootRequire('/libs/hashIdHelpers');
+
+/*
+ * Express
+ */
 
 express.response.respond = function(httpCode, data) {
   if (![ 200, 204 ].includes(httpCode)) {
@@ -33,3 +38,22 @@ express.response.success = function(data) {
 express.response.error = function(data) {
   this.respond(400, data);
 };
+
+/*
+ * Sequelize
+ */
+
+Sequelize.genericHashId = () => {
+  return {
+    type: Sequelize.STRING,
+    unique: true,
+  };
+}
+
+Sequelize.assignHashId = async function(instance, options) {
+  const { transaction } = options;
+
+  await instance.update({
+    hashId: hashIdHelpers.encode(instance.id),
+  }, { transaction });
+}

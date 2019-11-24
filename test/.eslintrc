@@ -1,0 +1,14 @@
+{
+  "globals": {
+    "it": true,
+    "before": true,
+    "beforeEach": true,
+    "after": true,
+    "describe": true,
+    "chai": true,
+    "chaiHttp": true,
+    "waitPort": true,
+    "server": true,
+    "testUserOne": true,
+  },
+}

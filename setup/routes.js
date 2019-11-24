@@ -1,5 +1,8 @@
+const usersRouter = rootRequire('/routes/users');
+
 module.exports = app => {
   // API Route Definitions
+  app.use('/users/:userHashId?', usersRouter);
 
   // Handle Various Errors
   app.use((error, request, response, next) => {
