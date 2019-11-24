@@ -1,0 +1,41 @@
+{
+  "name": "chat-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha --exit -t 300000",
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/braydo25/chat-api.git"
+  },
+  "author": "Braydon Batungbacal <me@braydonb.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/braydo25/chat-api/issues"
+  },
+  "homepage": "https://github.com/braydo25/chat-api#readme",
+  "dependencies": {
+    "aws-sdk": "^2.571.0",
+    "bcrypt": "^3.0.6",
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.6",
+    "hashids": "^1.2.2",
+    "mysql2": "^2.0.0",
+    "sequelize": "^5.21.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "eslint": "^6.6.0",
+    "mocha": "^6.2.2",
+    "mocha-junit-reporter": "^1.23.1",
+    "wait-port": "^0.2.6"
+  }
+}
