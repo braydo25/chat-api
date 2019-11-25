@@ -1,8 +1,11 @@
 /*
- * Route: /users/@me/rooms
+ * Route: /users/@me/rooms/:roomId?
  */
 
+const RoomModel = rootRequire('/models/RoomModel');
+const RoomUserModel = rootRequire('/models/RoomUserModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
+const roomAssociate = rootRequire('/middlewares/rooms/associate');
 
 const router = express.Router({
   mergeParams: true,
@@ -14,7 +17,23 @@ const router = express.Router({
 
 router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
-  response.error('todo');
+  const { user } = request;
+  const rooms = await RoomUserModel.findAll({
+    attributes: [ 'id', 'permissions' ],
+    include: [
+      {
+        attributes: [ 'id', 'name', 'description', 'iconHash' ],
+        model: RoomModel,
+        required: true,
+      },
+    ],
+    where: {
+      userId: user.id,
+      banned: false,
+    },
+  });
+
+  response.success(rooms);
 }));
 
 /*
@@ -22,8 +41,26 @@ router.get('/', asyncMiddleware(async (request, response) => {
  */
 
 router.post('/', userAuthorize);
+router.post('/', roomAssociate);
 router.post('/', asyncMiddleware(async (request, response) => {
-  response.error('todo');
+  const { user, room } = request;
+  const existingRoomUser = await RoomUserModel.findOne({
+    where: {
+      roomId: room.id,
+      userId: user.id,
+    },
+  });
+
+  if (existingRoomUser) {
+    return response.success(existingRoomUser);
+  }
+
+  const roomUser = await RoomUserModel.create({
+    roomId: room.id,
+    userId: user.id,
+  });
+
+  response.success(roomUser);
 }));
 
 /*
@@ -31,8 +68,22 @@ router.post('/', asyncMiddleware(async (request, response) => {
  */
 
 router.delete('/', userAuthorize);
+router.delete('/', roomAssociate);
 router.delete('/', asyncMiddleware(async (request, response) => {
-  response.error('todo');
+  const { user, room } = request;
+  const roomUser = await RoomUserModel.findOne({
+    where: {
+      roomId: room.id,
+      userId: user.id,
+      banned: false,
+    },
+  });
+
+  if (roomUser) {
+    await roomUser.destroy();
+  }
+
+  response.success();
 }));
 
 /*

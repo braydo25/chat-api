@@ -3,7 +3,11 @@
  */
 
 const RoomUserModel = database.define('roomUser', {
-  id: Sequelize.generateGenericIdAttribute({ hashPrefix: 'ru' }),
+  id: {
+    type: Sequelize.INTEGER(10).UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
+  },
   roomId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
@@ -11,6 +15,14 @@ const RoomUserModel = database.define('roomUser', {
   userId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
+  },
+  permissions: {
+    type: Sequelize.JSON,
+    defaultValue: [ 'MEMBER' ],
+  },
+  banned: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
   },
 });
 

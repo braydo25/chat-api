@@ -5,7 +5,7 @@ describe('Channel Messages', () => {
    * POST
    */
 
-  describe('POST /channels/{channel.hashId}/messages', () => {
+  describe('POST /channels/{channel.id}/messages', () => {
     it('200s with created channel message object', done => {
       done('todo');
     });
@@ -14,14 +14,14 @@ describe('Channel Messages', () => {
       done('todo');
     });
 
-//    helpers.it401sWhenUserAuthorizationIsInvalid('post', `/channels/${testRoomOneChannelOne.hashId}/messages`);
+//    helpers.it401sWhenUserAuthorizationIsInvalid('post', `/channels/${testRoomOneChannelOne.id}/messages`);
   });
 
   /*
    * GET
    */
 
-  describe('GET /channels/{channel.hashId}/messages', () => {
+  describe('GET /channels/{channel.id}/messages', () => {
     it('200s with an array of channel messages ordered by recency', done => {
       done('todo');
     });
@@ -30,14 +30,14 @@ describe('Channel Messages', () => {
       done('todo');
     });
 
-//    helpers.it401sWhenUserAuthorizationIsInvalid('get', `/channels/${testRoomOneChannelOne.hashId}/messages`);
+//    helpers.it401sWhenUserAuthorizationIsInvalid('get', `/channels/${testRoomOneChannelOne.id}/messages`);
   });
 
   /*
    * PATCH
    */
 
-  describe('PATCH /channels/{channel.hashId}/messages/{channelMessage.hashId}', () => {
+  describe('PATCH /channels/{channel.id}/messages/{channelMessage.id}', () => {
     it('200s with update channel message object', done => {
       done('todo');
     });
@@ -46,18 +46,18 @@ describe('Channel Messages', () => {
       done('todo');
     });
 
-//    helpers.it401sWhenUserAuthorizationIsInvalid('patch', `/channels/${testRoomOneChannelOne.hashId}/messages/${testRoomOneChannelOneMessageOne}`);
+//    helpers.it401sWhenUserAuthorizationIsInvalid('patch', `/channels/${testRoomOneChannelOne.id}/messages/${testRoomOneChannelOneMessageOne}`);
   });
 
   /*
    * DELETE
    */
 
-  describe('DELETE /channels/{channel.hashId}/messages/{channelMessage.hashId}', () => {
+  describe('DELETE /channels/{channel.id}/messages/{channelMessage.id}', () => {
     it('204s and deletes channel message when provided channel message hash id owned by authorized user', done => {
       done('todo');
     });
 
-//    helpers.it401sWhenUserAuthorizationIsInvalid('delete', `/channels/${testRoomOneChannelOne.hashId}/messages/${testRoomOneChannelOneMessageOne}`);
+//    helpers.it401sWhenUserAuthorizationIsInvalid('delete', `/channels/${testRoomOneChannelOne.id}/messages/${testRoomOneChannelOneMessageOne}`);
   });
 });

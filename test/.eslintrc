@@ -10,5 +10,7 @@
     "waitPort": true,
     "server": true,
     "testUserOne": true,
+    "testUserTwo": true,
+    "testRoomOne": true,
   },
 }

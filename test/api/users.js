@@ -25,7 +25,20 @@ describe('Users', () => {
     });
 
     it('200s when provided existing username and correct password', done => {
-      done();
+      const fields = {
+        username: 'chillen123',
+        password: 'test1234',
+      };
+
+      chai.request(server)
+        .post('/users')
+        .send(fields)
+        .end((error, response) => {
+          response.should.have.status(200);
+          response.body.should.be.an('object');
+          response.body.username.should.equal(fields.username);
+          done();
+        });
     });
 
     it('401s when provided existing username and incorrect password', done => {
@@ -76,7 +89,7 @@ describe('Users', () => {
         .patch('/users/@me')
         .set('X-Access-Token', testUserOne.accessToken)
         .field('name', fields.name)
-        .attach('photo', fs.readFileSync('./test/iconPhoto.jpg'), 'icon.jpg')
+        .attach('icon', fs.readFileSync('./test/iconPhoto.jpg'), 'icon.jpg')
         .end((error, response) => {
           response.should.have.status(200);
           response.body.should.be.an('object');

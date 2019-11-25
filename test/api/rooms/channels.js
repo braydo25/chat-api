@@ -5,14 +5,14 @@ describe('Room Channels', () => {
    * POST
    */
 
-  describe('POST /rooms/{room.hashId}/channels', () => {
+  describe('POST /rooms/{room.id}/channels', () => {
     it('200s with created room channel object when provided name', done => {
       /*const fields = {
         name: 'GitGud',
       };
 
       chai.request(server)
-        .post(`/rooms/${testRoomOne.hashId}/channels`)
+        .post(`/rooms/${testRoomOne.id}/channels`)
         .set('X-Access-Token', testUserOne.accessToken)
         .send(fields)
         .end((error, response) => {
@@ -33,14 +33,14 @@ describe('Room Channels', () => {
       done('todo');
     });
 
-    //helpers.it401sWhenUserAuthorizationIsInvalid('post', `/rooms/${testRoomOne.hashId}/channels`);
+    //helpers.it401sWhenUserAuthorizationIsInvalid('post', `/rooms/${testRoomOne.id}/channels`);
   });
 
   /*
    * PATCH
    */
 
-  describe('PATCH /rooms/{room.hashId}', () => {
+  describe('PATCH /rooms/{room.id}', () => {
     it('200s with updated room channel object', done => {
       done('todo');
     });
@@ -49,14 +49,14 @@ describe('Room Channels', () => {
       done('todo');
     });
 
-  //    helpers.it401sWhenUserAuthorizationIsInvalid('patch', `/rooms/${testRoomOne.hashId}/channels/${testRoomOneChannelOne.hashId}`);
+  //    helpers.it401sWhenUserAuthorizationIsInvalid('patch', `/rooms/${testRoomOne.id}/channels/${testRoomOneChannelOne.id}`);
   });
 
   /*
    * DELETE
    */
 
-  describe('DELETE /rooms/{room.hashId}', () => {
+  describe('DELETE /rooms/{room.id}', () => {
     it('204s and deletes room channel', done => {
       done('todo');
     });
@@ -65,6 +65,6 @@ describe('Room Channels', () => {
       done('todo');
     });
 
-  //    helpers.it401sWhenUserAuthorizationIsInvalid('delete', `/rooms/${testRoomOne.hashId}/channels/${testRoomOneChannelOne.hashId}`);
+  //    helpers.it401sWhenUserAuthorizationIsInvalid('delete', `/rooms/${testRoomOne.id}/channels/${testRoomOneChannelOne.id}`);
   });
 });

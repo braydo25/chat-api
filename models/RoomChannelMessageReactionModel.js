@@ -2,9 +2,13 @@
  * Model Definition
  */
 
-const ChannelMessageReactionModel = database.define('channelMessageReaction', {
-  id: Sequelize.generateGenericIdAttribute({ hashPrefix: 'cmr' }),
-  channelMessageId: {
+const RoomChannelMessageReactionModel = database.define('roomChannelMessageReaction', {
+  id: {
+    type: Sequelize.INTEGER(10).UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  roomChannelMessageId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
@@ -22,4 +26,4 @@ const ChannelMessageReactionModel = database.define('channelMessageReaction', {
  * Export
  */
 
-module.exports = ChannelMessageReactionModel;
+module.exports = RoomChannelMessageReactionModel;

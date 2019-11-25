@@ -38,18 +38,3 @@ express.response.success = function(data) {
 express.response.error = function(data) {
   this.respond(400, data);
 };
-
-/*
- * Sequelize
- */
-
-Sequelize.generateGenericIdAttribute = ({ hashPrefix }) => {
-  return {
-    type: Sequelize.INTEGER(10).UNSIGNED,
-    primaryKey: true,
-    autoIncrement: true,
-    get() {
-      return `${hashPrefix}_${hashIdHelpers.encode(this.getDataValue('id'))}`;
-    }
-  };
-};

@@ -2,8 +2,12 @@
  * Model Definition
  */
 
-const ChannelModel = database.define('channel', {
-  id: Sequelize.generateGenericIdAttribute({ hashPrefix: 'c' }),
+const RoomChannelModel = database.define('roomChannel', {
+  id: {
+    type: Sequelize.INTEGER(10).UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
+  },
   roomId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
@@ -21,4 +25,4 @@ const ChannelModel = database.define('channel', {
  * Export
  */
 
-module.exports = ChannelModel;
+module.exports = RoomChannelModel;

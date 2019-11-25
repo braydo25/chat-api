@@ -1,8 +1,11 @@
 /*
- * Route: /rooms/:roomHashId/channels/:channelHashId?
+ * Route: /rooms/:roomId/channels/:roomChannelId?
  */
 
+const RoomChannelModel = rootRequire('/models/RoomChannelModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
+const roomPermissionsAuthorize = rootRequire('/middlewares/rooms/permissionsAuthorize');
+const roomChannelAssociate = rootRequire('/middlewares/rooms/channels/associate');
 
 const router = express.Router({
   mergeParams: true,
@@ -13,8 +16,18 @@ const router = express.Router({
  */
 
 router.post('/', userAuthorize);
+router.post('/', roomPermissionsAuthorize([ 'ADMIN', 'MODERATOR' ]));
 router.post('/', asyncMiddleware(async (request, response) => {
-  response.error('todo');
+  const { room } = request;
+  const { name, description } = request.body;
+
+  const channel = await RoomChannelModel.create({
+    roomId: room.id,
+    name,
+    description,
+  });
+
+  response.success(channel);
 }));
 
 /*
@@ -22,8 +35,17 @@ router.post('/', asyncMiddleware(async (request, response) => {
  */
 
 router.patch('/', userAuthorize);
+router.patch('/', roomChannelAssociate);
+router.patch('/', roomPermissionsAuthorize([ 'ADMIN', 'MODERATOR' ]));
 router.patch('/', asyncMiddleware(async (request, response) => {
-  response.error('todo');
+  const { roomChannel } = request;
+
+  roomChannel.name = request.body.name || roomChannel.name;
+  roomChannel.description = request.body.description || roomChannel.description;
+
+  await roomChannel.save();
+
+  response.success(roomChannel);
 }));
 
 /*
@@ -31,8 +53,14 @@ router.patch('/', asyncMiddleware(async (request, response) => {
  */
 
 router.delete('/', userAuthorize);
+router.delete('/', roomChannelAssociate);
+router.delete('/', roomPermissionsAuthorize([ 'ADMIN', 'MODERATOR' ]));
 router.delete('/', asyncMiddleware(async (request, response) => {
-  response.error('todo');
+  const { roomChannel } = request;
+
+  await roomChannel.destroy();
+
+  response.success();
 }));
 
 /*

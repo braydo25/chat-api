@@ -4,7 +4,11 @@ const hashIdHelpers = rootRequire('/libs/hashIdHelpers');
  */
 
 const UserModel = database.define('user', {
-  id: Sequelize.generateGenericIdAttribute({ hashPrefix: 'u' }),
+  id: {
+    type: Sequelize.INTEGER(10).UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
+  },
   accessToken: {
     type: Sequelize.UUID,
     unique: true,

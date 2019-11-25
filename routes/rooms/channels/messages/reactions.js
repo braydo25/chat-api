@@ -1,5 +1,5 @@
 /*
- * Route: /channels/:channelHashId/messages/:channelMessageHashId/reactions/:channelMessageReactionHashId?
+ * Route: /rooms/:roomId/channels/:roomChannelId/messages/:roomChannelMessageId/reactions/:roomChannelMessageReactionId?
  */
 
 const userAuthorize = rootRequire('/middlewares/users/authorize');
