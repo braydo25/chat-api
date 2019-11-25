@@ -11,6 +11,8 @@
     "server": true,
     "testUserOne": true,
     "testUserTwo": true,
+    "testUserThree": true,
     "testRoomOne": true,
+    "testRoomOneChannelOne": true,
   },
 }

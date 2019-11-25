@@ -11,6 +11,7 @@ RoomModel.hasMany(RoomUserModel);
 RoomChannelModel.hasMany(RoomChannelMessageModel);
 RoomChannelMessageModel.hasMany(RoomChannelMessageReactionModel);
 RoomUserModel.belongsTo(RoomModel);
+RoomUserModel.belongsTo(UserModel);
 
 UserModel.hasMany(RoomUserModel);
 UserModel.hasMany(RoomChannelMessageModel);

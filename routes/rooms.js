@@ -3,6 +3,7 @@
  */
 
 const RoomModel = rootRequire('/models/RoomModel');
+const RoomChannelModel = rootRequire('/models/RoomChannelModel');
 const RoomUserModel = rootRequire('/models/RoomUserModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const roomPermissionsAuthorize = rootRequire('/middlewares/rooms/permissionsAuthorize');
@@ -52,6 +53,12 @@ router.post('/', asyncMiddleware(async (request, response) => {
     const room = await RoomModel.create({
       name,
       description,
+    }, { transaction });
+
+    await RoomChannelModel.create({
+      roomId: room.id,
+      name: 'general',
+      description: 'Talk about anything and everything.',
     }, { transaction });
 
     await RoomUserModel.create({

@@ -1,8 +1,6 @@
 const helpers = require('../../helpers');
 
 describe('User Rooms', () => {
-  let joinedUserRoom = null;
-
   /*
    * POST
    */
@@ -13,7 +11,6 @@ describe('User Rooms', () => {
         .post(`/users/@me/rooms/${testRoomOne.id}`)
         .set('X-Access-Token', testUserTwo.accessToken)
         .end((error, response) => {
-          joinedUserRoom = response.body;
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.should.have.property('id');
@@ -24,13 +21,12 @@ describe('User Rooms', () => {
         });
     });
 
-    it('200s with existing room user object when user has already joined the room', done => {
+    it('400s when user has already joined the room', done => {
       chai.request(server)
         .post(`/users/@me/rooms/${testRoomOne.id}`)
         .set('X-Access-Token', testUserTwo.accessToken)
         .end((error, response) => {
-          response.should.have.status(200);
-          response.body.id.should.equal(joinedUserRoom.id);
+          response.should.have.status(400);
           done();
         });
     });

@@ -20,6 +20,16 @@ router.post('/', roomPermissionsAuthorize([ 'ADMIN', 'MODERATOR' ]));
 router.post('/', asyncMiddleware(async (request, response) => {
   const { room } = request;
   const { name, description } = request.body;
+  const roomChannelExists = await RoomChannelModel.count({
+    where: {
+      name,
+      roomId: room.id,
+    },
+  });
+
+  if (roomChannelExists) {
+    throw new Error(`This room already has a channel with the name ${name}.`);
+  }
 
   const channel = await RoomChannelModel.create({
     roomId: room.id,

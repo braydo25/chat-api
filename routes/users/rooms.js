@@ -44,15 +44,15 @@ router.post('/', userAuthorize);
 router.post('/', roomAssociate);
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user, room } = request;
-  const existingRoomUser = await RoomUserModel.findOne({
+  const roomUserExists = await RoomUserModel.count({
     where: {
       roomId: room.id,
       userId: user.id,
     },
   });
 
-  if (existingRoomUser) {
-    return response.success(existingRoomUser);
+  if (roomUserExists) {
+    throw new Error('You have already joined this room.');
   }
 
   const roomUser = await RoomUserModel.create({

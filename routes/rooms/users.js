@@ -1,5 +1,5 @@
 /*
- * Route: /rooms/:roomId/users/:roomUserId?
+ * Route: /rooms/:roomId/users/:userId?
  */
 
 const RoomUserModel = rootRequire('/models/RoomUserModel');
@@ -19,7 +19,7 @@ const router = express.Router({
 router.get('/', userAuthorize);
 router.get('/', roomAssociate);
 router.get('/', asyncMiddleware(async (request, response) => {
-  const { room } = request;
+  const { roomId } = request.params;
   const roomUsers = await RoomUserModel.findAll({
     attributes: [ 'id', 'permissions' ],
     include: [
@@ -30,7 +30,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
       },
     ],
     where: {
-      roomId: room.id,
+      roomId: roomId,
       banned: false,
     },
   });
@@ -45,8 +45,8 @@ router.get('/', asyncMiddleware(async (request, response) => {
 router.patch('/', userAuthorize);
 router.patch('/', roomPermissionsAuthorize([ 'ADMIN', 'MODERATOR' ]));
 router.patch('/', asyncMiddleware(async (request, response) => {
-  const { roomUserId } = request.params;
-  const roomUser = await RoomUserModel.findOne({ where: { id: roomUserId } });
+  const { roomId, userId } = request.params;
+  const roomUser = await RoomUserModel.findOne({ where: { roomId, userId } });
 
   if (!roomUser) {
     throw new Error('This user is not a member of this room.');
@@ -68,8 +68,8 @@ router.patch('/', asyncMiddleware(async (request, response) => {
 router.delete('/', userAuthorize);
 router.delete('/', roomPermissionsAuthorize([ 'ADMIN', 'MODERATOR' ]));
 router.delete('/', asyncMiddleware(async (request, response) => {
-  const { roomUserId } = request.params;
-  const roomUser = await RoomUserModel.findOne({ where: { id: roomUserId } });
+  const { roomId, userId } = request.params;
+  const roomUser = await RoomUserModel.findOne({ where: { roomId, userId } });
 
   if (!roomUser) {
     throw new Error('This user is not a member of this room.');
