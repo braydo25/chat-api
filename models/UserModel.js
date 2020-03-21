@@ -1,4 +1,3 @@
-const hashIdHelpers = rootRequire('/libs/hashIdHelpers');
 /*
  * Model Definition
  */
@@ -9,23 +8,36 @@ const UserModel = database.define('user', {
     primaryKey: true,
     autoIncrement: true,
   },
-  accessToken: {
+  uuid: {
     type: Sequelize.UUID,
     unique: true,
     defaultValue: Sequelize.UUIDV1,
   },
-  username: {
-    type: Sequelize.STRING,
-    allowNull: false,
+  accessToken: {
+    type: Sequelize.UUID,
+    unique: true,
+    defaultValue: Sequelize.UUIDV4,
   },
-  password: {
+  phone: {
     type: Sequelize.STRING,
-    allowNull: false,
+    unique: {
+      msg: 'The phone number you provided is already in use.',
+    },
+    validate: {
+      isPhone: value => {
+        if (!(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(value))) {
+          throw new Error('The phone number you provided is invalid.');
+        }
+      },
+    },
   },
-  name: {
+  phoneLoginCode: {
     type: Sequelize.STRING,
   },
-  iconHash: {
+  firstName: {
+    type: Sequelize.STRING,
+  },
+  lastName: {
     type: Sequelize.STRING,
   },
 });

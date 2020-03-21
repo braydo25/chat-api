@@ -1,20 +1,13 @@
-const RoomModel = rootRequire('/models/RoomModel');
-const RoomChannelModel = rootRequire('/models/RoomChannelModel');
-const RoomChannelMessageModel = rootRequire('/models/RoomChannelMessageModel');
-const RoomChannelMessageReactionModel = rootRequire('/models/RoomChannelMessageReactionModel');
-const RoomUserModel = rootRequire('/models/RoomUserModel');
+const ConversationModel = rootRequire('/models/ConversationModel');
+const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
+const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 
 const UserModel = rootRequire('/models/UserModel');
 
-RoomModel.hasMany(RoomChannelModel);
-RoomModel.hasMany(RoomUserModel);
-RoomChannelModel.hasMany(RoomChannelMessageModel);
-RoomChannelMessageModel.hasMany(RoomChannelMessageReactionModel);
-RoomUserModel.belongsTo(RoomModel);
-RoomUserModel.belongsTo(UserModel);
+ConversationModel.hasMany(ConversationMessageModel);
+ConversationModel.hasMany(ConversationUserModel);
 
-UserModel.hasMany(RoomUserModel);
-UserModel.hasMany(RoomChannelMessageModel);
-UserModel.hasMany(RoomChannelMessageReactionModel);
+ConversationMessageModel.belongsTo(UserModel);
+ConversationUserModel.belongsTo(UserModel);
 
 module.exports = database.sync({ force: true });

@@ -1,5 +1,4 @@
 const awsHelpers = rootRequire('/libs/awsHelpers');
-const hashIdHelpers = rootRequire('/libs/hashIdHelpers');
 
 /*
  * Express

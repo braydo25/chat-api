@@ -2,22 +2,23 @@
  * Model Definition
  */
 
-const RoomChannelMessageModel = database.define('roomChannelMessage', {
+const ConversationUserModel = database.define('conversationUser', {
   id: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
-  roomChannelId: {
-    type: Sequelize.INTEGER(10).UNSIGNED,
-    allowNull: false,
+  uuid: {
+    type: Sequelize.UUID,
+    unique: true,
+    defaultValue: Sequelize.UUIDV1,
   },
   userId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
-  content: {
-    type: Sequelize.TEXT,
+  conversationId: {
+    type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
 });
@@ -26,4 +27,4 @@ const RoomChannelMessageModel = database.define('roomChannelMessage', {
  * Export
  */
 
-module.exports = RoomChannelMessageModel;
+module.exports = ConversationUserModel;

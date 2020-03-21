@@ -15,8 +15,6 @@ global.server = `http://localhost:${process.env.PORT}`;
 global.testUserOne = { username: 'monkey', password: 'banana' };
 global.testUserTwo = { username: 'chimp', password: 'apple' };
 global.testUserThree = { username: 'gorilla', password: 'berry' };
-global.testRoomOne = { name: 'Magic The Gathering' };
-global.testRoomOneChannelOne = { name: 'Modern Strategy' };
 
 /*
  * Configure Chai
@@ -95,25 +93,6 @@ before(done => {
       .post('/users')
       .send(testUserThree);
     Object.assign(testUserThree, createdTestUserThreeResponse.body);
-
-    fatLog('Creating global test room one...');
-    const createdTestRoomOneResponse = await chai.request(server)
-      .post('/rooms')
-      .set('X-Access-Token', testUserOne.accessToken)
-      .send(testRoomOne);
-    Object.assign(testRoomOne, createdTestRoomOneResponse.body);
-
-    fatLog('Creating global test room one channel one...');
-    const createdTestRoomOneChannelOneResponse = await chai.request(server)
-      .post(`/rooms/${testRoomOne.id}/channels`)
-      .set('X-Access-Token', testUserOne.accessToken)
-      .send(testRoomOneChannelOne);
-    Object.assign(testRoomOneChannelOne, createdTestRoomOneChannelOneResponse.body);
-
-    fatLog('Adding test user three to test room one...');
-    await chai.request(server)
-      .post(`/users/@me/rooms/${testRoomOne.id}`)
-      .set('X-Access-Token', testUserThree.accessToken);
 
     done();
   })();
