@@ -4,10 +4,13 @@ const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 
 const UserModel = rootRequire('/models/UserModel');
 
+ConversationModel.belongsTo(UserModel);
 ConversationModel.hasMany(ConversationMessageModel);
 ConversationModel.hasMany(ConversationUserModel);
 
 ConversationMessageModel.belongsTo(UserModel);
+
+ConversationUserModel.belongsTo(ConversationModel);
 ConversationUserModel.belongsTo(UserModel);
 
 module.exports = database.sync({ force: true });

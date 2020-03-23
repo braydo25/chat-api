@@ -12,9 +12,9 @@ global.chai = require('chai');
 global.chaiHttp = require('chai-http');
 global.server = `http://localhost:${process.env.PORT}`;
 
-global.testUserOne = { username: 'monkey', password: 'banana' };
-global.testUserTwo = { username: 'chimp', password: 'apple' };
-global.testUserThree = { username: 'gorilla', password: 'berry' };
+global.testUserOne = { phone: 5555555555 };
+global.testUserTwo = { phone: 6666666666 };
+global.testUserThree = { phone: 8888888888 };
 
 /*
  * Configure Chai
@@ -77,21 +77,18 @@ before(done => {
     });
 
     fatLog('Creating global test user one...');
-    const createdTestUserOneResponse = await chai.request(server)
-      .post('/users')
-      .send(testUserOne);
+    await chai.request(server).post('/users').send(testUserOne);
+    const createdTestUserOneResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserOne, { phoneLoginCode: '000000' }));
     Object.assign(testUserOne, createdTestUserOneResponse.body);
 
     fatLog('Creating global test user two...');
-    const createdTestUserTwoResponse = await chai.request(server)
-      .post('/users')
-      .send(testUserTwo);
+    await chai.request(server).post('/users').send(testUserTwo);
+    const createdTestUserTwoResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserTwo, { phoneLoginCode: '000000' }));
     Object.assign(testUserTwo, createdTestUserTwoResponse.body);
 
     fatLog('Creating global test user three...');
-    const createdTestUserThreeResponse = await chai.request(server)
-      .post('/users')
-      .send(testUserThree);
+    await chai.request(server).post('/users').send(testUserThree);
+    const createdTestUserThreeResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserThree, { phoneLoginCode: '000000' }));
     Object.assign(testUserThree, createdTestUserThreeResponse.body);
 
     done();

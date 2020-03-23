@@ -1,3 +1,5 @@
+const awsHelpers = rootRequire('/libs/awsHelpers');
+
 /*
  * Model Definition
  */
@@ -7,11 +9,6 @@ const UserModel = database.define('user', {
     type: Sequelize.INTEGER(10).UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
-  },
-  uuid: {
-    type: Sequelize.UUID,
-    unique: true,
-    defaultValue: Sequelize.UUIDV1,
   },
   accessToken: {
     type: Sequelize.UUID,
@@ -41,6 +38,23 @@ const UserModel = database.define('user', {
     type: Sequelize.STRING,
   },
 });
+
+/*
+ * Instance Methods
+ */
+
+UserModel.prototype.updateAndSendPhoneLoginCode = async function() {
+  this.phoneLoginCode = (process.env.NODE_ENV !== 'local') ? Math.floor(Math.random() * 900000) + 100000 : '000000';
+
+  if (process.env.NODE_ENV !== 'local') {
+    await awsHelpers.sendTextMessage({
+      phoneNumber: this.phone,
+      message: `Hey, this is Chat! Your one-time passcode is: ${this.phoneLoginCode}`,
+    });
+  }
+
+  await this.save();
+};
 
 /*
  * Export

@@ -8,11 +8,6 @@ const ConversationUserModel = database.define('conversationUser', {
     primaryKey: true,
     autoIncrement: true,
   },
-  uuid: {
-    type: Sequelize.UUID,
-    unique: true,
-    defaultValue: Sequelize.UUIDV1,
-  },
   userId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
