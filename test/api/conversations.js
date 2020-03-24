@@ -32,6 +32,7 @@ describe('Conversations', () => {
           response.body.conversationUsers[0].userId.should.equal(testUserOne.id);
           scopedConversation = response.body;
           done();
+          helpers.logExampleResponse(response);
         });
     });
 
@@ -47,6 +48,7 @@ describe('Conversations', () => {
         .end((error, response) => {
           response.should.have.status(400);
           done();
+          helpers.logExampleResponse(response);
         });
     });
 
@@ -72,6 +74,7 @@ describe('Conversations', () => {
             conversation.user.should.be.an('object');
           });
           done();
+          helpers.logExampleResponse(response);
         });
     });
 
@@ -96,6 +99,7 @@ describe('Conversations', () => {
           response.should.have.status(200);
           response.body.permission.should.equal(fields.permission);
           done();
+          helpers.logExampleResponse(response);
         });
     });
 
@@ -114,6 +118,7 @@ describe('Conversations', () => {
         .end((error, response) => {
           response.should.have.status(204);
           done();
+          helpers.logExampleResponse(response);
         });
     });
 

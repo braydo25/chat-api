@@ -9,6 +9,7 @@
     "chaiHttp": true,
     "waitPort": true,
     "server": true,
+    "enableTestResponseLogging": true,
     "testUserOne": true,
     "testUserTwo": true,
     "testUserThree": true,

@@ -24,6 +24,7 @@ describe('Conversation Messages', () => {
           response.body.text.should.equal(fields.text);
           scopedConversationMessage = response.body;
           done();
+          helpers.logExampleResponse(response);
         });
     });
 
@@ -34,6 +35,7 @@ describe('Conversation Messages', () => {
         .end((error, response) => {
           response.should.have.status(400);
           done();
+          helpers.logExampleResponse(response);
         });
     });
 
@@ -61,6 +63,7 @@ describe('Conversation Messages', () => {
             conversationMessage.user.should.have.property('lastName');
           });
           done();
+          helpers.logExampleResponse(response);
         });
     });
 
@@ -87,6 +90,7 @@ describe('Conversation Messages', () => {
           response.body.text.should.equal(fields.text);
           response.body.updatedAt.should.not.equal(response.body.createdAt);
           done();
+          helpers.logExampleResponse(response);
         });
     });
 
@@ -105,6 +109,7 @@ describe('Conversation Messages', () => {
         .end((error, response) => {
           response.should.have.status(204);
           done();
+          helpers.logExampleResponse(response);
         });
     });
 

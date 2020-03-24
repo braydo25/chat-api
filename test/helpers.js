@@ -13,6 +13,21 @@ module.exports.it401sWhenUserAuthorizationIsInvalid = (method, route) => {
   });
 };
 
+module.exports.logExampleResponse = response => {
+  if (!enableTestResponseLogging) {
+    return;
+  }
+
+  const logHeader = `------------ API Response (${response.status}) ------------`;
+  const logFooter = '-'.repeat(logHeader.length);
+
+  console.log(`\t${logHeader}`);
+  for (let i = 0; i < 4; i++) { console.group(); }
+  console.log(response.body);
+  for (let i = 0; i < 4; i++) { console.groupEnd(); }
+  console.log(`\t${logFooter}\n\n`);
+};
+
 module.exports.jenkinsDelay = delayOverride => {
   /*
    * Jenkins can get tripped up from executing requests faster

@@ -17,6 +17,7 @@ describe('Users', () => {
         .end((error, response) => {
           response.should.have.status(204);
           done();
+          helpers.logExampleResponse(response);
         });
     });
 
@@ -34,6 +35,7 @@ describe('Users', () => {
           response.body.should.be.an('object');
           response.body.id.should.be.a('number');
           done();
+          helpers.logExampleResponse(response);
         });
     });
 
@@ -49,6 +51,7 @@ describe('Users', () => {
         .end((error, response) => {
           response.should.have.status(400);
           done();
+          helpers.logExampleResponse(response);
         });
     });
 
@@ -63,6 +66,7 @@ describe('Users', () => {
         .end((error, response) => {
           response.should.have.status(400);
           done();
+          helpers.logExampleResponse(response);
         });
     });
   });
@@ -88,6 +92,7 @@ describe('Users', () => {
           response.body.firstName.should.equal(fields.firstName);
           response.body.lastName.should.equal(fields.lastName);
           done();
+          helpers.logExampleResponse(response);
         });
     });
 
