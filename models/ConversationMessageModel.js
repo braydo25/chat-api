@@ -19,6 +19,14 @@ const ConversationMessageModel = database.define('conversationMessage', {
   text: {
     type: Sequelize.TEXT,
   },
+}, {
+  validate: {
+    hasContent: function() {
+      if (!this.text) {
+        throw new Error('Conversation message text must be provided.');
+      }
+    },
+  },
 });
 
 /*

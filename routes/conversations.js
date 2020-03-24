@@ -4,6 +4,7 @@
 
 const ConversationModel = rootRequire('/models/ConversationModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
+const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const UserModel = rootRequire('/models/UserModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const conversationAuthorize = rootRequire('/middlewares/conversations/authorize');
@@ -34,7 +35,8 @@ router.get('/', asyncMiddleware(async (request, response) => {
 router.post('/', userAuthorize);
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
-  const { permission, conversationMessage } = request.body;
+  const { permission } = request.body;
+  const conversationMessage = request.body.conversationMessage || {};
 
   const transaction = await database.transaction();
 
@@ -48,10 +50,15 @@ router.post('/', asyncMiddleware(async (request, response) => {
           text: conversationMessage.text,
         },
       ],
+      conversationUsers: [
+        { userId: user.id },
+      ],
     }, {
-      include: [ ConversationMessageModel ],
+      include: [ ConversationMessageModel, ConversationUserModel ],
       transaction,
     });
+
+    await transaction.commit();
 
     response.success(conversation);
   } catch(error) {
@@ -84,7 +91,7 @@ router.patch('/', asyncMiddleware(async (request, response) => {
 router.delete('/', userAuthorize);
 router.delete('/', conversationAuthorize);
 router.delete('/', asyncMiddleware(async (request, response) => {
-  const conversation = request;
+  const { conversation } = request;
 
   await conversation.destroy();
 

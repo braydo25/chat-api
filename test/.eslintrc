@@ -12,7 +12,6 @@
     "testUserOne": true,
     "testUserTwo": true,
     "testUserThree": true,
-    "testRoomOne": true,
-    "testRoomOneChannelOne": true,
+    "testConversationOne": true,
   },
 }
