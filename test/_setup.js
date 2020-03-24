@@ -16,6 +16,13 @@ global.testUserOne = { phone: 5555555555 };
 global.testUserTwo = { phone: 6666666666 };
 global.testUserThree = { phone: 8888888888 };
 
+global.testConversationOne = {
+  permission: 'public',
+  conversationMessage: {
+    text: 'Sir, this is a wendys',
+  },
+};
+
 /*
  * Configure Chai
  */
@@ -90,6 +97,13 @@ before(done => {
     await chai.request(server).post('/users').send(testUserThree);
     const createdTestUserThreeResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserThree, { phoneLoginCode: '000000' }));
     Object.assign(testUserThree, createdTestUserThreeResponse.body);
+
+    fatLog('Creating global test conversation one...');
+    const createdTestConversationOne = await chai.request(server)
+      .post('/conversations')
+      .set('X-Access-Token', testUserOne.accessToken)
+      .send(testConversationOne);
+    Object.assign(testConversationOne, createdTestConversationOne.body);
 
     done();
   })();

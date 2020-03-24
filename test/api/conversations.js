@@ -58,6 +58,23 @@ describe('Conversations', () => {
    */
 
   describe('GET /conversations', () => {
+    it('200s with an array of conversations owned by the authorized user', done => {
+      chai.request(server)
+        .get('/conversations')
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.forEach(conversation => {
+            conversation.userId.should.equal(testUserOne.id);
+            conversation.conversationMessages.should.be.an('array');
+            conversation.conversationUsers.should.be.an('array');
+            conversation.user.should.be.an('object');
+          });
+          done();
+        });
+    });
+
     helpers.it401sWhenUserAuthorizationIsInvalid('get', '/conversations');
   });
 

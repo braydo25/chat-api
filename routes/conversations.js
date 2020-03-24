@@ -19,9 +19,16 @@ const router = express.Router({
 
 router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
-  const { user } = request.user;
+  const { user } = request;
   const conversations = await ConversationModel.findAll({
-    include: [ ConversationMessageModel, UserModel ],
+    include: [
+      ConversationMessageModel,
+      {
+        model: ConversationUserModel,
+        include: [ UserModel ],
+      },
+      UserModel,
+    ],
     where: { userId: user.id },
   });
 
