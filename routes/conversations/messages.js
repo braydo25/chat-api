@@ -2,7 +2,9 @@
  * Route: /conversations/:conversationId/messages/conversationMessageId?
  */
 
+const AttachmentModel = rootRequire('/models/AttachmentModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
+const EmbedModel = rootRequire('/models/EmbedModel');
 const UserModel = rootRequire('/models/UserModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
@@ -21,7 +23,7 @@ router.get('/', conversationAssociate);
 router.get('/', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
   const conversationMessages = await ConversationMessageModel.findAll({
-    include: [ UserModel ],
+    include: [ AttachmentModel, EmbedModel, UserModel ],
     where: { conversationId: conversation.id },
   });
 
