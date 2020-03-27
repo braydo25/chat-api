@@ -1,12 +1,16 @@
+const attachmentsRouter = rootRequire('/routes/attachments');
 const conversationsRouter = rootRequire('/routes/conversations');
 const conversationMessagesRouter = rootRequire('/routes/conversations/messages');
+const embedsRouter = rootRequire('/routes/embeds');
 const healthRouter = rootRequire('/routes/health');
 const usersRouter = rootRequire('/routes/users');
 
 module.exports = app => {
   // API Route Definitions
+  app.use('/attachments', attachmentsRouter);
   app.use('/conversations/:conversationId?', conversationsRouter);
   app.use('/conversations/:conversationId/messages/:conversationMessageId?', conversationMessagesRouter);
+  app.use('/embeds', embedsRouter);
   app.use('/health', healthRouter);
   app.use('/users/:userId?', usersRouter);
 

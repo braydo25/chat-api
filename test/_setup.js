@@ -12,7 +12,7 @@ global.chai = require('chai');
 global.chaiHttp = require('chai-http');
 global.server = `http://localhost:${process.env.PORT}`;
 
-global.enableTestResponseLogging = true;
+global.enableTestResponseLogging = false;
 
 global.testUserOne = { phone: 5555555555 };
 global.testUserTwo = { phone: 6666666666 };

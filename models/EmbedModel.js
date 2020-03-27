@@ -18,17 +18,35 @@ const EmbedModel = database.define('embed', {
   description: {
     type: Sequelize.TEXT,
   },
+  language: {
+    type: Sequelize.STRING,
+  },
+  author: {
+    type: Sequelize.TEXT,
+  },
+  publisher: {
+    type: Sequelize.TEXT,
+  },
+  date: {
+    type: Sequelize.DATE,
+  },
   url: {
     type: Sequelize.TEXT,
   },
-  content: {
+  responseHeaders: {
     type: Sequelize.JSON,
   },
-  image: {
-    type: Sequelize.JSON,
+  logoUrl: {
+    type: Sequelize.TEXT,
   },
-  video: {
-    type: Sequelize.JSON,
+  audioUrl: {
+    type: Sequelize.TEXT,
+  },
+  imageUrl: {
+    type: Sequelize.TEXT,
+  },
+  videoUrl: {
+    type: Sequelize.TEXT,
   },
 });
 

@@ -24,11 +24,12 @@ const AttachmentModel = database.define('attachment', {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  width: {
-    type: Sequelize.INTEGER(10).UNSIGNED,
+  mimetype: {
+    type: Sequelize.STRING,
+    allowNull: false,
   },
-  height: {
-    type: Sequelize.INTEGER(10).UNSIGNED,
+  checksum: {
+    type: Sequelize.STRING,
   },
 });
 

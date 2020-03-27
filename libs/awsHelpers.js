@@ -1,4 +1,22 @@
 const aws = require('aws-sdk');
+const awsConfig = rootRequire('/config/aws');
+
+/*
+ * S3
+ */
+
+async function uploadFileToS3(buffer, filename) {
+  const s3 = new aws.S3();
+  const keyPrefix = Math.random().toString(32).substring(2, 15);
+  const result = await s3.upload({
+    ACL: 'public-read',
+    Body: buffer,
+    Bucket: awsConfig.s3FileUploadsBucket,
+    Key: `${keyPrefix}/${filename}`,
+  }).promise();
+
+  return result.Location;
+}
 
 /*
  * SNS
@@ -26,11 +44,14 @@ function logEvent({ event, data }) {
   }));
 }
 
+
+
 /*
  * Export
  */
 
 module.exports = {
+  uploadFileToS3,
   sendTextMessage,
   logEvent,
 };

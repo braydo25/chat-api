@@ -16,4 +16,8 @@ ConversationMessageModel.belongsTo(UserModel);
 ConversationUserModel.belongsTo(ConversationModel);
 ConversationUserModel.belongsTo(UserModel);
 
+UserModel.hasMany(AttachmentModel);
+UserModel.hasMany(ConversationModel);
+UserModel.hasMany(EmbedModel);
+
 module.exports = database.sync({ force: true });
