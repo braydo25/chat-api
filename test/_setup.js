@@ -5,6 +5,12 @@
 require('dotenv').config();
 
 /*
+ * Dependencies
+ */
+
+const fs = require('fs');
+
+/*
  * Set Globals
  */
 
@@ -12,7 +18,7 @@ global.chai = require('chai');
 global.chaiHttp = require('chai-http');
 global.server = `http://localhost:${process.env.PORT}`;
 
-global.enableTestResponseLogging = false;
+global.enableTestResponseLogging = true;
 
 global.testUserOne = { phone: 5555555555 };
 global.testUserTwo = { phone: 6666666666 };
@@ -24,6 +30,9 @@ global.testConversationOne = {
     text: 'Sir, this is a wendys',
   },
 };
+
+global.testAttachmentOne = {};
+global.testEmbedOne = { url: 'https://brrr.money/' };
 
 /*
  * Configure Chai
@@ -106,6 +115,20 @@ before(done => {
       .set('X-Access-Token', testUserOne.accessToken)
       .send(testConversationOne);
     Object.assign(testConversationOne, createdTestConversationOne.body);
+
+    fatLog('Creating global test attachment one...');
+    const createdTestAttachmentOne = await chai.request(server)
+      .post('/attachments')
+      .set('X-Access-Token', testUserOne.accessToken)
+      .attach('file', fs.readFileSync('./test/yosemite.jpg'), 'yosemite.jpg');
+    Object.assign(testAttachmentOne, createdTestAttachmentOne.body);
+
+    fatLog('Creating global test embed one...');
+    const createdTestEmbedOne = await chai.request(server)
+      .post('/embeds')
+      .set('X-Access-Token', testUserOne.accessToken)
+      .send(testEmbedOne);
+    Object.assign(testEmbedOne, createdTestEmbedOne.body);
 
     done();
   })();

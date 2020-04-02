@@ -41,7 +41,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
 router.post('/', userAuthorize);
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user, files } = request;
-  const file = files.file;
+  const file = (files && files.file) ? files.file : null;
 
   if (!file) {
     throw new Error('A file must be provided.');

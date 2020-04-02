@@ -15,9 +15,9 @@ describe('Users', () => {
         .post('/users')
         .send(fields)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(204);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -31,11 +31,11 @@ describe('Users', () => {
         .post('/users')
         .send(fields)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.id.should.be.a('number');
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -49,9 +49,9 @@ describe('Users', () => {
         .post('/users')
         .send(fields)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(400);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -64,9 +64,9 @@ describe('Users', () => {
         .post('/users')
         .send(fields)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(400);
           done();
-          helpers.logExampleResponse(response);
         });
     });
   });
@@ -87,12 +87,12 @@ describe('Users', () => {
         .set('X-Access-Token', testUserOne.accessToken)
         .send(fields)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.firstName.should.equal(fields.firstName);
           response.body.lastName.should.equal(fields.lastName);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 

@@ -18,13 +18,13 @@ describe('Embeds', () => {
         .set('X-Access-Token', testUserOne.accessToken)
         .send(fields)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.userId.should.equal(testUserOne.id);
           response.body.url.should.equal(fields.url);
           scopedEmbed = response.body;
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -38,10 +38,10 @@ describe('Embeds', () => {
         .set('X-Access-Token', testUserOne.accessToken)
         .send(fields)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.id.should.equal(scopedEmbed.id);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -50,9 +50,9 @@ describe('Embeds', () => {
         .post('/embeds')
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(400);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 

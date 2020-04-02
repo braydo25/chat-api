@@ -21,6 +21,7 @@ describe('Conversations', () => {
         .set('X-Access-Token', testUserOne.accessToken)
         .send(fields)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.userId.should.equal(testUserOne.id);
@@ -32,7 +33,41 @@ describe('Conversations', () => {
           response.body.conversationUsers[0].userId.should.equal(testUserOne.id);
           scopedConversation = response.body;
           done();
+        });
+    });
+
+    it('200s with created conversation object when provided conversation users, attachments and embeds', done => {
+      const fields = {
+        permission: 'private',
+        conversationMessage: {
+          text: 'what is up friend!',
+          attachments: [ testAttachmentOne.id ],
+          embeds: [ testEmbedOne.id ],
+        },
+        conversationUsers: [ testUserTwo.id ],
+      };
+
+      chai.request(server)
+        .post('/conversations')
+        .set('X-Access-Token', testUserOne.accessToken)
+        .send(fields)
+        .end((error, response) => {
           helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('object');
+          response.body.userId.should.equal(testUserOne.id);
+          response.body.permission.should.equal(fields.permission);
+          response.body.conversationMessages.should.be.an('array');
+          response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
+          response.body.conversationMessages[0].text.should.equal(fields.conversationMessage.text);
+          response.body.conversationMessages[0].attachments.should.be.an('array');
+          response.body.conversationMessages[0].attachments[0].id.should.equal(testAttachmentOne.id);
+          response.body.conversationMessages[0].embeds.should.be.an('array');
+          response.body.conversationMessages[0].embeds[0].id.should.equal(testEmbedOne.id);
+          response.body.conversationUsers.should.be.an('array');
+          response.body.conversationUsers[0].userId.should.equal(testUserOne.id);
+          response.body.conversationUsers[1].userId.should.equal(testUserTwo.id);
+          done();
         });
     });
 
@@ -46,9 +81,9 @@ describe('Conversations', () => {
         .set('X-Access-Token', testUserOne.accessToken)
         .send(fields)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(400);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -65,6 +100,7 @@ describe('Conversations', () => {
         .get('/conversations')
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('array');
           response.body.forEach(conversation => {
@@ -74,7 +110,6 @@ describe('Conversations', () => {
             conversation.user.should.be.an('object');
           });
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -96,10 +131,10 @@ describe('Conversations', () => {
         .set('X-Access-Token', testUserOne.accessToken)
         .send(fields)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.permission.should.equal(fields.permission);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -116,9 +151,9 @@ describe('Conversations', () => {
         .delete(`/conversations/${scopedConversation.id}`)
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(204);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 

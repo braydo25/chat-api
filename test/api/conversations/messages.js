@@ -18,13 +18,38 @@ describe('Conversation Messages', () => {
         .set('X-Access-Token', testUserOne.accessToken)
         .send(fields)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.userId.should.equal(testUserOne.id);
           response.body.text.should.equal(fields.text);
           scopedConversationMessage = response.body;
           done();
+        });
+    });
+
+    it('200s with created conversation message object when provided attachments or embeds', done => {
+      const fields = {
+        text: 'This is an attachment plus embed!!',
+        attachments: [ testAttachmentOne.id ],
+        embeds: [ testEmbedOne.id ],
+      };
+
+      chai.request(server)
+        .post(`/conversations/${testConversationOne.id}/messages`)
+        .set('X-Access-Token', testUserOne.accessToken)
+        .send(fields)
+        .end((error, response) => {
           helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('object');
+          response.body.userId.should.equal(testUserOne.id);
+          response.body.text.should.equal(fields.text);
+          response.body.attachments.should.be.an('array');
+          response.body.attachments[0].id.should.equal(testAttachmentOne.id);
+          response.body.embeds.should.be.an('array');
+          response.body.embeds[0].id.should.equal(testEmbedOne.id);
+          done();
         });
     });
 
@@ -33,9 +58,9 @@ describe('Conversation Messages', () => {
         .post(`/conversations/${testConversationOne.id}/messages`)
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(400);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -52,6 +77,7 @@ describe('Conversation Messages', () => {
         .get(`/conversations/${testConversationOne.id}/messages`)
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('array');
           response.body.forEach(conversationMessage => {
@@ -63,7 +89,6 @@ describe('Conversation Messages', () => {
             conversationMessage.user.should.have.property('lastName');
           });
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -85,12 +110,12 @@ describe('Conversation Messages', () => {
         .set('X-Access-Token', testUserOne.accessToken)
         .send(fields)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.text.should.equal(fields.text);
           response.body.updatedAt.should.not.equal(response.body.createdAt);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -107,9 +132,9 @@ describe('Conversation Messages', () => {
         .delete(`/conversations/${testConversationOne.id}/messages/${scopedConversationMessage.id}`)
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(204);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 

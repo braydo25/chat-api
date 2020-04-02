@@ -18,14 +18,14 @@ module.exports.logExampleResponse = response => {
     return;
   }
 
-  const logHeader = `------------ API Response (${response.status}) ------------`;
-  const logFooter = '-'.repeat(logHeader.length);
+  const logHeader = `--- ${response.request.method.toUpperCase()} ${response.request.url} | API Response (${response.status}) ---`;
+  const logFooter = `VVV${'-'.repeat(logHeader.length - 3)}`;
 
-  console.log(`\t${logHeader}`);
+  console.log(`\n\n\t${logHeader}`);
   for (let i = 0; i < 4; i++) { console.group(); }
   console.log(response.body);
   for (let i = 0; i < 4; i++) { console.groupEnd(); }
-  console.log(`\t${logFooter}\n\n`);
+  console.log(`\t${logFooter}`);
 };
 
 module.exports.jenkinsDelay = delayOverride => {

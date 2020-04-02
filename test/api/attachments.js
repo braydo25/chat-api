@@ -15,6 +15,7 @@ describe('Attachments', () => {
         .set('X-Access-Token', testUserOne.accessToken)
         .attach('file', fs.readFileSync('./test/happier.mp4'), 'happier.mp4')
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.should.have.property('bytes');
@@ -23,7 +24,6 @@ describe('Attachments', () => {
           response.body.should.have.property('checksum');
           scopedAttachment = response.body;
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -32,9 +32,9 @@ describe('Attachments', () => {
         .post('/attachments')
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(400);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -49,13 +49,13 @@ describe('Attachments', () => {
     it('200s when provided checksum and filename of file previously uploaded by user', done => {
       chai.request(server)
         .get('/attachments')
-        .query({ checksum: scopedAttachment.checksum, filename: 'happier.mp4' })
+        .query({ checksum: scopedAttachment.checksum, filename: scopedAttachment.filename })
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.id.should.equal(scopedAttachment.id);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -65,9 +65,9 @@ describe('Attachments', () => {
         .query({ checksum: 'u12hdu1h2d7h2', filename: 'random.jpg' })
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(204);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
@@ -76,9 +76,9 @@ describe('Attachments', () => {
         .get('/attachments')
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
+          helpers.logExampleResponse(response);
           response.should.have.status(400);
           done();
-          helpers.logExampleResponse(response);
         });
     });
 
