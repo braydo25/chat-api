@@ -38,15 +38,30 @@ router.post('/', userAuthorize);
 router.post('/', conversationAssociate);
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user, conversation } = request;
-  const { text } = request.body;
+  const { text, attachments, embeds } = request.body;
 
-  const conversationMessage = await ConversationMessageModel.create({
-    userId: user.id,
-    conversationId: conversation.id,
-    text,
-  });
+  const transaction = await database.transaction();
 
-  response.success(conversationMessage);
+  try {
+    const conversationMessage = await ConversationMessageModel.createWithAssociations({
+      data: {
+        userId: user.id,
+        conversationId: conversation.id,
+        text,
+      },
+      attachmentIds: attachments,
+      embedIds: embeds,
+      transaction,
+    });
+
+    await transaction.commit();
+
+    response.success(conversationMessage);
+  } catch(error) {
+    await transaction.rollback();
+
+    throw error;
+  }
 }));
 
 /*

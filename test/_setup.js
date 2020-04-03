@@ -26,7 +26,7 @@ global.testUserThree = { phone: 8888888888 };
 
 global.testConversationOne = {
   permission: 'public',
-  conversationMessage: {
+  message: {
     text: 'Sir, this is a wendys',
   },
 };

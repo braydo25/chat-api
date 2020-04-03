@@ -11,7 +11,7 @@ describe('Conversations', () => {
     it('200s with created conversation object', done => {
       const fields = {
         permission: 'public',
-        conversationMessage: {
+        message: {
           text: 'test test test!',
         },
       };
@@ -28,7 +28,7 @@ describe('Conversations', () => {
           response.body.permission.should.equal(fields.permission),
           response.body.conversationMessages.should.be.an('array');
           response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
-          response.body.conversationMessages[0].text.should.equal(fields.conversationMessage.text);
+          response.body.conversationMessages[0].text.should.equal(fields.message.text);
           response.body.conversationUsers.should.be.an('array');
           response.body.conversationUsers[0].userId.should.equal(testUserOne.id);
           scopedConversation = response.body;
@@ -39,12 +39,12 @@ describe('Conversations', () => {
     it('200s with created conversation object when provided conversation users, attachments and embeds', done => {
       const fields = {
         permission: 'private',
-        conversationMessage: {
+        message: {
           text: 'what is up friend!',
           attachments: [ testAttachmentOne.id ],
           embeds: [ testEmbedOne.id ],
         },
-        conversationUsers: [ testUserTwo.id ],
+        users: [ testUserTwo.id ],
       };
 
       chai.request(server)
@@ -59,7 +59,7 @@ describe('Conversations', () => {
           response.body.permission.should.equal(fields.permission);
           response.body.conversationMessages.should.be.an('array');
           response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
-          response.body.conversationMessages[0].text.should.equal(fields.conversationMessage.text);
+          response.body.conversationMessages[0].text.should.equal(fields.message.text);
           response.body.conversationMessages[0].attachments.should.be.an('array');
           response.body.conversationMessages[0].attachments[0].id.should.equal(testAttachmentOne.id);
           response.body.conversationMessages[0].embeds.should.be.an('array');

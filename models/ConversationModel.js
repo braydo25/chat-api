@@ -27,6 +27,32 @@ const ConversationModel = database.define('conversation', {
 });
 
 /*
+ * Class Methods
+ */
+
+ConversationModel.createWithAssociations = async function({ data, userIds = [], transaction }) {
+  userIds = [ ...new Set(userIds) ];
+
+  const conversation = await this.create(data, { transaction });
+  const conversationUsers = await database.models.conversationUser.bulkCreate((
+    userIds.map(userId => ({ conversationId: conversation.id, userId }))
+  ), { transaction });
+  const users = await database.models.user.findAll({
+    where: { id: userIds },
+  }, { transaction });
+
+  conversation.setDataValue('conversationUsers', conversationUsers);
+
+  conversationUsers.forEach(conversationUser => {
+    conversationUser.setDataValue('user', users.find(user => {
+      return conversationUser.userId === user.id;
+    }));
+  });
+
+  return conversation;
+};
+
+/*
  * Export
  */
 

@@ -1,3 +1,5 @@
+const util = require('util');
+
 /*
  * Helpers
  */
@@ -23,7 +25,7 @@ module.exports.logExampleResponse = response => {
 
   console.log(`\n\n\t${logHeader}`);
   for (let i = 0; i < 4; i++) { console.group(); }
-  console.log(response.body);
+  console.log(util.inspect(response.body, true, 10));
   for (let i = 0; i < 4; i++) { console.groupEnd(); }
   console.log(`\t${logFooter}`);
 };

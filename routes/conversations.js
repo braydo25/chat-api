@@ -2,9 +2,11 @@
  * Route: /conversations/:conversationId?
  */
 
+const AttachmentModel = rootRequire('/models/AttachmentModel');
 const ConversationModel = rootRequire('/models/ConversationModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
+const EmbedModel = rootRequire('/models/EmbedModel');
 const UserModel = rootRequire('/models/UserModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const conversationAuthorize = rootRequire('/middlewares/conversations/authorize');
@@ -22,7 +24,10 @@ router.get('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
   const conversations = await ConversationModel.findAll({
     include: [
-      ConversationMessageModel,
+      {
+        model: ConversationMessageModel,
+        include: [ AttachmentModel, EmbedModel ],
+      },
       {
         model: ConversationUserModel,
         include: [ UserModel ],
@@ -43,33 +48,42 @@ router.post('/', userAuthorize);
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
   const { permission } = request.body;
-  const conversationMessage = request.body.conversationMessage || {};
+  const message = request.body.message || {};
+  const attachments = (Array.isArray(message.attachments)) ? [ ...new Set(message.attachments) ] : [];
+  const embeds = (Array.isArray(message.embeds)) ? [ ...new Set(message.embeds) ] : [];
+  const users = (Array.isArray(request.body.users)) ? [ ...new Set(request.body.users) ] : [];
 
   const transaction = await database.transaction();
 
   try {
-    const conversation = await ConversationModel.create({
-      userId: user.id,
-      permission,
-      conversationMessages: [
-        {
-          userId: user.id,
-          text: conversationMessage.text,
-        },
-      ],
-      conversationUsers: [
-        { userId: user.id },
-      ],
-    }, {
-      include: [ ConversationMessageModel, ConversationUserModel ],
+    const conversation = await ConversationModel.createWithAssociations({
+      data: {
+        userId: user.id,
+        permission,
+      },
+      userIds: [ user.id, ...users ],
+      transaction,
+    });
+
+    const conversationMessage = await ConversationMessageModel.createWithAssociations({
+      data: {
+        conversationId: conversation.id,
+        userId: user.id,
+        text: message.text,
+      },
+      attachmentIds: attachments,
+      embedIds: embeds,
       transaction,
     });
 
     await transaction.commit();
 
-    response.success(conversation);
+    response.success({
+      ...conversation.toJSON(),
+      conversationMessages: [ conversationMessage.toJSON() ],
+    });
   } catch(error) {
-    transaction.rollback();
+    await transaction.rollback();
 
     throw error;
   }
