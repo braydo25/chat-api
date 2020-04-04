@@ -40,7 +40,6 @@ describe('Conversations', () => {
       const fields = {
         permission: 'private',
         message: {
-          text: 'what is up friend!',
           attachments: [ testAttachmentOne.id ],
           embeds: [ testEmbedOne.id ],
         },
@@ -59,7 +58,6 @@ describe('Conversations', () => {
           response.body.permission.should.equal(fields.permission);
           response.body.conversationMessages.should.be.an('array');
           response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
-          response.body.conversationMessages[0].text.should.equal(fields.message.text);
           response.body.conversationMessages[0].attachments.should.be.an('array');
           response.body.conversationMessages[0].attachments[0].id.should.equal(testAttachmentOne.id);
           response.body.conversationMessages[0].embeds.should.be.an('array');

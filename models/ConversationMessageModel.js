@@ -19,14 +19,6 @@ const ConversationMessageModel = database.define('conversationMessage', {
   text: {
     type: Sequelize.TEXT,
   },
-}, {
-  validate: {
-    hasContent: function() {
-      if (!this.text) {
-        throw new Error('Conversation message text must be provided.');
-      }
-    },
-  },
 });
 
 /*
@@ -36,6 +28,10 @@ const ConversationMessageModel = database.define('conversationMessage', {
 ConversationMessageModel.createWithAssociations = async function({ data, attachmentIds = [], embedIds = [], transaction }) {
   attachmentIds = [ ...new Set(attachmentIds) ];
   embedIds = [ ...new Set(embedIds) ];
+
+  if (!data.text && !attachmentIds.length && !embedIds.length) {
+    throw new Error('You must provide text, an attachment, or embed.');
+  }
 
   const conversationMessage = await this.create(data, { transaction });
 

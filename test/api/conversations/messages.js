@@ -30,7 +30,6 @@ describe('Conversation Messages', () => {
 
     it('200s with created conversation message object when provided attachments or embeds', done => {
       const fields = {
-        text: 'This is an attachment plus embed!!',
         attachments: [ testAttachmentOne.id ],
         embeds: [ testEmbedOne.id ],
       };
@@ -44,7 +43,6 @@ describe('Conversation Messages', () => {
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.userId.should.equal(testUserOne.id);
-          response.body.text.should.equal(fields.text);
           response.body.attachments.should.be.an('array');
           response.body.attachments[0].id.should.equal(testAttachmentOne.id);
           response.body.embeds.should.be.an('array');
