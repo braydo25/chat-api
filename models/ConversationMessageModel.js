@@ -55,8 +55,13 @@ ConversationMessageModel.createWithAssociations = async function({ data, attachm
     where: { id: embedIds },
   }, { transaction });
 
+  const user = await database.models.user.findOne({
+    where: { id:  data.userId },
+  }, { transaction });
+
   conversationMessage.setDataValue('attachments', attachments);
   conversationMessage.setDataValue('embeds', embeds);
+  conversationMessage.setDataValue('user', user);
 
   return conversationMessage;
 };

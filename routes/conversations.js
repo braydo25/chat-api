@@ -61,7 +61,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
         userId: user.id,
         permission,
       },
-      userIds: [ user.id, ...users ],
+      userIds: users,
       transaction,
     });
 

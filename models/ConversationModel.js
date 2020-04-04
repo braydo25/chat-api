@@ -31,7 +31,7 @@ const ConversationModel = database.define('conversation', {
  */
 
 ConversationModel.createWithAssociations = async function({ data, userIds = [], transaction }) {
-  userIds = [ ...new Set(userIds) ];
+  userIds = [ ...new Set([ data.userId, ...userIds ]) ];
 
   const conversation = await this.create(data, { transaction });
   const conversationUsers = await database.models.conversationUser.bulkCreate((
@@ -41,6 +41,7 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
     where: { id: userIds },
   }, { transaction });
 
+  conversation.setDataValue('user', users.find(user => user.id === data.userId));
   conversation.setDataValue('conversationUsers', conversationUsers);
 
   conversationUsers.forEach(conversationUser => {
