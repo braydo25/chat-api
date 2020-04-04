@@ -1,6 +1,7 @@
 const attachmentsRouter = rootRequire('/routes/attachments');
 const conversationsRouter = rootRequire('/routes/conversations');
 const conversationMessagesRouter = rootRequire('/routes/conversations/messages');
+const conversationTypingRouter = rootRequire('/routes/conversations/typing');
 const conversationUsersRouter = rootRequire('/routes/conversations/users');
 const embedsRouter = rootRequire('/routes/embeds');
 const healthRouter = rootRequire('/routes/health');
@@ -11,6 +12,7 @@ module.exports = app => {
   app.use('/attachments', attachmentsRouter);
   app.use('/conversations/:conversationId?', conversationsRouter);
   app.use('/conversations/:conversationId/messages/:conversationMessageId?', conversationMessagesRouter);
+  app.use('/conversations/:conversationId/typing', conversationTypingRouter);
   app.use('/conversations/:conversationId/users/:conversationUserId?', conversationUsersRouter);
   app.use('/embeds', embedsRouter);
   app.use('/health', healthRouter);
