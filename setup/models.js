@@ -6,6 +6,7 @@ const ConversationMessageEmbedModel = rootRequire('/models/ConversationMessageEm
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const EmbedModel = rootRequire('/models/EmbedModel');
 const UserModel = rootRequire('/models/UserModel');
+const UserFollowerModel = rootRequire('/models/UserFollowerModel');
 
 ConversationModel.belongsTo(UserModel);
 ConversationModel.hasMany(ConversationMessageModel);
@@ -21,5 +22,8 @@ ConversationUserModel.belongsTo(UserModel);
 UserModel.hasMany(AttachmentModel);
 UserModel.hasMany(ConversationModel);
 UserModel.hasMany(EmbedModel);
+
+UserFollowerModel.belongsTo(UserModel);
+UserFollowerModel.belongsTo(UserModel, { foreignKey: 'followerUserId', as: 'followerUser' });
 
 module.exports = database.sync({ force: true });

@@ -3,6 +3,7 @@
  */
 
 require('./api/users');
+require('./api/users/followers');
 require('./api/attachments');
 require('./api/conversations');
 require('./api/conversations/messages');
