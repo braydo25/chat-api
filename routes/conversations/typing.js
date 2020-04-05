@@ -2,8 +2,8 @@
  * Route: /conversations/:conversationId/typing
  */
 
-const userAuthorize = rootRequire('/middlewares/users/authorize');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
+const userAuthorize = rootRequire('/middlewares/users/authorize');
 
 const router = express.Router({
   mergeParams: true

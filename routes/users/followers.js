@@ -72,8 +72,10 @@ router.delete('/', asyncMiddleware(async (request, response) => {
       followerUserId: user.id,
     },
   });
-  // TODO: what if they aren't following? userFollower will be null - error
-  await userFollower.destroy();
+
+  if (userFollower) {
+    await userFollower.destroy();
+  }
 
   response.success();
 }));

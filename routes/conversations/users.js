@@ -4,9 +4,9 @@
 
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const UserModel = rootRequire('/models/UserModel');
-const userAuthorize = rootRequire('/middlewares/users/authorize');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const conversationUserAssociate = rootRequire('/middlewares/conversations/users/associate');
+const userAuthorize = rootRequire('/middlewares/users/authorize');
 
 const router = express.Router({
   mergeParams: true,

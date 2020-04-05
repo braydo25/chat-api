@@ -8,8 +8,8 @@ const ConversationMessageModel = rootRequire('/models/ConversationMessageModel')
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const EmbedModel = rootRequire('/models/EmbedModel');
 const UserModel = rootRequire('/models/UserModel');
-const userAuthorize = rootRequire('/middlewares/users/authorize');
 const conversationAuthorize = rootRequire('/middlewares/conversations/authorize');
+const userAuthorize = rootRequire('/middlewares/users/authorize');
 
 const router = express.Router({
   mergeParams: true,
