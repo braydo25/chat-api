@@ -2,43 +2,14 @@
  * Route: /conversations/:conversationId?
  */
 
-const AttachmentModel = rootRequire('/models/AttachmentModel');
 const ConversationModel = rootRequire('/models/ConversationModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
-const ConversationUserModel = rootRequire('/models/ConversationUserModel');
-const EmbedModel = rootRequire('/models/EmbedModel');
-const UserModel = rootRequire('/models/UserModel');
 const conversationAuthorize = rootRequire('/middlewares/conversations/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 
 const router = express.Router({
   mergeParams: true,
 });
-
-/*
- * GET
- */
-
-router.get('/', userAuthorize);
-router.get('/', asyncMiddleware(async (request, response) => {
-  const { user } = request;
-  const conversations = await ConversationModel.findAll({
-    include: [
-      {
-        model: ConversationMessageModel,
-        include: [ AttachmentModel, EmbedModel ],
-      },
-      {
-        model: ConversationUserModel,
-        include: [ UserModel ],
-      },
-      UserModel,
-    ],
-    where: { userId: user.id },
-  });
-
-  response.success(conversations);
-}));
 
 /*
  * POST
