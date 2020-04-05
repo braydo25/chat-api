@@ -20,7 +20,9 @@ const router = express.Router({
 
 router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
+  const { user } = request;
   const { userId } = request.params;
+  const permission = (user.id === userId) ? [ 'public', 'private' ] : 'public';
   const conversations = await ConversationModel.findAll({
     include: [
       {
@@ -33,7 +35,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
       },
       UserModel,
     ],
-    where: { userId },
+    where: { userId, permission },
   });
 
   response.success(conversations);

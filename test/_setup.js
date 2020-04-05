@@ -18,7 +18,7 @@ global.chai = require('chai');
 global.chaiHttp = require('chai-http');
 global.server = `http://localhost:${process.env.PORT}`;
 
-global.enableTestResponseLogging = true;
+global.enableTestResponseLogging = false; //true;
 
 global.testUserOne = { phone: 5555555555 };
 global.testUserTwo = { phone: 6666666666 };
@@ -28,6 +28,20 @@ global.testConversationOne = {
   permission: 'public',
   message: {
     text: 'Sir, this is a wendys',
+  },
+};
+
+global.testConversationTwo = {
+  permission: 'private',
+  message: {
+    text: 'testing private',
+  },
+};
+
+global.testConversationThree = {
+  permission: 'public',
+  message: {
+    text: 'testing public',
   },
 };
 
@@ -115,6 +129,20 @@ before(done => {
       .set('X-Access-Token', testUserOne.accessToken)
       .send(testConversationOne);
     Object.assign(testConversationOne, createdTestConversationOne.body);
+
+    fatLog('Creating glboal test conversation two...');
+    const createdTestConversationTwo = await chai.request(server)
+      .post('/conversations')
+      .set('X-Access-Token', testUserTwo.accessToken)
+      .send(testConversationTwo);
+    Object.assign(testConversationTwo, createdTestConversationTwo.body);
+
+    fatLog('Creating glboal test conversation three...');
+    const createdTestConversationThree = await chai.request(server)
+      .post('/conversations')
+      .set('X-Access-Token', testUserTwo.accessToken)
+      .send(testConversationThree);
+    Object.assign(testConversationThree, createdTestConversationThree.body);
 
     fatLog('Creating global test attachment one...');
     const createdTestAttachmentOne = await chai.request(server)

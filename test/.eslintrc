@@ -14,6 +14,8 @@
     "testUserTwo": true,
     "testUserThree": true,
     "testConversationOne": true,
+    "testConversationTwo": true,
+    "testConversationThree": true,
     "testAttachmentOne": true,
     "testEmbedOne": true,
   },
