@@ -53,6 +53,28 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
   return conversation;
 };
 
+ConversationModel.findAllWithAssociations = async function({ where }) {
+  const conversations = await database.models.conversation.findAll({
+    include: [
+      {
+        model: database.models.conversationMessage,
+        include: [
+          database.models.attachment,
+          database.models.embed,
+        ],
+      },
+      {
+        model: database.models.conversationUser,
+        include: [ database.models.user ],
+      },
+      database.models.user,
+    ],
+    where,
+  });
+
+  return conversations;
+};
+
 /*
  * Export
  */

@@ -4,18 +4,6 @@ describe('Conversations', () => {
   let scopedConversation = null;
 
   /*
-   * GET
-   */
-
-  describe('GET /conversations', () => {
-    it('200s with an array of conversation objects the user is a part of', done => {
-      done('todo');
-    });
-
-    helpers.it401sWhenUserAuthorizationIsInvalid('get', '/conversations');
-  });
-
-  /*
    * POST
    */
 
@@ -98,6 +86,31 @@ describe('Conversations', () => {
     });
 
     helpers.it401sWhenUserAuthorizationIsInvalid('post', '/conversations');
+  });
+
+  /*
+   * GET
+   */
+
+  describe('GET /conversations', () => {
+    it('200s with an array of conversation objects the user is a part of', done => {
+      chai.request(server)
+        .get('/conversations')
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.forEach(conversation => {
+            conversation.conversationMessages.should.be.an('array');
+            conversation.conversationUsers.should.be.an('array');
+            conversation.user.should.be.an('object');
+          });
+          done();
+        });
+    });
+
+    helpers.it401sWhenUserAuthorizationIsInvalid('get', '/conversations');
   });
 
   /*

@@ -18,7 +18,7 @@ global.chai = require('chai');
 global.chaiHttp = require('chai-http');
 global.server = `http://localhost:${process.env.PORT}`;
 
-global.enableTestResponseLogging = false; //true;
+global.enableTestResponseLogging = true;
 
 global.testUserOne = { phone: 5555555555 };
 global.testUserTwo = { phone: 6666666666 };
@@ -36,6 +36,7 @@ global.testConversationTwo = {
   message: {
     text: 'testing private',
   },
+  users: [ 1 ],  
 };
 
 global.testConversationThree = {
@@ -43,6 +44,7 @@ global.testConversationThree = {
   message: {
     text: 'testing public',
   },
+  users: [ 1 ],
 };
 
 global.testAttachmentOne = {};
@@ -130,14 +132,14 @@ before(done => {
       .send(testConversationOne);
     Object.assign(testConversationOne, createdTestConversationOne.body);
 
-    fatLog('Creating glboal test conversation two...');
+    fatLog('Creating global test conversation two...');
     const createdTestConversationTwo = await chai.request(server)
       .post('/conversations')
       .set('X-Access-Token', testUserTwo.accessToken)
       .send(testConversationTwo);
     Object.assign(testConversationTwo, createdTestConversationTwo.body);
 
-    fatLog('Creating glboal test conversation three...');
+    fatLog('Creating global test conversation three...');
     const createdTestConversationThree = await chai.request(server)
       .post('/conversations')
       .set('X-Access-Token', testUserTwo.accessToken)
