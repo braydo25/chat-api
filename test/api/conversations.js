@@ -4,6 +4,18 @@ describe('Conversations', () => {
   let scopedConversation = null;
 
   /*
+   * GET
+   */
+
+  describe('GET /conversations', () => {
+    it('200s with an array of conversation objects the user is a part of', done => {
+      done('todo');
+    });
+
+    helpers.it401sWhenUserAuthorizationIsInvalid('get', '/conversations');
+  });
+
+  /*
    * POST
    */
 
@@ -36,7 +48,7 @@ describe('Conversations', () => {
         });
     });
 
-    it('200s with created conversation object when provided conversation users, attachments and embeds', done => {
+    it('200s with created conversation object when provided users, attachments and embeds', done => {
       const fields = {
         permission: 'private',
         message: {

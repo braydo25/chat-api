@@ -5,7 +5,7 @@ describe('User Conversations', () => {
    * GET
    */
 
-  it('200s with an array of conversations for authenticated user', done => {
+  it('200s with an array of conversation objects for authenticated user', done => {
     chai.request(server)
       .get(`/users/${testUserOne.id}/conversations`)
       .set('X-Access-Token', testUserOne.accessToken)
@@ -24,7 +24,7 @@ describe('User Conversations', () => {
       });
   });
 
-  it('200s with an array of public conversations for provided userId', done => {
+  it('200s with an array of public conversation objects for provided userId', done => {
     chai.request(server)
       .get(`/users/${testUserTwo.id}/conversations`)
       .set('X-Access-Token', testUserOne.accessToken)

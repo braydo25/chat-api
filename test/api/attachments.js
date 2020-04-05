@@ -46,7 +46,7 @@ describe('Attachments', () => {
    */
 
   describe('GET /attachments', () => {
-    it('200s when provided checksum and filename of file previously uploaded by user', done => {
+    it('200s with attachment object when provided checksum and filename of file previously uploaded by user', done => {
       chai.request(server)
         .get('/attachments')
         .query({ checksum: scopedAttachment.checksum, filename: scopedAttachment.filename })

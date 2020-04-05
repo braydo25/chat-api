@@ -65,7 +65,7 @@ describe('Conversation Users', () => {
    */
 
   describe('GET /conversations/:conversationId/users', () => {
-    it('200s with an array of conversation users', done => {
+    it('200s with an array of conversation user objects', done => {
       chai.request(server)
         .get(`/conversations/${testConversationOne.id}/users`)
         .set('X-Access-Token', testUserOne.accessToken)
