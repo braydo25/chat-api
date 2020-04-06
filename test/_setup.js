@@ -36,7 +36,7 @@ global.testConversationTwo = {
   message: {
     text: 'testing private',
   },
-  users: [ 1 ],  
+  users: [ 1 ],
 };
 
 global.testConversationThree = {
@@ -148,14 +148,14 @@ before(done => {
 
     fatLog('Creating global test attachment one...');
     const createdTestAttachmentOne = await chai.request(server)
-      .post('/attachments')
+      .put('/attachments')
       .set('X-Access-Token', testUserOne.accessToken)
       .attach('file', fs.readFileSync('./test/yosemite.jpg'), 'yosemite.jpg');
     Object.assign(testAttachmentOne, createdTestAttachmentOne.body);
 
     fatLog('Creating global test embed one...');
     const createdTestEmbedOne = await chai.request(server)
-      .post('/embeds')
+      .put('/embeds')
       .set('X-Access-Token', testUserOne.accessToken)
       .send(testEmbedOne);
     Object.assign(testEmbedOne, createdTestEmbedOne.body);

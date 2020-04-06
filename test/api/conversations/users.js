@@ -4,17 +4,17 @@ describe('Conversation Users', () => {
   let scopedConversationUser = null;
 
   /*
-   * POST
+   * PUT
    */
 
-  describe('POST /conversations/:conversationId/users', () => {
+  describe('PUT /conversations/:conversationId/users', () => {
     it('200s with created conversation user object', done => {
       const fields = {
         userId: testUserThree.id,
       };
 
       chai.request(server)
-        .post(`/conversations/${testConversationOne.id}/users`)
+        .put(`/conversations/${testConversationOne.id}/users`)
         .set('X-Access-Token', testUserOne.accessToken)
         .send(fields)
         .end((error, response) => {
@@ -34,7 +34,7 @@ describe('Conversation Users', () => {
       };
 
       chai.request(server)
-        .post(`/conversations/${testConversationOne.id}/users`)
+        .put(`/conversations/${testConversationOne.id}/users`)
         .set('X-Access-Token', testUserOne.accessToken)
         .send(fields)
         .end((error, response) => {
@@ -48,7 +48,7 @@ describe('Conversation Users', () => {
 
     it('400s when not provided a user id', done => {
       chai.request(server)
-        .post(`/conversations/${testConversationOne.id}/users`)
+        .put(`/conversations/${testConversationOne.id}/users`)
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
@@ -57,7 +57,7 @@ describe('Conversation Users', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('post', `/conversations/${testConversationOne.id}/users`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('put', `/conversations/${testConversationOne.id}/users`);
   });
 
   /*

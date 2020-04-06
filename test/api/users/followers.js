@@ -4,13 +4,13 @@ describe('User Followers', () => {
   let scopedUserFollower = null;
 
   /*
-   * POST
+   * PUT
    */
 
-  describe('POST /users/:userId/followers', () => {
+  describe('PUT /users/:userId/followers', () => {
     it('200s with created user follower object', done => {
       chai.request(server)
-        .post(`/users/${testUserTwo.id}/followers`)
+        .put(`/users/${testUserTwo.id}/followers`)
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
@@ -25,7 +25,7 @@ describe('User Followers', () => {
 
     it('200s with an already existing user follower object', done => {
       chai.request(server)
-        .post(`/users/${testUserTwo.id}/followers`)
+        .put(`/users/${testUserTwo.id}/followers`)
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
@@ -36,7 +36,7 @@ describe('User Followers', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('post', `/users/${testUserOne.id}/followers`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('put', `/users/${testUserOne.id}/followers`);
   });
 
   /*

@@ -32,11 +32,11 @@ router.get('/', asyncMiddleware(async (request, response) => {
 }));
 
 /*
- * POST
+ * PUT
  */
 
-router.post('/', userAuthorize);
-router.post('/', asyncMiddleware(async (request, response) => {
+router.put('/', userAuthorize);
+router.put('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
   const { userId } = request.params;
 

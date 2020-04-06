@@ -29,12 +29,12 @@ router.get('/', asyncMiddleware(async (request, response) => {
 }));
 
 /*
- * POST
+ * PUT
  */
 
-router.post('/', userAuthorize);
-router.post('/', conversationAssociate);
-router.post('/', asyncMiddleware(async (request, response) => {
+router.put('/', userAuthorize);
+router.put('/', conversationAssociate);
+router.put('/', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
   const { userId } = request.body;
   const data = { conversationId: conversation.id, userId };

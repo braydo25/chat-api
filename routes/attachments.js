@@ -35,11 +35,11 @@ router.get('/', asyncMiddleware(async (request, response) => {
 }));
 
 /*
- * POST
+ * PUT
  */
 
-router.post('/', userAuthorize);
-router.post('/', asyncMiddleware(async (request, response) => {
+router.put('/', userAuthorize);
+router.put('/', asyncMiddleware(async (request, response) => {
   const { user, files } = request;
   const file = (files && files.file) ? files.file : null;
 

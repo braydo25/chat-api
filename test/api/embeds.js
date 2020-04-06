@@ -2,10 +2,10 @@ const helpers = require('../helpers');
 
 describe('Embeds', () => {
   /*
-   * POST
+   * PUT
    */
 
-  describe('POST /embeds', () => {
+  describe('PUT /embeds', () => {
     let scopedEmbed = null;
 
     it('200s with created embed object', done => {
@@ -14,7 +14,7 @@ describe('Embeds', () => {
       };
 
       chai.request(server)
-        .post('/embeds')
+        .put('/embeds')
         .set('X-Access-Token', testUserOne.accessToken)
         .send(fields)
         .end((error, response) => {
@@ -34,7 +34,7 @@ describe('Embeds', () => {
       };
 
       chai.request(server)
-        .post('/embeds')
+        .put('/embeds')
         .set('X-Access-Token', testUserOne.accessToken)
         .send(fields)
         .end((error, response) => {
@@ -47,7 +47,7 @@ describe('Embeds', () => {
 
     it('400s when not provided url', done => {
       chai.request(server)
-        .post('/embeds')
+        .put('/embeds')
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
@@ -56,6 +56,6 @@ describe('Embeds', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('post', '/embeds');
+    helpers.it401sWhenUserAuthorizationIsInvalid('put', '/embeds');
   });
 });

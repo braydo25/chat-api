@@ -5,13 +5,13 @@ describe('Attachments', () => {
   let scopedAttachment = null;
 
   /*
-   * POST
+   * PUT
    */
 
-  describe('POST /attachments', () => {
+  describe('PUT /attachments', () => {
     it('200s with created attachment object', done => {
       chai.request(server)
-        .post('/attachments')
+        .put('/attachments')
         .set('X-Access-Token', testUserOne.accessToken)
         .attach('file', fs.readFileSync('./test/happier.mp4'), 'happier.mp4')
         .end((error, response) => {
@@ -29,7 +29,7 @@ describe('Attachments', () => {
 
     it('400s when not provided file', done => {
       chai.request(server)
-        .post('/attachments')
+        .put('/attachments')
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
@@ -38,7 +38,7 @@ describe('Attachments', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('post', '/attachments');
+    helpers.it401sWhenUserAuthorizationIsInvalid('put', '/attachments');
   });
 
   /*
