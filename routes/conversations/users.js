@@ -37,7 +37,10 @@ router.put('/', conversationAssociate);
 router.put('/', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
   const { userId } = request.body;
-  const data = { conversationId: conversation.id, userId };
+  const data = {
+    conversationId: conversation.id,
+    userId,
+  };
 
   if (!userId) {
     throw new Error('A user must be provided.');

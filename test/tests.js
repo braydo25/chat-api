@@ -8,6 +8,7 @@ require('./api/users/followers');
 require('./api/attachments');
 require('./api/conversations');
 require('./api/conversations/messages');
+require('./api/conversations/messages/reactions');
 require('./api/conversations/typing');
 require('./api/conversations/users');
 require('./api/embeds');

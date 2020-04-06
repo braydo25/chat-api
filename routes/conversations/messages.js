@@ -1,5 +1,5 @@
 /*
- * Route: /conversations/:conversationId/messages/conversationMessageId?
+ * Route: /conversations/:conversationId/messages/:conversationMessageId?
  */
 
 const AttachmentModel = rootRequire('/models/AttachmentModel');

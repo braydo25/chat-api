@@ -47,6 +47,10 @@ global.testConversationThree = {
   users: [ 1 ],
 };
 
+global.testConversationOneMessageOne = {
+  text: 'This is a test',
+};
+
 global.testAttachmentOne = {};
 global.testEmbedOne = { url: 'https://brrr.money/' };
 
@@ -145,6 +149,13 @@ before(done => {
       .set('X-Access-Token', testUserTwo.accessToken)
       .send(testConversationThree);
     Object.assign(testConversationThree, createdTestConversationThree.body);
+
+    fatLog('Creating global test conversation one message one...');
+    const createdTestConversationOneMessageOne = await chai.request(server)
+      .post(`/conversations/${testConversationOne.id}/messages`)
+      .set('X-Access-Token', testUserOne.accessToken)
+      .send(testConversationOneMessageOne);
+    Object.assign(testConversationOneMessageOne, createdTestConversationOneMessageOne.body);
 
     fatLog('Creating global test attachment one...');
     const createdTestAttachmentOne = await chai.request(server)

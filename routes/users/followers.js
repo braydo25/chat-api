@@ -5,6 +5,7 @@
 const UserModel = rootRequire('/models/UserModel');
 const UserFollowerModel = rootRequire('/models/UserFollowerModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
+const userFollowerAuthorize = rootRequire('/middlewares/users/followers/authorize');
 
 const router = express.Router({
   mergeParams: true,
@@ -39,19 +40,15 @@ router.put('/', userAuthorize);
 router.put('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
   const { userId } = request.params;
+  const data = {
+    userId,
+    followerUserId: user.id,
+  };
 
-  let userFollower = await UserFollowerModel.findOne({
-    where: {
-      userId,
-      followerUserId: user.id,
-    },
-  });
+  let userFollower = await UserFollowerModel.findOne({ where: data });
 
   if (!userFollower) {
-    userFollower = await UserFollowerModel.create({
-      userId,
-      followerUserId: user.id,
-    });
+    userFollower = await UserFollowerModel.create(data);
   }
 
   response.success(userFollower);
@@ -62,20 +59,11 @@ router.put('/', asyncMiddleware(async (request, response) => {
  */
 
 router.delete('/', userAuthorize);
+router.delete('/', userFollowerAuthorize);
 router.delete('/', asyncMiddleware(async (request, response) => {
-  const { user } = request;
-  const { userId } = request.params;
+  const { userFollower } = request;
 
-  const userFollower = await UserFollowerModel.findOne({
-    where: {
-      userId,
-      followerUserId: user.id,
-    },
-  });
-
-  if (userFollower) {
-    await userFollower.destroy();
-  }
+  await userFollower.destroy();
 
   response.success();
 }));
