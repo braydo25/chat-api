@@ -74,7 +74,6 @@ describe('Conversation Users', () => {
           response.should.have.status(200);
           response.body.should.be.an('array');
           response.body.forEach(conversationUser => {
-            conversationUser.conversationId.should.equal(testConversationOne.id);
             conversationUser.should.have.property('user');
             conversationUser.user.should.have.property('id');
             conversationUser.user.should.have.property('firstName');

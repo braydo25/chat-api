@@ -23,11 +23,12 @@ ConversationMessageReactionModel.belongsTo(UserModel);
 ConversationUserModel.belongsTo(ConversationModel);
 ConversationUserModel.belongsTo(UserModel);
 
-UserModel.hasMany(AttachmentModel);
+UserModel.belongsTo(AttachmentModel, { as: 'avatarAttachment' });
+UserModel.hasMany(AttachmentModel, { constraints: false });
 UserModel.hasMany(ConversationModel);
 UserModel.hasMany(EmbedModel);
 
 UserFollowerModel.belongsTo(UserModel);
-UserFollowerModel.belongsTo(UserModel, { foreignKey: 'followerUserId', as: 'followerUser' });
+UserFollowerModel.belongsTo(UserModel, { as: 'followerUser' });
 
 module.exports = database.sync({ force: true });

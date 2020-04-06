@@ -16,6 +16,10 @@ const ConversationUserModel = database.define('conversationUser', {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
+}, {
+  defaultScope: {
+    attributes: [ 'id' ],
+  },
 });
 
 /*

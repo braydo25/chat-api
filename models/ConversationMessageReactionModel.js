@@ -23,6 +23,13 @@ const ConversationMessageReactionModel = database.define('conversationMessageRea
       max: 3,
     },
   },
+}, {
+  defaultScope: {
+    attributes: [
+      'id',
+      'reaction',
+    ],
+  },
 });
 
 /*

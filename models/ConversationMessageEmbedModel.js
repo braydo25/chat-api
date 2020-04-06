@@ -11,6 +11,10 @@ const ConversationMessageEmbedModel = database.define('conversationMessageEmbed'
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
+}, {
+  defaultScope: {
+    attributes: [],
+  },
 });
 
 /*

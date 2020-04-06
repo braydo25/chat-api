@@ -2,6 +2,7 @@
  * Route: /users
  */
 
+const AttachmentModel = rootRequire('/models/AttachmentModel');
 const UserModel = rootRequire('/models/UserModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 
@@ -20,10 +21,10 @@ router.post('/', asyncMiddleware(async (request, response) => {
     throw new Error('A phone number must be provided.');
   }
 
-  let user = await UserModel.findOne({ where: { phone } });
+  let user = await UserModel.scope('owner').findOne({ where: { phone } });
 
   if (!user) {
-    user = await UserModel.create({ phone });
+    user = await UserModel.scope('owner').create({ phone });
   }
 
   if (!phoneLoginCode) {
@@ -46,7 +47,20 @@ router.post('/', asyncMiddleware(async (request, response) => {
 router.patch('/', userAuthorize);
 router.patch('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
+  const { avatarAttachmentId } = request.body;
 
+  if (avatarAttachmentId) {
+    const attachment = await AttachmentModel.findOne({
+      attributes: [ 'mimetype' ],
+      where: { id: avatarAttachmentId },
+    });
+
+    if (!attachment.mimetype.includes('image/')) {
+      throw new Error('Only images are allowed for avatars.');
+    }
+  }
+
+  user.avatarAttachmentId = avatarAttachmentId || user.avatarAttachmentId;
   user.firstName = request.body.firstName || user.firstName;
   user.lastName = request.body.lastName || user.lastName;
 

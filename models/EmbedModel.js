@@ -48,6 +48,23 @@ const EmbedModel = database.define('embed', {
   videoUrl: {
     type: Sequelize.TEXT,
   },
+}, {
+  defaultScope: {
+    attributes: [
+      'id',
+      'title',
+      'description',
+      'language',
+      'author',
+      'publisher',
+      'date',
+      'url',
+      'logoUrl',
+      'audioUrl',
+      'imageUrl',
+      'videoUrl',
+    ],
+  },
 });
 
 /*

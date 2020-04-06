@@ -16,6 +16,10 @@ const UserFollowerModel = database.define('userFollower', {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
+}, {
+  defaultScope: {
+    attributes: [ 'id' ],
+  },
 });
 
 /*

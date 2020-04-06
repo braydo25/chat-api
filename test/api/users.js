@@ -78,6 +78,7 @@ describe('Users', () => {
   describe('PATCH /users/@me', () => {
     it('200s with updated user object', done => {
       const fields = {
+        avatarAttachmentId: testAttachmentOne.id,
         firstName: 'Braydon',
         lastName: 'Batungbacal',
       };

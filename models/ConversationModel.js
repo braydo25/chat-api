@@ -24,6 +24,14 @@ const ConversationModel = database.define('conversation', {
       },
     },
   },
+}, {
+  defaultScope: {
+    attributes: [
+      'id',
+      'permission',
+      'createdAt',
+    ],
+  },
 });
 
 /*
@@ -38,6 +46,12 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
     userIds.map(userId => ({ conversationId: conversation.id, userId }))
   ), { transaction });
   const users = await database.models.user.findAll({
+    include: [
+      {
+        model: database.models.attachment,
+        as: 'avatarAttachment',
+      },
+    ],
     where: { id: userIds },
   }, { transaction });
 
@@ -65,9 +79,27 @@ ConversationModel.findAllWithAssociations = async function({ where }) {
       },
       {
         model: database.models.conversationUser,
-        include: [ database.models.user ],
+        include: [
+          {
+            model: database.models.user,
+            include: [
+              {
+                model: database.models.attachment,
+                as: 'avatarAttachment',
+              },
+            ],
+          },
+        ],
       },
-      database.models.user,
+      {
+        model: database.models.user,
+        include: [
+          {
+            model: database.models.attachment,
+            as: 'avatarAttachment',
+          },
+        ],
+      },
     ],
     where,
   });

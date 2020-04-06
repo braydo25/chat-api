@@ -19,6 +19,15 @@ const ConversationMessageModel = database.define('conversationMessage', {
   text: {
     type: Sequelize.TEXT,
   },
+}, {
+  defaultScope: {
+    attributes: [
+      'id',
+      'text',
+      'createdAt',
+      'updatedAt',
+    ],
+  },
 });
 
 /*
@@ -52,6 +61,12 @@ ConversationMessageModel.createWithAssociations = async function({ data, attachm
   }, { transaction });
 
   const user = await database.models.user.findOne({
+    include: [
+      {
+        model: database.models.attachment,
+        as: 'avatarAttachment',
+      },
+    ],
     where: { id:  data.userId },
   }, { transaction });
 
@@ -67,7 +82,15 @@ ConversationMessageModel.findAllWithAssociations = async function({ where }) {
     include: [
       database.models.attachment,
       database.models.embed,
-      database.models.user,
+      {
+        model: database.models.user,
+        include: [
+          {
+            model: database.models.attachment,
+            as: 'avatarAttachment',
+          },
+        ],
+      },
     ],
     where,
   });

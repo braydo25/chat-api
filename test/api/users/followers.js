@@ -53,8 +53,6 @@ describe('User Followers', () => {
           response.should.have.status(200);
           response.body.should.be.an('array');
           response.body.forEach(userFollower => {
-            userFollower.should.have.property('userId');
-            userFollower.should.have.property('followerUserId');
             userFollower.should.have.property('followerUser');
             userFollower.followerUser.id.should.equal(scopedUserFollower.followerUserId);
             userFollower.followerUser.should.have.property('firstName');

@@ -15,6 +15,9 @@ const UserModel = database.define('user', {
     unique: true,
     defaultValue: Sequelize.UUIDV4,
   },
+  avatarAttachmentId: {
+    type: Sequelize.INTEGER(10).UNSIGNED,
+  },
   phone: {
     type: Sequelize.STRING,
     unique: {
@@ -36,6 +39,17 @@ const UserModel = database.define('user', {
   },
   lastName: {
     type: Sequelize.STRING,
+  },
+}, {
+  defaultScope: {
+    attributes: [
+      'id',
+      'firstName',
+      'lastName',
+    ],
+  },
+  scopes: {
+    owner: {},
   },
 });
 
