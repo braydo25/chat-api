@@ -77,8 +77,7 @@ describe('Conversation Users', () => {
           response.body.forEach(conversationUser => {
             conversationUser.should.have.property('user');
             conversationUser.user.should.have.property('id');
-            conversationUser.user.should.have.property('firstName');
-            conversationUser.user.should.have.property('lastName');
+            conversationUser.user.should.have.property('name');
           });
           done();
         });

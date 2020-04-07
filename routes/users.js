@@ -61,8 +61,8 @@ router.patch('/', asyncMiddleware(async (request, response) => {
   }
 
   user.avatarAttachmentId = avatarAttachmentId || user.avatarAttachmentId;
-  user.firstName = request.body.firstName || user.firstName;
-  user.lastName = request.body.lastName || user.lastName;
+  user.username = request.body.username || user.username;
+  user.name = request.body.name || user.name;
 
   await user.save();
 

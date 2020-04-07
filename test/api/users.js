@@ -79,8 +79,8 @@ describe('Users', () => {
     it('200s with updated user object', done => {
       const fields = {
         avatarAttachmentId: testAttachmentOne.id,
-        firstName: 'Braydon',
-        lastName: 'Batungbacal',
+        username: 'braydonio',
+        name: 'Braydon Batungbacal',
       };
 
       chai.request(server)
@@ -91,8 +91,23 @@ describe('Users', () => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
-          response.body.firstName.should.equal(fields.firstName);
-          response.body.lastName.should.equal(fields.lastName);
+          response.body.name.should.equal(fields.name);
+          done();
+        });
+    });
+
+    it('400s when provided a username that is already taken', done => {
+      const fields = {
+        username: 'braydonio',
+      };
+
+      chai.request(server)
+        .patch('/users')
+        .set('X-Access-Token', testUserTwo.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(400);
           done();
         });
     });
