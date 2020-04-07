@@ -20,11 +20,11 @@ router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
 
-  const conversationIds = (await ConversationUserModel.findAll({
+  const conversationIds = (await ConversationUserModel.scope('complete').findAll({
     where: { userId: user.id },
   })).map(conversationUser => conversationUser.conversationId);
 
-  const conversations = await ConversationModel.findAllWithAssociations({
+  const conversations = await ConversationModel.findAll({
     where: { id: conversationIds },
   });
 

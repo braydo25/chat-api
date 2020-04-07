@@ -73,6 +73,7 @@ describe('Conversation Users', () => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
           response.body.forEach(conversationUser => {
             conversationUser.should.have.property('user');
             conversationUser.user.should.have.property('id');

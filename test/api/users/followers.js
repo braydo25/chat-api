@@ -52,6 +52,7 @@ describe('User Followers', () => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
           response.body.forEach(userFollower => {
             userFollower.should.have.property('followerUser');
             userFollower.followerUser.id.should.equal(scopedUserFollower.followerUserId);

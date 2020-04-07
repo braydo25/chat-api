@@ -18,7 +18,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
   const { userId } = request.params;
   const permission = (user.id === userId) ? [ 'public', 'private' ] : 'public';
-  const conversations = await ConversationModel.findAllWithAssociations({
+  const conversations = await ConversationModel.findAll({
     where: { userId, permission },
   });
 

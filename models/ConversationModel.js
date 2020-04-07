@@ -1,4 +1,8 @@
-const permissions = [ 'public', 'private' ];
+const UserModel = rootRequire('/models/UserModel');
+const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
+const ConversationUserModel = rootRequire('/models/ConversationUserModel');
+
+const permissions = [ 'public', 'private', 'protected' ];
 
 /*
  * Model Definition
@@ -31,6 +35,11 @@ const ConversationModel = database.define('conversation', {
       'permission',
       'createdAt',
     ],
+    include: [
+      ConversationMessageModel,
+      ConversationUserModel,
+      UserModel,
+    ],
   },
 });
 
@@ -41,17 +50,11 @@ const ConversationModel = database.define('conversation', {
 ConversationModel.createWithAssociations = async function({ data, userIds = [], transaction }) {
   userIds = [ ...new Set([ data.userId, ...userIds ]) ];
 
-  const conversation = await this.create(data, { transaction });
-  const conversationUsers = await database.models.conversationUser.bulkCreate((
+  const conversation = await ConversationModel.create(data, { transaction });
+  const conversationUsers = await ConversationUserModel.bulkCreate((
     userIds.map(userId => ({ conversationId: conversation.id, userId }))
   ), { transaction });
-  const users = await database.models.user.findAll({
-    include: [
-      {
-        model: database.models.attachment,
-        as: 'avatarAttachment',
-      },
-    ],
+  const users = await UserModel.findAll({
     where: { id: userIds },
   }, { transaction });
 
@@ -65,46 +68,6 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
   });
 
   return conversation;
-};
-
-ConversationModel.findAllWithAssociations = async function({ where }) {
-  const conversations = await database.models.conversation.findAll({
-    include: [
-      {
-        model: database.models.conversationMessage,
-        include: [
-          database.models.attachment,
-          database.models.embed,
-        ],
-      },
-      {
-        model: database.models.conversationUser,
-        include: [
-          {
-            model: database.models.user,
-            include: [
-              {
-                model: database.models.attachment,
-                as: 'avatarAttachment',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        model: database.models.user,
-        include: [
-          {
-            model: database.models.attachment,
-            as: 'avatarAttachment',
-          },
-        ],
-      },
-    ],
-    where,
-  });
-
-  return conversations;
 };
 
 /*

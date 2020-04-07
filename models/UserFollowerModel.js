@@ -1,3 +1,5 @@
+const UserModel = rootRequire('/models/UserModel');
+
 /*
  * Model Definition
  */
@@ -19,6 +21,12 @@ const UserFollowerModel = database.define('userFollower', {
 }, {
   defaultScope: {
     attributes: [ 'id' ],
+    include: [
+      {
+        model: UserModel,
+        as: 'followerUser',
+      },
+    ],
   },
 });
 

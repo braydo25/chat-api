@@ -101,6 +101,7 @@ describe('Conversations', () => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
           response.body.forEach(conversation => {
             conversation.conversationMessages.should.be.an('array');
             conversation.conversationUsers.should.be.an('array');

@@ -2,7 +2,6 @@
  * Route: /users/:userId/followers
  */
 
-const UserModel = rootRequire('/models/UserModel');
 const UserFollowerModel = rootRequire('/models/UserFollowerModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const userFollowerAuthorize = rootRequire('/middlewares/users/followers/authorize');
@@ -20,12 +19,6 @@ router.get('/', asyncMiddleware(async (request, response) => {
   const { userId } = request.params;
 
   const userFollowers = await UserFollowerModel.findAll({
-    include: [
-      {
-        model: UserModel,
-        as: 'followerUser',
-      },
-    ],
     where: { userId },
   });
 

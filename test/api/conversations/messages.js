@@ -78,6 +78,7 @@ describe('Conversation Messages', () => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
           response.body.forEach(conversationMessage => {
             conversationMessage.should.have.property('user');
             conversationMessage.should.have.property('createdAt');

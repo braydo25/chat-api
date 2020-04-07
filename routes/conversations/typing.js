@@ -6,7 +6,7 @@ const conversationAssociate = rootRequire('/middlewares/conversations/associate'
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 
 const router = express.Router({
-  mergeParams: true
+  mergeParams: true,
 });
 
 /*

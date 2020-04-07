@@ -3,7 +3,6 @@
  */
 
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
-const UserModel = rootRequire('/models/UserModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const conversationUserAssociate = rootRequire('/middlewares/conversations/users/associate');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
@@ -21,7 +20,6 @@ router.get('/', conversationAssociate);
 router.get('/', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
   const conversationUsers = await ConversationUserModel.findAll({
-    include: [ UserModel ],
     where: { conversationId: conversation.id },
   });
 

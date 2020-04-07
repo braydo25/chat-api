@@ -1,3 +1,4 @@
+const AttachmentModel = rootRequire('/models/AttachmentModel');
 const awsHelpers = rootRequire('/libs/awsHelpers');
 
 /*
@@ -47,9 +48,22 @@ const UserModel = database.define('user', {
       'firstName',
       'lastName',
     ],
+    include: [
+      {
+        model: AttachmentModel,
+        as: 'avatarAttachment',
+      },
+    ],
   },
   scopes: {
-    owner: {},
+    complete: {
+      include: [
+        {
+          model: AttachmentModel,
+          as: 'avatarAttachment',
+        },
+      ],
+    },
   },
 });
 

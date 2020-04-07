@@ -1,3 +1,5 @@
+const UserModel = rootRequire('/models/UserModel');
+
 /*
  * Model Definition
  */
@@ -19,6 +21,12 @@ const ConversationUserModel = database.define('conversationUser', {
 }, {
   defaultScope: {
     attributes: [ 'id' ],
+    include: [ UserModel ],
+  },
+  scopes: {
+    complete: {
+      include: [ UserModel ],
+    },
   },
 });
 
