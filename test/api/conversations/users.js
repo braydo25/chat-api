@@ -78,6 +78,8 @@ describe('Conversation Users', () => {
             conversationUser.should.have.property('user');
             conversationUser.user.should.have.property('id');
             conversationUser.user.should.have.property('name');
+            conversationUser.user.should.have.property('username');
+            conversationUser.user.should.have.property('avatarAttachment');
           });
           done();
         });

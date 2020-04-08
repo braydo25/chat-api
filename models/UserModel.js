@@ -48,20 +48,28 @@ const UserModel = database.define('user', {
   defaultScope: {
     attributes: [
       'id',
+      'username',
       'name',
     ],
     include: [
       {
-        model: AttachmentModel,
+        model: AttachmentModel.scope('avatar'),
         as: 'avatarAttachment',
       },
     ],
   },
   scopes: {
+    noAvatar: {
+      attributes: [
+        'id',
+        'username',
+        'name',
+      ],
+    },
     complete: {
       include: [
         {
-          model: AttachmentModel,
+          model: AttachmentModel.scope('avatar'),
           as: 'avatarAttachment',
         },
       ],

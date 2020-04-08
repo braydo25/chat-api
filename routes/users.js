@@ -49,9 +49,10 @@ router.patch('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
   const { avatarAttachmentId } = request.body;
 
+  let attachment = null;
+
   if (avatarAttachmentId) {
-    const attachment = await AttachmentModel.findOne({
-      attributes: [ 'mimetype' ],
+    attachment = await AttachmentModel.scope('avatar').findOne({
       where: { id: avatarAttachmentId },
     });
 
@@ -63,6 +64,8 @@ router.patch('/', asyncMiddleware(async (request, response) => {
   user.avatarAttachmentId = avatarAttachmentId || user.avatarAttachmentId;
   user.username = request.body.username || user.username;
   user.name = request.body.name || user.name;
+
+  user.setDataValue('avatarAttachment', attachment || user.avatarAttachment);
 
   await user.save();
 

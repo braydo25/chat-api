@@ -1,3 +1,5 @@
+const UserModel = rootRequire('/models/UserModel');
+
 /*
  * Model Definition
  */
@@ -29,6 +31,7 @@ const ConversationMessageReactionModel = database.define('conversationMessageRea
       'id',
       'reaction',
     ],
+    include: [ UserModel.scope('noAvatar') ],
   },
 });
 

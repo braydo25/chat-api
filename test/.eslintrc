@@ -17,6 +17,7 @@
     "testConversationTwo": true,
     "testConversationThree": true,
     "testConversationOneMessageOne": true,
+    "testConversationOneMessageOneReactionOne": true,
     "testAttachmentOne": true,
     "testEmbedOne": true,
   },

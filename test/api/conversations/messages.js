@@ -85,6 +85,8 @@ describe('Conversation Messages', () => {
             conversationMessage.should.have.property('updatedAt');
             conversationMessage.user.should.have.property('id');
             conversationMessage.user.should.have.property('name');
+            conversationMessage.user.should.have.property('username');
+            conversationMessage.user.should.have.property('avatarAttachment');
           });
           done();
         });

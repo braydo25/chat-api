@@ -57,6 +57,8 @@ describe('User Followers', () => {
             userFollower.should.have.property('followerUser');
             userFollower.followerUser.id.should.equal(scopedUserFollower.followerUserId);
             userFollower.followerUser.should.have.property('name');
+            userFollower.followerUser.should.have.property('username');
+            userFollower.followerUser.should.have.property('avatarAttachment');
           });
           done();
         });
