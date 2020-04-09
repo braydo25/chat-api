@@ -22,7 +22,10 @@ const ConversationMessageReactionModel = database.define('conversationMessageRea
     type: Sequelize.STRING(3),
     allowNull: false,
     validate: {
-      max: 3,
+      len: {
+        args: [ 1, 3 ],
+        msg: 'Reaction cannot be more than 3 characters.',
+      },
     },
   },
 }, {
