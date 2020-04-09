@@ -33,9 +33,16 @@ const ConversationMessageReactionModel = database.define('conversationMessageRea
     attributes: [
       'id',
       'reaction',
+      'createdAt',
     ],
     include: [ UserModel.scope('noAvatar') ],
   },
+  indexes: [
+    {
+      fields: [ 'reaction' ],
+      unique: false,
+    },
+  ],
 });
 
 /*

@@ -36,7 +36,15 @@ const ConversationMessageModel = database.define('conversationMessage', {
     ],
     include: [
       AttachmentModel,
-      ConversationMessageReactionModel,
+      {
+        attributes: [
+          'reaction',
+          [ database.fn('COUNT', 'id'), 'count' ],
+        ],
+        model: ConversationMessageReactionModel.unscoped(),
+        separate: true,
+        group: [ 'reaction' ],
+      },
       EmbedModel,
       UserModel,
     ],
