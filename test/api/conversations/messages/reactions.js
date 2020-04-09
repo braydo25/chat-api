@@ -31,9 +31,6 @@ describe('Conversation Message Reactions', () => {
             .set('X-Access-Token', testUserOne.accessToken)
             .end((error, response) => {
               response.should.have.status(200);
-              console.log(response.body.find(message => {
-                return message.id === testConversationOneMessageOne.id;
-              }));
               response.body.find(message => {
                 return message.id === testConversationOneMessageOne.id;
               }).conversationMessageReactions.should.deep.include({
