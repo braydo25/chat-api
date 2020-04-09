@@ -8,7 +8,7 @@ describe('Conversation Message Reactions', () => {
    */
 
   describe('PUT /conversations/:conversationId/messages/:conversationMessageId/reactions', () => {
-    it('200s with created conversation message reaction object', done => {
+    it('200s with created conversation message reaction object and is reflected in message reaction totals', done => {
       const fields = {
         reaction: '🔥🔥🔥',
       };
@@ -25,7 +25,23 @@ describe('Conversation Message Reactions', () => {
           response.body.conversationMessageId.should.equal(testConversationOneMessageOne.id);
           response.body.reaction.should.equal(fields.reaction);
           scopedConversationMessageReaction = response.body;
-          done();
+
+          chai.request(server)
+            .get(`/conversations/${testConversationOne.id}/messages`)
+            .set('X-Access-Token', testUserOne.accessToken)
+            .end((error, response) => {
+              response.should.have.status(200);
+              console.log(response.body.find(message => {
+                return message.id === testConversationOneMessageOne.id;
+              }));
+              response.body.find(message => {
+                return message.id === testConversationOneMessageOne.id;
+              }).conversationMessageReactions.should.deep.include({
+                reaction: fields.reaction,
+                count: 1,
+              });
+              done();
+            });
         });
     });
 
