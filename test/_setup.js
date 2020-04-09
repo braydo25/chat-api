@@ -56,7 +56,7 @@ global.testConversationOneMessageOneReactionOne = {
 };
 
 global.testAttachmentOne = {};
-global.testEmbedOne = { url: 'https://brrr.money/' };
+global.testEmbedOne = { url: 'https://www.instagram.com/p/B-vPu7xDDbH/' };
 
 /*
  * Configure Chai

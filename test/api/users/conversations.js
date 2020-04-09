@@ -34,7 +34,7 @@ describe('User Conversations', () => {
         response.body.should.be.an('array');
         response.body.length.should.be.at.least(1);
         response.body.forEach(conversation => {
-          conversation.permission.should.equal('public');
+          conversation.permission.should.not.equal('private');
           conversation.conversationMessages.should.be.an('array');
           conversation.conversationUsers.should.be.an('array');
           conversation.user.should.be.an('object');
