@@ -13,6 +13,31 @@ const router = express.Router({
 });
 
 /*
+ * GET
+ */
+
+router.get('/', userAuthorize);
+router.get('/', conversationAssociate);
+router.get('/', conversationMessageAssociate);
+router.get('/', asyncMiddleware(async (request, response) => {
+  const { conversationMessage } = request;
+  const { reaction } = request.query;
+
+  if (!reaction) {
+    throw new Error('A reaction must be provided.');
+  }
+
+  const conversationMessageReactions = await ConversationMessageReactionModel.findAll({
+    where: {
+      conversationMessageId: conversationMessage.id,
+      reaction,
+    },
+  });
+
+  response.success(conversationMessageReactions);
+}));
+
+/*
  * PUT
  */
 

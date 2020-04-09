@@ -94,6 +94,33 @@ describe('Conversation Message Reactions', () => {
   });
 
   /*
+   * GET
+   */
+
+  describe('GET /conversations/:conversationId/messages/:conversationMessageId/reactions', () => {
+    it('200s with an array of conversation message reactions when provided reaction', done => {
+      chai.request(server)
+        .get(`/conversations/${testConversationOne.id}/messages/${testConversationOneMessageOne.id}/reactions`)
+        .query({ reaction: '🔥🔥🔥' })
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.forEach(conversationMessageReaction => {
+            conversationMessageReaction.should.have.property('id');
+            conversationMessageReaction.should.have.property('reaction');
+            conversationMessageReaction.should.have.property('createdAt');
+            conversationMessageReaction.should.have.property('user');
+          });
+          done();
+        });
+    });
+
+    helpers.it401sWhenUserAuthorizationIsInvalid('get', `/conversations/${testConversationOne.id}/messages/${testConversationOneMessageOne.id}/reactions?reaction=${encodeURI('🔥🔥🔥')}`);
+  });
+
+  /*
    * DELETE
    */
 
