@@ -25,14 +25,14 @@ global.testUserTwo = { phone: 6666666666 };
 global.testUserThree = { phone: 8888888888 };
 
 global.testConversationOne = {
-  permission: 'public',
+  accessLevel: 'public',
   message: {
     text: 'Sir, this is a wendys',
   },
 };
 
 global.testConversationTwo = {
-  permission: 'private',
+  accessLevel: 'private',
   message: {
     text: 'testing private',
   },
@@ -40,7 +40,7 @@ global.testConversationTwo = {
 };
 
 global.testConversationThree = {
-  permission: 'public',
+  accessLevel: 'public',
   message: {
     text: 'testing public',
   },

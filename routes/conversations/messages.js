@@ -6,6 +6,7 @@ const ConversationMessageModel = rootRequire('/models/ConversationMessageModel')
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const conversationMessageAuthorize = rootRequire('/middlewares/conversations/messages/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
+const userConversationPermissions = rootRequire('/middlewares/users/conversations/permissions');
 
 const router = express.Router({
   mergeParams: true,
@@ -17,6 +18,7 @@ const router = express.Router({
 
 router.get('/', userAuthorize);
 router.get('/', conversationAssociate);
+router.get('/', userConversationPermissions({ private: [ 'CONVERSATION_MESSAGES_READ' ] }));
 router.get('/', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
   const conversationMessages = await ConversationMessageModel.findAll({
@@ -32,6 +34,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
 
 router.post('/', userAuthorize);
 router.post('/', conversationAssociate);
+router.post('/', userConversationPermissions({ all: [ 'CONVERSATION_MESSAGES_WRITE' ] }));
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user, conversation } = request;
   const { text, attachments, embeds } = request.body;

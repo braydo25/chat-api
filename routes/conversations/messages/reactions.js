@@ -7,6 +7,7 @@ const conversationAssociate = rootRequire('/middlewares/conversations/associate'
 const conversationMessageAssociate = rootRequire('/middlewares/conversations/messages/associate');
 const conversationMessageReactionAuthorize = rootRequire('/middlewares/conversations/messages/reactions/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
+const userConversationPermissions = rootRequire('/middlewares/users/conversations/permissions');
 
 const router = express.Router({
   mergeParams: true,
@@ -19,6 +20,7 @@ const router = express.Router({
 router.get('/', userAuthorize);
 router.get('/', conversationAssociate);
 router.get('/', conversationMessageAssociate);
+router.get('/', userConversationPermissions({ private: [ 'CONVERSATION_MESSAGE_REACTIONS_READ' ] }));
 router.get('/', asyncMiddleware(async (request, response) => {
   const { conversationMessage } = request;
   const { reaction } = request.query;
@@ -44,6 +46,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
 router.put('/', userAuthorize);
 router.put('/', conversationAssociate);
 router.put('/', conversationMessageAssociate);
+router.put('/', userConversationPermissions({ private: [ 'CONVERSATION_MESSAGE_REACTIONS_WRITE' ] }));
 router.put('/', asyncMiddleware(async (request, response) => {
   const { user, conversationMessage } = request;
   const { reaction } = request.body;

@@ -17,7 +17,7 @@ module.exports = asyncMiddleware(async (request, response, next) => {
   });
 
   if (!conversationMessageReaction) {
-    return response.respond(401, 'Insufficient conversation message reaction permissions');
+    return response.respond(403, 'Insufficient conversation message reaction permissions');
   }
 
   request.conversationMessageReaction = conversationMessageReaction;

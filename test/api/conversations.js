@@ -10,7 +10,7 @@ describe('Conversations', () => {
   describe('POST /conversations', () => {
     it('200s with created conversation object', done => {
       const fields = {
-        permission: 'public',
+        accessLevel: 'public',
         message: {
           text: 'test test test!',
         },
@@ -25,7 +25,7 @@ describe('Conversations', () => {
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.userId.should.equal(testUserOne.id);
-          response.body.permission.should.equal(fields.permission),
+          response.body.accessLevel.should.equal(fields.accessLevel),
           response.body.conversationMessages.should.be.an('array');
           response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
           response.body.conversationMessages[0].text.should.equal(fields.message.text);
@@ -38,7 +38,7 @@ describe('Conversations', () => {
 
     it('200s with created conversation object when provided users, attachments and embeds', done => {
       const fields = {
-        permission: 'private',
+        accessLevel: 'private',
         message: {
           attachments: [ testAttachmentOne.id ],
           embeds: [ testEmbedOne.id ],
@@ -55,7 +55,7 @@ describe('Conversations', () => {
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.userId.should.equal(testUserOne.id);
-          response.body.permission.should.equal(fields.permission);
+          response.body.accessLevel.should.equal(fields.accessLevel);
           response.body.conversationMessages.should.be.an('array');
           response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
           response.body.conversationMessages[0].attachments.should.be.an('array');
@@ -71,7 +71,7 @@ describe('Conversations', () => {
 
     it('400s when not provided content for conversationMessage', done => {
       const fields = {
-        permission: 'public',
+        accessLevel: 'public',
       };
 
       chai.request(server)
@@ -121,7 +121,7 @@ describe('Conversations', () => {
   describe('PATCH /conversations', () => {
     it('200s with updated conversation object', done => {
       const fields = {
-        permission: 'private',
+        accessLevel: 'private',
       };
 
       chai.request(server)
@@ -131,7 +131,7 @@ describe('Conversations', () => {
         .end((error, response) => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
-          response.body.permission.should.equal(fields.permission);
+          response.body.accessLevel.should.equal(fields.accessLevel);
           done();
         });
     });

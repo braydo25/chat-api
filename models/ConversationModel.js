@@ -2,7 +2,7 @@ const UserModel = rootRequire('/models/UserModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 
-const permissions = [ 'public', 'private', 'protected' ];
+const accessLevels = [ 'public', 'protected', 'private' ];
 
 /*
  * Model Definition
@@ -18,13 +18,13 @@ const ConversationModel = database.define('conversation', {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
-  permission: {
+  accessLevel: {
     type: Sequelize.STRING,
     allowNull: false,
     validate: {
       isIn: {
-        args: [ permissions ],
-        msg: 'The permission provided is invalid.',
+        args: [ accessLevels ],
+        msg: 'The access level provided is invalid.',
       },
     },
   },
@@ -32,14 +32,23 @@ const ConversationModel = database.define('conversation', {
   defaultScope: {
     attributes: [
       'id',
-      'permission',
+      'accessLevel',
       'createdAt',
     ],
-    include: [
-      ConversationMessageModel,
-      ConversationUserModel,
-      UserModel,
-    ],
+  },
+  scopes: {
+    complete: {
+      attributes: [
+        'id',
+        'accessLevel',
+        'createdAt',
+      ],
+      include: [
+        ConversationMessageModel,
+        ConversationUserModel,
+        UserModel,
+      ],
+    },
   },
 });
 

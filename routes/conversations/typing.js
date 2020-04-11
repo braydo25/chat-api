@@ -4,6 +4,7 @@
 
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
+const userConversationPermissions = rootRequire('/middlewares/users/conversations/permissions');
 
 const router = express.Router({
   mergeParams: true,
@@ -15,6 +16,7 @@ const router = express.Router({
 
 router.post('/', userAuthorize);
 router.post('/', conversationAssociate);
+router.post('/', userConversationPermissions({ all: [ 'CONVERSATION_MESSAGES_WRITE' ] }));
 router.post('/', asyncMiddleware(async (request, response) => {
   // send MQTT chat event.
 

@@ -17,7 +17,7 @@ module.exports = asyncMiddleware(async (request, response, next) => {
   });
 
   if (!userFollower) {
-    return response.respond('Insufficient user follower permissions.');
+    return response.respond(403, 'Insufficient user follower permissions.');
   }
 
   request.userFollower = userFollower;

@@ -4,8 +4,8 @@
 
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
-const conversationUserAssociate = rootRequire('/middlewares/conversations/users/associate');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
+const userConversationPermissions = rootRequire('/middlewares/users/conversations/permissions');
 
 const router = express.Router({
   mergeParams: true,
@@ -17,6 +17,7 @@ const router = express.Router({
 
 router.get('/', userAuthorize);
 router.get('/', conversationAssociate);
+router.get('/', userConversationPermissions({ private: [ 'CONVERSATION_USERS_READ' ] }));
 router.get('/', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
   const conversationUsers = await ConversationUserModel.findAll({
@@ -32,6 +33,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
 
 router.put('/', userAuthorize);
 router.put('/', conversationAssociate);
+router.put('/', userConversationPermissions({ private: [ 'CONVERSATION_USERS_CREATE' ] }));
 router.put('/', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
   const { userId } = request.body;
@@ -54,12 +56,24 @@ router.put('/', asyncMiddleware(async (request, response) => {
 }));
 
 /*
+ * PATCH
+ */
+
+router.patch('/', userAuthorize);
+router.patch('/', conversationAssociate);
+router.patch('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_USERS_UPDATE' ] }));
+router.patch('/', asyncMiddleware(async (request, response) => {
+  // TODO: allow super user with permission to modify other convo user permissions.
+  response.success();
+}));
+
+/*
  * DELETE
  */
 
 router.delete('/', userAuthorize);
 router.delete('/', conversationAssociate);
-router.delete('/', conversationUserAssociate);
+router.delete('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_USERS_DELETE' ] }));
 router.delete('/', asyncMiddleware(async (request, response) => {
   const { conversationUser } = request;
 

@@ -24,7 +24,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
     where: { userId: user.id },
   })).map(conversationUser => conversationUser.conversationId);
 
-  const conversations = await ConversationModel.findAll({
+  const conversations = await ConversationModel.scope('complete').findAll({
     where: { id: conversationIds },
   });
 
@@ -38,7 +38,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
 router.post('/', userAuthorize);
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
-  const { permission } = request.body;
+  const { accessLevel } = request.body;
   const message = request.body.message || {};
   const attachments = (Array.isArray(message.attachments)) ? message.attachments : [];
   const embeds = (Array.isArray(message.embeds)) ? message.embeds : [];
@@ -50,7 +50,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
     const conversation = await ConversationModel.createWithAssociations({
       data: {
         userId: user.id,
-        permission,
+        accessLevel,
       },
       userIds: users,
       transaction,
@@ -89,7 +89,7 @@ router.patch('/', conversationAuthorize);
 router.patch('/', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
 
-  conversation.permission = request.body.permission || conversation.permission;
+  conversation.accessLevel = request.body.accessLevel || conversation.accessLevel;
 
   await conversation.save();
 
