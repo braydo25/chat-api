@@ -62,7 +62,20 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
   const conversation = await ConversationModel.create(data, { transaction });
 
   const conversationUsers = await ConversationUserModel.bulkCreate((
-    userIds.map(userId => ({ conversationId: conversation.id, userId }))
+    userIds.map(userId => ({
+      userId,
+      conversationId: conversation.id,
+      permissions: (userId === data.userId) ? [
+        'CONVERSATION_ADMIN',
+      ] : [
+        'CONVERSATION_MESSAGES_CREATE',
+        'CONVERSATION_MESSAGES_READ',
+        'CONVERSATION_MESSAGE_REACTIONS_CREATE',
+        'CONVERSATION_MESSAGE_REACTIONS_READ',
+        'CONVERSATION_USERS_CREATE',
+        'CONVERSATION_USERS_READ',
+      ],
+    }))
   ), { transaction });
 
   const users = await UserModel.findAll({
