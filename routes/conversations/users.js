@@ -4,6 +4,7 @@
 
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
+const conversationUserAssociate = rootRequire('/middlewares/conversations/users/associate');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const userConversationPermissions = rootRequire('/middlewares/users/conversations/permissions');
 
@@ -38,8 +39,8 @@ router.put('/', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
   const { userId } = request.body;
   const data = {
-    conversationId: conversation.id,
     userId,
+    conversationId: conversation.id,
   };
 
   if (!userId) {
@@ -61,10 +62,16 @@ router.put('/', asyncMiddleware(async (request, response) => {
 
 router.patch('/', userAuthorize);
 router.patch('/', conversationAssociate);
+router.patch('/', conversationUserAssociate);
 router.patch('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_USERS_UPDATE' ] }));
 router.patch('/', asyncMiddleware(async (request, response) => {
-  // TODO: allow super user with permission to modify other convo user permissions.
-  response.success();
+  const { conversationUser } = request;
+
+  conversationUser.permissions = request.body.permissions || conversationUser.permissions;
+
+  await conversationUser.save();
+
+  response.success(conversationUser);
 }));
 
 /*
@@ -73,6 +80,7 @@ router.patch('/', asyncMiddleware(async (request, response) => {
 
 router.delete('/', userAuthorize);
 router.delete('/', conversationAssociate);
+router.delete('/', conversationUserAssociate);
 router.delete('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_USERS_DELETE' ] }));
 router.delete('/', asyncMiddleware(async (request, response) => {
   const { conversationUser } = request;

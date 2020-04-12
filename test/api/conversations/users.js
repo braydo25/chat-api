@@ -89,6 +89,53 @@ describe('Conversation Users', () => {
   });
 
   /*
+   * PATCH
+   */
+
+  describe('PATCH /conversations/:conversationId/users', () => {
+    it('200s with updated conversation user object when provided permissions', done => {
+      const fields = {
+        permissions: [
+          'CONVERSATION_MESSAGES_CREATE',
+          'CONVERSATION_MESSAGES_READ',
+        ],
+      };
+
+      chai.request(server)
+        .patch(`/conversations/${testConversationOne.id}/users/${testConversationOneUserOne.id}`)
+        .set('X-Access-Token', testUserOne.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('object');
+          response.body.permissions.should.deep.equal(fields.permissions);
+          done();
+        });
+    });
+
+    it('403s when requesting user does not have permission to modify conversation users', done => {
+      const fields = {
+        permissions: [
+          'CONVERSATION_MESSAGES_READ',
+        ],
+      };
+
+      chai.request(server)
+        .patch(`/conversations/${testConversationOne.id}/users/${scopedConversationUser.id}`)
+        .set('X-Access-Token', testUserTwo.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(403);
+          done();
+        });
+    });
+
+    helpers.it401sWhenUserAuthorizationIsInvalid('patch', `/conversations/${testConversationOne.id}/users/${testConversationOneUserOne.id}`);
+  });
+
+  /*
    * DELETE
    */
 

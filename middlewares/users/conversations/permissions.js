@@ -32,8 +32,6 @@ module.exports = permissions => {
       }
     }
 
-    request.conversationUser = conversationUser;
-
     next();
   });
 };

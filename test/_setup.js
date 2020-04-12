@@ -47,6 +47,8 @@ global.testConversationThree = {
   users: [ 1 ],
 };
 
+global.testConversationOneUserOne = {};
+
 global.testConversationOneMessageOne = {
   text: 'This is a test',
 };
@@ -153,6 +155,13 @@ before(done => {
       .set('X-Access-Token', testUserTwo.accessToken)
       .send(testConversationThree);
     Object.assign(testConversationThree, createdTestConversationThree.body);
+
+    fatLog('Creating global test conversation one user one...');
+    const createdTestConversationOneUserOne = await chai.request(server)
+      .put(`/conversations/${testConversationOne.id}/users`)
+      .set('X-Access-Token', testUserOne.accessToken)
+      .send({ userId: testUserTwo.id });
+    Object.assign(testConversationOneUserOne, createdTestConversationOneUserOne.body);
 
     fatLog('Creating global test conversation one message one...');
     const createdTestConversationOneMessageOne = await chai.request(server)
