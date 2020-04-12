@@ -16,7 +16,7 @@ const router = express.Router({
 
 router.post('/', userAuthorize);
 router.post('/', conversationAssociate);
-router.post('/', userConversationPermissions({ all: [ 'CONVERSATION_MESSAGES_WRITE' ] }));
+router.post('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_MESSAGES_WRITE' ] }));
 router.post('/', asyncMiddleware(async (request, response) => {
   // send MQTT chat event.
 

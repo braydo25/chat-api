@@ -22,8 +22,8 @@ module.exports = permissions => {
     ];
 
     if (requiredPermissions.length) {
-      const authorized = (conversationUser) ? conversationUser.permissions.every(permission => {
-        return requiredPermissions.includes(permission);
+      const authorized = (conversationUser) ? requiredPermissions.every(permission => {
+        return conversationUser.permissions.includes(permission);
       }) : false;
 
       if (!authorized) {

@@ -38,10 +38,6 @@ const ConversationUserModel = database.define('conversationUser', {
     allowNull: false,
     validate: {
       isValid(value) {
-        if (!value.length) {
-          throw new Error('At lest one permission must be provided.');
-        }
-
         value.forEach(permission => {
           if (!permissions.includes(permission)) {
             throw new Error('Invalid conversation user permission provided');
@@ -49,6 +45,7 @@ const ConversationUserModel = database.define('conversationUser', {
         });
       },
     },
+    defaultValue: [],
   },
 }, {
   defaultScope: {

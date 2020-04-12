@@ -9,6 +9,7 @@ const ConversationMessageModel = rootRequire('/models/ConversationMessageModel')
 module.exports = asyncMiddleware(async (request, response, next) => {
   const { conversation } = request;
   const { conversationMessageId } = request.params;
+
   const conversationMessage = await ConversationMessageModel.findOne({
     where: {
       id: conversationMessageId,

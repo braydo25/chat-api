@@ -60,9 +60,11 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
   userIds = [ ...new Set([ data.userId, ...userIds ]) ];
 
   const conversation = await ConversationModel.create(data, { transaction });
+
   const conversationUsers = await ConversationUserModel.bulkCreate((
     userIds.map(userId => ({ conversationId: conversation.id, userId }))
   ), { transaction });
+
   const users = await UserModel.findAll({
     where: { id: userIds },
   }, { transaction });
