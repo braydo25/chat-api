@@ -57,6 +57,18 @@ describe('Conversation Users', () => {
         });
     });
 
+    it('403s when requesting user does not have CONVERSATION_USERS_CREATE permission for conversation with private access level', done => {
+      chai.request(server)
+        .put(`/conversations/${testPermissionsPrivateConversation.id}/users`)
+        .set('X-Access-Token', testPermissionsPrivateConversationPermissionlessUser.accessToken)
+        .send({ userId: testUserFour.id })
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(403);
+          done();
+        });
+    });
+
     helpers.it401sWhenUserAuthorizationIsInvalid('put', `/conversations/${testConversationOne.id}/users`);
   });
 
@@ -81,6 +93,17 @@ describe('Conversation Users', () => {
             conversationUser.user.should.have.property('username');
             conversationUser.user.should.have.property('avatarAttachment');
           });
+          done();
+        });
+    });
+
+    it('403s when requesting user does not have CONVERSATION_USERS_READ permission for conversation with private access level', done => {
+      chai.request(server)
+        .get(`/conversations/${testPermissionsPrivateConversation.id}/users`)
+        .set('X-Access-Token', testPermissionsPrivateConversationPermissionlessUser.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(403);
           done();
         });
     });
@@ -114,7 +137,7 @@ describe('Conversation Users', () => {
         });
     });
 
-    it('403s when requesting user does not have permission to modify conversation users', done => {
+    it('403s when requesting user does not have CONVERSATION_USERS_UPDATE permission for conversation with any access level', done => {
       const fields = {
         permissions: [
           'CONVERSATION_MESSAGES_READ',
@@ -122,8 +145,8 @@ describe('Conversation Users', () => {
       };
 
       chai.request(server)
-        .patch(`/conversations/${testConversationOne.id}/users/${scopedConversationUser.id}`)
-        .set('X-Access-Token', testUserTwo.accessToken)
+        .patch(`/conversations/${testPermissionsPrivateConversation.id}/users/${testPermissionsPrivateConversationPermissionlessConversationUser.id}`)
+        .set('X-Access-Token', testPermissionsPrivateConversationPermissionlessUser.accessToken)
         .send(fields)
         .end((error, response) => {
           helpers.logExampleResponse(response);
@@ -147,6 +170,17 @@ describe('Conversation Users', () => {
         .end((error, response) => {
           helpers.logExampleResponse(response);
           response.should.have.status(204);
+          done();
+        });
+    });
+
+    it('403s when requesting user does not have CONVERSATION_USERS_DELETE permission for conversation with any access level', done => {
+      chai.request(server)
+        .delete(`/conversations/${testPermissionsPublicConversation.id}/users/${testPermissionsPublicConversationGeneralConversationUser.id}`)
+        .set('X-Access-Token', testPermissionsPublicConversationPermissionlessUser.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(403);
           done();
         });
     });
