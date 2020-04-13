@@ -65,6 +65,7 @@ global.testPermissionsPublicConversation = {
   },
   users: [ 1, 2, 3 ],
 };
+global.testPermissionsPublicConversationMessageOne = {};
 global.testPermissionsPublicConversationAdminUser = {};
 global.testPermissionsPublicConversationGeneralUser = {};
 global.testPermissionsPublicConversationPermissionlessUser = {};
@@ -79,6 +80,7 @@ global.testPermissionsProtectedConversation = {
   },
   users: [ 1, 2, 3 ],
 };
+global.testPermissionsProtectedConversationMessageOne = {};
 global.testPermissionsProtectedConversationAdminUser = {};
 global.testPermissionsProtectedConversationGeneralUser = {};
 global.testPermissionsProtectedConversationPermissionlessUser = {};
@@ -93,6 +95,7 @@ global.testPermissionsPrivateConversation = {
   },
   users: [ 1, 2, 3 ],
 };
+global.testPermissionsPrivateConversationMessageOne = {};
 global.testPermissionsPrivateConversationAdminUser = {};
 global.testPermissionsPrivateConversationGeneralUser = {};
 global.testPermissionsPrivateConversationPermissionlessUser = {};
@@ -233,6 +236,9 @@ before(done => {
       .send(testPermissionsPublicConversation);
     Object.assign(testPermissionsPublicConversation, createdTestPermissionsPublicConversation.body);
 
+    fatLog('Setting global test permissions public conversation message one...');
+    Object.assign(testPermissionsPublicConversationMessageOne, testPermissionsPublicConversation.conversationMessages[0]);
+
     fatLog('Setting global test permissions public conversation admin user...');
     Object.assign(testPermissionsPublicConversationAdminUser, testUserOne);
     testPermissionsPublicConversationAdminConversationUser = testPermissionsPublicConversation.conversationUsers.find(conversationUser => {
@@ -264,6 +270,9 @@ before(done => {
       .send(testPermissionsProtectedConversation);
     Object.assign(testPermissionsProtectedConversation, createdTestPermissionsProtectedConversation.body);
 
+    fatLog('Setting global test permissions protected conversation message one...');
+    Object.assign(testPermissionsProtectedConversationMessageOne, testPermissionsProtectedConversation.conversationMessages[0]);
+
     fatLog('Setting global test permissions protected conversation admin user...');
     Object.assign(testPermissionsProtectedConversationAdminUser, testUserOne);
     testPermissionsProtectedConversationAdminConversationUser = testPermissionsProtectedConversation.conversationUsers.find(conversationUser => {
@@ -294,6 +303,9 @@ before(done => {
       .set('X-Access-Token', testUserOne.accessToken)
       .send(testPermissionsPrivateConversation);
     Object.assign(testPermissionsPrivateConversation, createdTestPermissionsPrivateConversation.body);
+
+    fatLog('Setting global test permissions private conversation message one...');
+    Object.assign(testPermissionsPrivateConversationMessageOne, testPermissionsPrivateConversation.conversationMessages[0]);
 
     fatLog('Setting global test permissions private conversation admin user...');
     Object.assign(testPermissionsPrivateConversationAdminUser, testUserOne);

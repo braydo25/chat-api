@@ -62,7 +62,7 @@ describe('Conversation Messages', () => {
         });
     });
 
-    it('403s when requesting user does not have CONVERSATION_MESSAGES_WRITE permission for conversation with any access level', done => {
+    it('403s when requesting user does not have CONVERSATION_MESSAGES_CREATE permission for conversation with any access level', done => {
       const fields = {
         text: 'this is a test',
       };

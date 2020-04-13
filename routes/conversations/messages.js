@@ -34,7 +34,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
 
 router.post('/', userAuthorize);
 router.post('/', conversationAssociate);
-router.post('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_MESSAGES_WRITE' ] }));
+router.post('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_MESSAGES_CREATE' ] }));
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user, conversation } = request;
   const { text, attachments, embeds } = request.body;

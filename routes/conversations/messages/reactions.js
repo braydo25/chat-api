@@ -46,7 +46,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
 router.put('/', userAuthorize);
 router.put('/', conversationAssociate);
 router.put('/', conversationMessageAssociate);
-router.put('/', userConversationPermissions({ private: [ 'CONVERSATION_MESSAGE_REACTIONS_WRITE' ] }));
+router.put('/', userConversationPermissions({ private: [ 'CONVERSATION_MESSAGE_REACTIONS_CREATE' ] }));
 router.put('/', asyncMiddleware(async (request, response) => {
   const { user, conversationMessage } = request;
   const { reaction } = request.body;

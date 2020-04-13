@@ -90,6 +90,22 @@ describe('Conversation Message Reactions', () => {
         });
     });
 
+    it('403s when requesting user does not have CONVERSATION_MESSAGE_REACTIONS_CREATE permission for conversation with private access level', done => {
+      const fields = {
+        reaction: 'kek',
+      };
+
+      chai.request(server)
+        .put(`/conversations/${testPermissionsPrivateConversation.id}/messages/${testPermissionsPrivateConversationMessageOne.id}/reactions`)
+        .set('X-Access-Token', testPermissionsPrivateConversationPermissionlessUser.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(403);
+          done();
+        });
+    });
+
     helpers.it401sWhenUserAuthorizationIsInvalid('put', `/conversations/${testConversationOne.id}/messages/${testConversationOneMessageOne.id}/reactions`);
   });
 
@@ -113,6 +129,17 @@ describe('Conversation Message Reactions', () => {
             conversationMessageReaction.should.have.property('createdAt');
             conversationMessageReaction.should.have.property('user');
           });
+          done();
+        });
+    });
+
+    it('403s when requesting user does not have CONVERSATION_MESSAGE_REACTIONS_READ permission for conversation with private access level', done => {
+      chai.request(server)
+        .get(`/conversations/${testPermissionsPrivateConversation.id}/messages/${testPermissionsPrivateConversationMessageOne.id}/reactions`)
+        .set('X-Access-Token', testPermissionsPrivateConversationPermissionlessUser.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(403);
           done();
         });
     });
