@@ -62,6 +62,22 @@ describe('Conversation Messages', () => {
         });
     });
 
+    it('403s when requesting user does not have CONVERSATION_MESSAGES_WRITE permission for conversation with any access level', done => {
+      const fields = {
+        text: 'this is a test',
+      };
+
+      chai.request(server)
+        .post(`/conversations/${testPermissionsPublicConversation.id}/messages`)
+        .set('X-Access-Token', testPermissionsPublicConversationPermissionlessUser.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(403);
+          done();
+        });
+    });
+
     helpers.it401sWhenUserAuthorizationIsInvalid('post', `/conversations/${testConversationOne.id}/messages`);
   });
 
@@ -88,6 +104,17 @@ describe('Conversation Messages', () => {
             conversationMessage.user.should.have.property('username');
             conversationMessage.user.should.have.property('avatarAttachment');
           });
+          done();
+        });
+    });
+
+    it('403s when requesting user does not have CONVERSATION_MESSAGES_READ permission for conversation with private access level', done => {
+      chai.request(server)
+        .get(`/conversations/${testPermissionsPrivateConversation.id}/messages`)
+        .set('X-Access-Token', testPermissionsPrivateConversationPermissionlessUser.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(403);
           done();
         });
     });
