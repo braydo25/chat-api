@@ -43,6 +43,10 @@ router.put('/', asyncMiddleware(async (request, response) => {
     conversationId: conversation.id,
   };
 
+  if (conversation.accessLevel === 'private') {
+    throw new Error('Please create a new conversation to add users to a private conversation.');
+  }
+
   if (!userId) {
     throw new Error('A user must be provided.');
   }
@@ -50,6 +54,18 @@ router.put('/', asyncMiddleware(async (request, response) => {
   let conversationUser = await ConversationUserModel.findOne({ where: data });
 
   if (!conversationUser) {
+    data.permissions = [
+      'CONVERSATION_MESSAGES_READ',
+      'CONVERSATION_MESSAGE_REACTIONS_CREATE',
+      'CONVERSATION_MESSAGE_REACTIONS_READ',
+      'CONVERSATION_USERS_READ',
+    ];
+
+    if (conversation.accessLevel !== 'protected') {
+      data.permissions.push('CONVERSATION_MESSAGES_CREATE');
+      data.permissions.push('CONVERSATION_USERS_CREATE');
+    }
+
     conversationUser = await ConversationUserModel.create(data);
   }
 

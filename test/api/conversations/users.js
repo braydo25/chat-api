@@ -23,6 +23,7 @@ describe('Conversation Users', () => {
           response.body.should.be.an('object');
           response.body.conversationId.should.equal(testConversationOne.id);
           response.body.userId.should.equal(fields.userId);
+          response.body.permissions.length.should.be.at.least(1);
           scopedConversationUser = response.body;
           done();
         });
@@ -42,6 +43,7 @@ describe('Conversation Users', () => {
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.id.should.equal(scopedConversationUser.id);
+          response.body.permissions.length.should.be.at.least(1);
           done();
         });
     });
@@ -50,6 +52,22 @@ describe('Conversation Users', () => {
       chai.request(server)
         .put(`/conversations/${testConversationOne.id}/users`)
         .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(400);
+          done();
+        });
+    });
+
+    it('400s when adding user to private conversation', done => {
+      const fields = {
+        userId: testUserFour.id,
+      };
+
+      chai.request(server)
+        .put(`/conversations/${testPermissionsPrivateConversation.id}/users`)
+        .set('X-Access-Token', testPermissionsPrivateConversationGeneralUser.accessToken)
+        .send(fields)
         .end((error, response) => {
           helpers.logExampleResponse(response);
           response.should.have.status(400);
