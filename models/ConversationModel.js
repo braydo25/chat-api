@@ -94,6 +94,33 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
   return conversation;
 };
 
+ConversationModel.findOneWithUsers = async function({ userIds, where }) {
+  userIds = [ ...(new Set(userIds)) ];
+
+  const match = await ConversationUserModel.unscoped().findOne({
+    attributes: [ 'conversationId' ],
+    include: [
+      {
+        attributes: [],
+        model: ConversationModel,
+        where,
+        required: true,
+      },
+    ],
+    group: [ 'conversationId' ],
+    having: database.literal([
+      `SUM(conversationUser.userId IN (${userIds.join(',')})) = COUNT(conversationUser.id)`,
+      `AND ${userIds.length} = COUNT(conversationUser.id)`,
+    ].join(' ')),
+  });
+
+  const conversation = (match) ? await ConversationModel.findOne({
+    where: { id: match.conversationId },
+  }) : undefined;
+
+  return conversation;
+};
+
 /*
  * Export
  */

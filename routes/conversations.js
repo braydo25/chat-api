@@ -46,6 +46,17 @@ router.post('/', asyncMiddleware(async (request, response) => {
 
   const transaction = await database.transaction();
 
+  if (accessLevel === 'private') {
+    const existingConversation = await ConversationModel.findOneWithUsers({
+      userIds: [ user.id, ...users ],
+      where: { accessLevel: 'private' },
+    });
+
+    if (existingConversation) {
+      return response.respond(409, existingConversation);
+    }
+  }
+
   try {
     const conversation = await ConversationModel.createWithAssociations({
       data: {

@@ -38,7 +38,7 @@ describe('Conversations', () => {
 
     it('200s with created conversation object when provided users, attachments and embeds', done => {
       const fields = {
-        accessLevel: 'private',
+        accessLevel: 'protected',
         message: {
           attachments: [ testAttachmentOne.id ],
           embeds: [ testEmbedOne.id ],
@@ -81,6 +81,28 @@ describe('Conversations', () => {
         .end((error, response) => {
           helpers.logExampleResponse(response);
           response.should.have.status(400);
+          done();
+        });
+    });
+
+    it('409s with already existing private conversation object when provided users of already existing private conversation', done => {
+      const fields = {
+        accessLevel: 'private',
+        users: [
+          testPermissionsPrivateConversationAdminUser.id,
+          testPermissionsPrivateConversationGeneralUser.id,
+          testPermissionsPrivateConversationPermissionlessUser.id,
+        ],
+      };
+
+      chai.request(server)
+        .post('/conversations')
+        .set('X-Access-Token', testUserOne.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(409);
+          response.body.should.be.an('object');
           done();
         });
     });
