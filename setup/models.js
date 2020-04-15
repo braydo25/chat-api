@@ -10,6 +10,7 @@ const UserModel = rootRequire('/models/UserModel');
 const UserFollowerModel = rootRequire('/models/UserFollowerModel');
 
 ConversationModel.belongsTo(UserModel);
+ConversationModel.belongsTo(ConversationMessageModel, { as: 'previewConversationMessage', constraints: false });
 ConversationModel.hasMany(ConversationMessageModel);
 ConversationModel.hasMany(ConversationUserModel);
 

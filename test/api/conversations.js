@@ -26,6 +26,7 @@ describe('Conversations', () => {
           response.body.should.be.an('object');
           response.body.userId.should.equal(testUserOne.id);
           response.body.accessLevel.should.equal(fields.accessLevel),
+          response.body.previewConversationMessage.should.be.an('object');
           response.body.conversationMessages.should.be.an('array');
           response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
           response.body.conversationMessages[0].text.should.equal(fields.message.text);
@@ -56,6 +57,7 @@ describe('Conversations', () => {
           response.body.should.be.an('object');
           response.body.userId.should.equal(testUserOne.id);
           response.body.accessLevel.should.equal(fields.accessLevel);
+          response.body.previewConversationMessage.should.be.an('object');
           response.body.conversationMessages.should.be.an('array');
           response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
           response.body.conversationMessages[0].attachments.should.be.an('array');
@@ -125,6 +127,7 @@ describe('Conversations', () => {
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversation => {
+            conversation.previewConversationMessage.should.be.an('object');
             conversation.conversationMessages.should.be.an('array');
             conversation.conversationUsers.should.be.an('array');
             conversation.user.should.be.an('object');

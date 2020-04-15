@@ -18,6 +18,9 @@ const ConversationModel = database.define('conversation', {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
+  previewConversationMessageId: {
+    type: Sequelize.INTEGER(10).UNSIGNED,
+  },
   accessLevel: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -44,7 +47,16 @@ const ConversationModel = database.define('conversation', {
         'createdAt',
       ],
       include: [
-        ConversationMessageModel,
+        {
+          model: ConversationMessageModel,
+          as: 'previewConversationMessage',
+        },
+        {
+          model: ConversationMessageModel.unscoped(),
+          separate: true,
+          order: [ [ 'id', 'DESC' ] ],
+          limit: 5,
+        },
         ConversationUserModel,
         UserModel,
       ],
