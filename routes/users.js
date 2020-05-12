@@ -1,14 +1,55 @@
 /*
- * Route: /users
+ * Route: /users/:userId?
  */
 
 const AttachmentModel = rootRequire('/models/AttachmentModel');
+const UserFollowerModel = rootRequire('/models/UserFollowerModel');
 const UserModel = rootRequire('/models/UserModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 
 const router = express.Router({
   mergeParams: true,
 });
+
+/*
+ * GET
+ */
+
+router.get('/', userAuthorize);
+router.get('/', asyncMiddleware(async (request, response) => {
+  const { userId } = request.params;
+
+  if (!userId) {
+    throw new Error('A user id must be provided.');
+  }
+
+  const user = await UserModel.findOne({
+    attributes: [
+      'id',
+      'username',
+      'name',
+      'about',
+      [ database.fn('COUNT', database.col('userFollowers.id')), 'followersCount' ],
+    ],
+    include: [
+      {
+        model: AttachmentModel.scope('avatar'),
+        as: 'avatarAttachment',
+      },
+      {
+        attributes: [],
+        model: UserFollowerModel.unscoped(),
+      },
+    ],
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new Error('This user does not exist.');
+  }
+
+  return response.success(user);
+}));
 
 /*
  * POST
@@ -64,6 +105,7 @@ router.patch('/', asyncMiddleware(async (request, response) => {
   user.avatarAttachmentId = avatarAttachmentId || user.avatarAttachmentId;
   user.username = request.body.username || user.username;
   user.name = request.body.name || user.name;
+  user.about = request.body.about || user.about;
 
   user.setDataValue('avatarAttachment', attachment || user.avatarAttachment);
 

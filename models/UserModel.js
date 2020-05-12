@@ -44,6 +44,9 @@ const UserModel = database.define('user', {
   name: {
     type: Sequelize.STRING,
   },
+  about: {
+    type: Sequelize.STRING,
+  },
 }, {
   defaultScope: {
     attributes: [

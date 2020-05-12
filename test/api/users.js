@@ -72,6 +72,32 @@ describe('Users', () => {
   });
 
   /*
+   * GET
+   */
+
+  describe('GET /users', () => {
+    it('200s with user object when provided userId', done => {
+      chai.request(server)
+        .get(`/users/${testUserTwo.id}`)
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('object');
+          response.body.id.should.equal(testUserTwo.id);
+          response.body.should.have.property('username');
+          response.body.should.have.property('name');
+          response.body.should.have.property('about');
+          response.body.should.have.property('avatarAttachment');
+          response.body.should.have.property('followersCount');
+          done();
+        });
+    });
+
+    helpers.it401sWhenUserAuthorizationIsInvalid('get', `/users/${testUserTwo.id}`);
+  });
+
+  /*
    * PATCH
    */
 
@@ -81,6 +107,7 @@ describe('Users', () => {
         avatarAttachmentId: testAttachmentOne.id,
         username: 'braydonio',
         name: 'Braydon Batungbacal',
+        about: 'My name is braydon!',
       };
 
       chai.request(server)
@@ -92,6 +119,7 @@ describe('Users', () => {
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.name.should.equal(fields.name);
+          response.body.about.should.equal(fields.about);
           done();
         });
     });

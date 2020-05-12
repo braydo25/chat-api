@@ -28,8 +28,9 @@ UserModel.belongsTo(AttachmentModel, { as: 'avatarAttachment' });
 UserModel.hasMany(AttachmentModel, { constraints: false });
 UserModel.hasMany(ConversationModel);
 UserModel.hasMany(EmbedModel);
+UserModel.hasMany(UserFollowerModel);
 
 UserFollowerModel.belongsTo(UserModel);
 UserFollowerModel.belongsTo(UserModel, { as: 'followerUser' });
 
-module.exports = database.sync({ force: true });
+module.exports = database.sync();
