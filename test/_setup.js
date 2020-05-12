@@ -20,10 +20,10 @@ global.server = `http://localhost:${process.env.PORT}`;
 
 global.enableTestResponseLogging = true;
 
-global.testUserOne = { phone: 5555555555 };
-global.testUserTwo = { phone: 6666666666 };
-global.testUserThree = { phone: 8888888888 };
-global.testUserFour = { phone: 9999999999 };
+global.testUserOne = { phone: 15555555555 };
+global.testUserTwo = { phone: 16666666666 };
+global.testUserThree = { phone: 18888888888 };
+global.testUserFour = { phone: 19999999999 };
 
 global.testConversationOne = {
   accessLevel: 'public',
