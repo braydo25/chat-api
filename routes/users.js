@@ -18,37 +18,53 @@ const router = express.Router({
 router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
   const { userId } = request.params;
+  const { search } = request.query;
 
-  if (!userId) {
-    throw new Error('A user id must be provided.');
+  if (!userId && !search) {
+    throw new Error('A user id or search must be provided.');
   }
 
-  const user = await UserModel.findOne({
-    attributes: [
-      'id',
-      'username',
-      'name',
-      'about',
-      [ database.fn('COUNT', database.col('userFollowers.id')), 'followersCount' ],
-    ],
-    include: [
-      {
-        model: AttachmentModel.scope('avatar'),
-        as: 'avatarAttachment',
-      },
-      {
-        attributes: [],
-        model: UserFollowerModel.unscoped(),
-      },
-    ],
-    where: { id: userId },
-  });
+  if (userId) {
+    const user = await UserModel.findOne({
+      attributes: [
+        'id',
+        'username',
+        'name',
+        'about',
+        [ database.fn('COUNT', database.col('userFollowers.id')), 'followersCount' ],
+      ],
+      include: [
+        {
+          model: AttachmentModel.scope('avatar'),
+          as: 'avatarAttachment',
+        },
+        {
+          attributes: [],
+          model: UserFollowerModel.unscoped(),
+        },
+      ],
+      where: { id: userId },
+    });
 
-  if (!user) {
-    throw new Error('This user does not exist.');
+    if (!user) {
+      throw new Error('This user does not exist.');
+    }
+
+    return response.success(user);
   }
 
-  return response.success(user);
+  if (search) {
+    const users = await UserModel.findAll({
+      where: {
+        [Sequelize.Op.or]: {
+          name: { [Sequelize.Op.startsWith]: search },
+          username: { [Sequelize.Op.startsWith]: search },
+        },
+      },
+    });
+
+    return response.success(users);
+  }
 }));
 
 /*

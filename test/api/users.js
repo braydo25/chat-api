@@ -94,6 +94,20 @@ describe('Users', () => {
         });
     });
 
+    it('200s with an array of user objects when provided search', done => {
+      chai.request(server)
+        .get('/users')
+        .query({ search: 'bray' })
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          done();
+        });
+    });
+
     helpers.it401sWhenUserAuthorizationIsInvalid('get', `/users/${testUserTwo.id}`);
   });
 

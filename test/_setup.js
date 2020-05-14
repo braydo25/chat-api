@@ -186,6 +186,12 @@ before(done => {
     const createdTestUserFourResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserThree, { phoneLoginCode: '000000' }));
     Object.assign(testUserFour, createdTestUserFourResponse.body);
 
+    fatLog('Updating global test user one...');
+    await chai.request(server)
+      .patch('/users')
+      .set('X-Access-Token', testUserOne.accessToken)
+      .send({ name: 'braydon' });
+
     fatLog('Creating global test conversation one...');
     const createdTestConversationOne = await chai.request(server)
       .post('/conversations')
