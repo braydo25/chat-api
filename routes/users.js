@@ -57,8 +57,8 @@ router.get('/', asyncMiddleware(async (request, response) => {
     const users = await UserModel.findAll({
       where: {
         [Sequelize.Op.or]: {
-          name: { [Sequelize.Op.startsWith]: search },
-          username: { [Sequelize.Op.startsWith]: search },
+          name: { [Sequelize.Op.like]: `${search}%` },
+          username: { [Sequelize.Op.like]: `${search}%` },
         },
       },
     });
