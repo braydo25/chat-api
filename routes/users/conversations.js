@@ -20,6 +20,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
   const accessLevel = (user.id === userId) ? [ 'public', 'protected', 'private' ] : [ 'public', 'protected' ];
   const conversations = await ConversationModel.scope('complete').findAll({
     where: { userId, accessLevel },
+    order: [ [ 'createdAt', 'DESC' ] ],
   });
 
   response.success(conversations);

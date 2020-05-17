@@ -26,6 +26,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
 
   const conversations = await ConversationModel.scope('complete').findAll({
     where: { id: conversationIds },
+    order: [ [ 'createdAt', 'DESC' ] ],
   });
 
   response.success(conversations);

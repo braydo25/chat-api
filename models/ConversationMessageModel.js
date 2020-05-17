@@ -23,6 +23,9 @@ const ConversationMessageModel = database.define('conversationMessage', {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
+  nonce: {
+    type: Sequelize.STRING,
+  },
   text: {
     type: Sequelize.TEXT,
   },

@@ -161,7 +161,7 @@ describe('Conversations', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('patch', '/conversations');
+    helpers.it401sWhenUserAuthorizationIsInvalid('patch', '/conversations/1');
   });
 
   /*
@@ -180,6 +180,6 @@ describe('Conversations', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('delete', '/conversations');
+    helpers.it401sWhenUserAuthorizationIsInvalid('delete', '/conversations/1');
   });
 });

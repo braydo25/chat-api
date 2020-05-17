@@ -23,6 +23,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
   const conversationMessages = await ConversationMessageModel.findAll({
     where: { conversationId: conversation.id },
+    order: [ [ 'createdAt', 'DESC' ] ],
   });
 
   response.success(conversationMessages);
@@ -37,7 +38,7 @@ router.post('/', conversationAssociate);
 router.post('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_MESSAGES_CREATE' ] }));
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user, conversation } = request;
-  const { text, attachments, embeds } = request.body;
+  const { nonce, text, attachments, embeds } = request.body;
 
   const transaction = await database.transaction();
 
@@ -46,6 +47,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
       data: {
         userId: user.id,
         conversationId: conversation.id,
+        nonce,
         text,
       },
       attachmentIds: attachments,

@@ -11,6 +11,7 @@ describe('Conversation Messages', () => {
     it('200s with created conversation message object', done => {
       const fields = {
         text: 'No, this is a mcdonalds',
+        nonce: 'fe0d0354-9796-11ea-bb37-0242ac130002',
       };
 
       chai.request(server)
@@ -23,6 +24,7 @@ describe('Conversation Messages', () => {
           response.body.should.be.an('object');
           response.body.userId.should.equal(testUserOne.id);
           response.body.text.should.equal(fields.text);
+          response.body.nonce.should.equal(fields.nonce);
           scopedConversationMessage = response.body;
           done();
         });
