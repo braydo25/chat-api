@@ -13,7 +13,7 @@ const userFollowersRouter = rootRequire('/routes/users/followers');
 module.exports = app => {
   // API Route Definitions
   app.use('/attachments', attachmentsRouter);
-  app.use('/conversations/:conversationId?', conversationsRouter);
+  app.use('/conversations', conversationsRouter);
   app.use('/conversations/:conversationId/messages/:conversationMessageId?', conversationMessagesRouter);
   app.use('/conversations/:conversationId/messages/:conversationMessageId/reactions/:conversationMessageReactionId?', conversationMessageReactionsRouter);
   app.use('/conversations/:conversationId/typing', conversationTypingRouter);

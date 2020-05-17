@@ -5,8 +5,10 @@
 const ConversationModel = rootRequire('/models/ConversationModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
+const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const conversationAuthorize = rootRequire('/middlewares/conversations/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
+const userConversationPermissions = rootRequire('/middlewares/users/conversations/permissions');
 
 const router = express.Router({
   mergeParams: true,
@@ -24,12 +26,24 @@ router.get('/', asyncMiddleware(async (request, response) => {
     where: { userId: user.id },
   })).map(conversationUser => conversationUser.conversationId);
 
-  const conversations = await ConversationModel.scope('complete').findAll({
+  const conversations = await ConversationModel.scope('preview').findAll({
     where: { id: conversationIds },
     order: [ [ 'createdAt', 'DESC' ] ],
   });
 
   response.success(conversations);
+}));
+
+router.get('/:conversationId', userAuthorize);
+router.get('/:conversationId', conversationAssociate);
+router.get('/:conversationId', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_MESSAGES_READ' ] }));
+router.get('/:conversationId', asyncMiddleware(async (request, response) => {
+  const { conversation } = request;
+  const completeConversation = await ConversationModel.scope('complete').findOne({
+    where: { id: conversation.id },
+  });
+
+  response.success(completeConversation);
 }));
 
 /*
@@ -101,9 +115,9 @@ router.post('/', asyncMiddleware(async (request, response) => {
  * PATCH
  */
 
-router.patch('/', userAuthorize);
-router.patch('/', conversationAuthorize);
-router.patch('/', asyncMiddleware(async (request, response) => {
+router.patch('/:conversationId', userAuthorize);
+router.patch('/:conversationId', conversationAuthorize);
+router.patch('/:conversationId', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
 
   conversation.accessLevel = request.body.accessLevel || conversation.accessLevel;
@@ -117,9 +131,9 @@ router.patch('/', asyncMiddleware(async (request, response) => {
  * DELETE
  */
 
-router.delete('/', userAuthorize);
-router.delete('/', conversationAuthorize);
-router.delete('/', asyncMiddleware(async (request, response) => {
+router.delete('/:conversationId', userAuthorize);
+router.delete('/:conversationId', conversationAuthorize);
+router.delete('/:conversationId', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
 
   await conversation.destroy();

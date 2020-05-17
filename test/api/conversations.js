@@ -117,6 +117,24 @@ describe('Conversations', () => {
    */
 
   describe('GET /conversations', () => {
+    it('200s with conversation object when provided conversation id', done => {
+      chai.request(server)
+        .get(`/conversations/${scopedConversation.id}`)
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('object');
+          response.body.should.have.property('id');
+          response.body.should.have.property('accessLevel');
+          response.body.should.have.property('createdAt');
+          response.body.conversationMessages.should.be.an('array');
+          response.body.conversationUsers.should.be.an('array');
+          response.body.user.should.be.an('object');
+          done();
+        });
+    });
+
     it('200s with an array of conversation objects the user is a part of', done => {
       chai.request(server)
         .get('/conversations')

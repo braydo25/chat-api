@@ -48,6 +48,23 @@ const ConversationModel = database.define('conversation', {
       ],
       include: [
         {
+          model: ConversationMessageModel.unscoped(),
+          separate: true,
+          order: [ [ 'id', 'DESC' ] ],
+          limit: 25,
+        },
+        ConversationUserModel,
+        UserModel,
+      ],
+    },
+    preview: {
+      attributes: [
+        'id',
+        'accessLevel',
+        'createdAt',
+      ],
+      include: [
+        {
           model: ConversationMessageModel,
           as: 'previewConversationMessage',
         },
