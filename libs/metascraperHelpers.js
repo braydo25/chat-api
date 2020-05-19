@@ -18,6 +18,8 @@ const metascraper = require('metascraper')([
 ]);
 
 async function extractMetadata(targetUrl) {
+  targetUrl = (!targetUrl.includes('http')) ? `http://${targetUrl}` : targetUrl;
+
   const { headers, body, url } = await got(targetUrl);
   const metadata = await metascraper({ html: body, url });
 
