@@ -30,11 +30,14 @@ const EmbedModel = database.define('embed', {
   date: {
     type: Sequelize.DATE,
   },
-  url: {
-    type: Sequelize.TEXT,
+  contentType: {
+    type: Sequelize.STRING,
   },
   responseHeaders: {
     type: Sequelize.JSON,
+  },
+  url: {
+    type: Sequelize.TEXT,
   },
   logoUrl: {
     type: Sequelize.TEXT,
