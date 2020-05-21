@@ -61,6 +61,7 @@ const EmbedModel = database.define('embed', {
       'author',
       'publisher',
       'date',
+      'contentType',
       'url',
       'logoUrl',
       'audioUrl',
