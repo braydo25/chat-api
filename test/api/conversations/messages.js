@@ -34,6 +34,7 @@ describe('Conversation Messages', () => {
       const fields = {
         attachments: [ testAttachmentOne.id ],
         embeds: [ testEmbedOne.id ],
+        nonce: 'attachio12412',
       };
 
       chai.request(server)

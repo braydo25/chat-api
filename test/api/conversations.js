@@ -13,6 +13,7 @@ describe('Conversations', () => {
         accessLevel: 'public',
         message: {
           text: 'test test test!',
+          nonce: '11h1h1h1h111',
         },
       };
 
@@ -43,6 +44,7 @@ describe('Conversations', () => {
         message: {
           attachments: [ testAttachmentOne.id ],
           embeds: [ testEmbedOne.id ],
+          nonce: 'yoyoyoyo',
         },
         users: [ testUserTwo.id ],
       };

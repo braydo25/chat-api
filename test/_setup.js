@@ -29,6 +29,7 @@ global.testConversationOne = {
   accessLevel: 'public',
   message: {
     text: 'Sir, this is a wendys',
+    nonce: 'abcdefg',
   },
 };
 
@@ -36,6 +37,7 @@ global.testConversationTwo = {
   accessLevel: 'private',
   message: {
     text: 'testing private',
+    nonce: 'aiwdaiwjd',
   },
   users: [ 1 ],
 };
@@ -44,6 +46,7 @@ global.testConversationThree = {
   accessLevel: 'public',
   message: {
     text: 'testing public',
+    nonce: '777wdahwd',
   },
   users: [ 1 ],
 };
@@ -52,6 +55,7 @@ global.testConversationOneUserOne = {};
 
 global.testConversationOneMessageOne = {
   text: 'This is a test',
+  nonce: '73773711',
 };
 
 global.testConversationOneMessageOneReactionOne = {
@@ -62,6 +66,7 @@ global.testPermissionsPublicConversation = {
   accessLevel: 'public',
   message: {
     text: 'this is a public convo!',
+    nonce: '8441hfaiheu3',
   },
   users: [ 1, 2, 3 ],
 };
@@ -77,6 +82,7 @@ global.testPermissionsProtectedConversation = {
   accessLevel: 'protected',
   message: {
     text: 'this is a protected convo!',
+    nonce: 'b3ufb37f1038',
   },
   users: [ 1, 2, 3 ],
 };
@@ -92,6 +98,7 @@ global.testPermissionsPrivateConversation = {
   accessLevel: 'private',
   message: {
     text: 'this is a private convo!',
+    nonce: '0199191',
   },
   users: [ 1, 2, 3 ],
 };

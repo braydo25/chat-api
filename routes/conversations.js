@@ -87,6 +87,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
         conversationId: conversation.id,
         userId: user.id,
         text: message.text,
+        nonce: message.nonce,
       },
       attachmentIds: attachments,
       embedIds: embeds,
