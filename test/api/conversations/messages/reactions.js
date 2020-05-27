@@ -74,6 +74,24 @@ describe('Conversation Message Reactions', () => {
         });
     });
 
+    it('200s with new conversation reaction message object when user has already reacted with a different reaction', done => {
+      const fields = {
+        reaction: '🍚',
+      };
+
+      chai.request(server)
+        .put(`/conversations/${testConversationOne.id}/messages/${testConversationOneMessageOne.id}/reactions`)
+        .set('X-Access-Token', testUserOne.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('object');
+          response.body.reaction.should.equal(fields.reaction);
+          done();
+        });
+    });
+
     it('400s when conversation message reaction content is greater than 3 characters', done => {
       const fields = {
         reaction: '🔥🔥🔥🔥',

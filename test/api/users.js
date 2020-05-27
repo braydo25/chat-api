@@ -97,7 +97,7 @@ describe('Users', () => {
     it('200s with an array of user objects when provided search', done => {
       chai.request(server)
         .get('/users')
-        .query({ search: 'bray' })
+        .query({ search: 'BrAy' })
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);

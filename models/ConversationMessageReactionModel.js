@@ -29,6 +29,7 @@ const ConversationMessageReactionModel = database.define('conversationMessageRea
     },
   },
 }, {
+  collate: 'utf8mb4_bin',
   defaultScope: {
     attributes: [
       'id',
