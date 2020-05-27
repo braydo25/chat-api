@@ -44,12 +44,14 @@ describe('Conversation Message Reactions', () => {
                 .set('X-Access-Token', testUserOne.accessToken)
                 .end((error, response) => {
                   response.should.have.status(200);
-                  response.body.find(message => {
+                  const message = response.body.find(message => {
                     return message.id === testConversationOneMessageOne.id;
-                  }).conversationMessageReactions.should.deep.include({
+                  });
+                  message.conversationMessageReactions.should.deep.include({
                     reaction: fields.reaction,
                     count: 2,
                   });
+                  message.authUserConversationMessageReactions.length.should.be.at.least(1);
                   done();
                 });
             });

@@ -17,6 +17,7 @@ ConversationModel.hasMany(ConversationUserModel);
 ConversationMessageModel.belongsToMany(AttachmentModel, { through: ConversationMessageAttachmentModel });
 ConversationMessageModel.belongsToMany(EmbedModel, { through: ConversationMessageEmbedModel });
 ConversationMessageModel.hasMany(ConversationMessageReactionModel);
+ConversationMessageModel.hasMany(ConversationMessageReactionModel, { as: 'authUserConversationMessageReactions' });
 ConversationMessageModel.belongsTo(UserModel);
 
 ConversationMessageReactionModel.belongsTo(UserModel);

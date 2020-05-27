@@ -100,6 +100,8 @@ describe('Conversation Messages', () => {
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversationMessage => {
             conversationMessage.should.have.property('user');
+            conversationMessage.should.have.property('conversationMessageReactions');
+            conversationMessage.should.have.property('authUserConversationMessageReactions');
             conversationMessage.should.have.property('createdAt');
             conversationMessage.should.have.property('updatedAt');
             conversationMessage.user.should.have.property('id');
