@@ -47,7 +47,7 @@ const ConversationMessageModel = database.define('conversationMessage', {
         ],
         model: ConversationMessageReactionModel.unscoped(),
         separate: true,
-        group: [ 'reaction' ],
+        group: [ 'conversationMessageId', 'reaction' ],
       },
       {
         attributes: [
