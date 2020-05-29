@@ -49,17 +49,25 @@ const ConversationMessageModel = database.define('conversationMessage', {
         separate: true,
         group: [ 'conversationMessageId', 'reaction' ],
       },
-      {
-        attributes: [
-          'id',
-          'reaction',
-        ],
-        model: ConversationMessageReactionModel.unscoped(),
-        as: 'authUserConversationMessageReactions',
-      },
       EmbedModel,
       UserModel,
     ],
+  },
+  scopes: {
+    withAuthUserReactions: userId => ({
+      include: [
+        {
+          attributes: [
+            'id',
+            'reaction',
+          ],
+          model: ConversationMessageReactionModel.unscoped(),
+          as: 'authUserConversationMessageReactions',
+          where: { userId },
+          required: false,
+        },
+      ],
+    }),
   },
 });
 

@@ -40,7 +40,7 @@ const ConversationModel = database.define('conversation', {
     ],
   },
   scopes: {
-    complete: {
+    complete: userId => ({
       attributes: [
         'id',
         'accessLevel',
@@ -48,7 +48,9 @@ const ConversationModel = database.define('conversation', {
       ],
       include: [
         {
-          model: ConversationMessageModel.unscoped(),
+          model: ConversationMessageModel.scope([
+            { method: [ 'withAuthUserReactions', userId ] },
+          ]),
           separate: true,
           order: [ [ 'id', 'DESC' ] ],
           limit: 25,
@@ -56,7 +58,7 @@ const ConversationModel = database.define('conversation', {
         ConversationUserModel,
         UserModel,
       ],
-    },
+    }),
     preview: {
       attributes: [
         'id',

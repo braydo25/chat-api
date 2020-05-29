@@ -20,8 +20,11 @@ router.get('/', userAuthorize);
 router.get('/', conversationAssociate);
 router.get('/', userConversationPermissions({ private: [ 'CONVERSATION_MESSAGES_READ' ] }));
 router.get('/', asyncMiddleware(async (request, response) => {
-  const { conversation } = request;
-  const conversationMessages = await ConversationMessageModel.findAll({
+  const { conversation, user } = request;
+  const conversationMessages = await ConversationMessageModel.scope([
+    'defaultScope',
+    { method: [ 'withAuthUserReactions', user.id ] },
+  ]).findAll({
     where: { conversationId: conversation.id },
     order: [ [ 'createdAt', 'DESC' ] ],
   });

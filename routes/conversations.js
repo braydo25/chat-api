@@ -38,8 +38,8 @@ router.get('/:conversationId', userAuthorize);
 router.get('/:conversationId', conversationAssociate);
 router.get('/:conversationId', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_MESSAGES_READ' ] }));
 router.get('/:conversationId', asyncMiddleware(async (request, response) => {
-  const { conversation } = request;
-  const completeConversation = await ConversationModel.scope('complete').findOne({
+  const { conversation, user } = request;
+  const completeConversation = await ConversationModel.scope({ method: [ 'complete', user.id ] }).findOne({
     where: { id: conversation.id },
   });
 
