@@ -19,7 +19,16 @@ describe('User Followers', () => {
           response.body.userId.should.be.oneOf([ testUserTwo.id, `${testUserTwo.id}` ]); // TODO: string param in url makes userId (int in db) returned a string, weird.
           response.body.followerUserId.should.equal(testUserOne.id);
           scopedUserFollower = response.body;
-          done();
+
+          chai.request(server)
+            .get(`/users/${testUserTwo.id}`)
+            .set('X-Access-Token', testUserOne.accessToken)
+            .end((error, response) => {
+              response.should.have.status(200);
+              response.body.authUserFollower.should.be.an('object');
+              response.body.authUserFollower.id.should.equal(scopedUserFollower.id);
+              done();
+            });
         });
     });
 

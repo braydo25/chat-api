@@ -42,6 +42,11 @@ router.get('/', asyncMiddleware(async (request, response) => {
           attributes: [],
           model: UserFollowerModel.unscoped(),
         },
+        {
+          model: UserFollowerModel.unscoped(),
+          as: 'authUserFollower',
+          where: { followerUserId: request.user.id },
+        },
       ],
       where: { id: userId },
     });

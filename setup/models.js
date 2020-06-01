@@ -30,6 +30,7 @@ UserModel.hasMany(AttachmentModel, { constraints: false });
 UserModel.hasMany(ConversationModel);
 UserModel.hasMany(EmbedModel);
 UserModel.hasMany(UserFollowerModel);
+UserModel.hasOne(UserFollowerModel, { as: 'authUserFollower', foreignKey: 'userId' });
 
 UserFollowerModel.belongsTo(UserModel);
 UserFollowerModel.belongsTo(UserModel, { as: 'followerUser' });
