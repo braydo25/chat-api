@@ -29,6 +29,11 @@ const ConversationMessageModel = database.define('conversationMessage', {
   },
   text: {
     type: Sequelize.TEXT,
+    set(text) {
+      if (text) {
+        this.setDataValue('text', text.trim());
+      }
+    },
   },
 }, {
   defaultScope: {
