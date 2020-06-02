@@ -137,6 +137,21 @@ describe('Conversations', () => {
         });
     });
 
+    it('200s with conversation object when provided user ids that are a part of existing conversation that includes authenticated user', done => {
+      console.log(testPermissionsPrivateConversation);
+      chai.request(server)
+        .get('/conversations')
+        .query({ privateUserIds: [ testPermissionsPrivateConversation.users ] })
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('object');
+          response.body.id.should.equal(testPermissionsPrivateConversation.id);
+          done();
+        });
+    });
+
     it('200s with an array of conversation objects the user is a part of', done => {
       chai.request(server)
         .get('/conversations')

@@ -21,6 +21,17 @@ const router = express.Router({
 router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
+  const { privateUserIds } = request.query;
+
+  if (privateUserIds) {
+    const privateConversation = await ConversationModel.findOneWithUsers({
+      authUserId: user.id,
+      userIds: [ ...new Set([ user.id, ...privateUserIds.map(id => +id) ]) ],
+      where: { accessLevel: 'private' },
+    });
+
+    return response.success(privateConversation);
+  }
 
   const conversationIds = (await ConversationUserModel.scope('complete').findAll({
     where: { userId: user.id },
@@ -63,7 +74,8 @@ router.post('/', asyncMiddleware(async (request, response) => {
 
   if (accessLevel === 'private') {
     const existingConversation = await ConversationModel.findOneWithUsers({
-      userIds: [ user.id, ...users ],
+      authUserId: user.id,
+      userIds: [ ...new Set([ user.id, ...users.map(id => +id) ]) ],
       where: { accessLevel: 'private' },
     });
 

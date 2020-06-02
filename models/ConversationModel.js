@@ -88,7 +88,7 @@ const ConversationModel = database.define('conversation', {
  */
 
 ConversationModel.createWithAssociations = async function({ data, userIds = [], transaction }) {
-  userIds = [ ...new Set([ data.userId, ...userIds ]) ];
+  userIds = [ ...new Set([ data.userId, ...userIds.map(id => +id) ]) ];
 
   const conversation = await ConversationModel.create(data, { transaction });
 
@@ -125,8 +125,8 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
   return conversation;
 };
 
-ConversationModel.findOneWithUsers = async function({ userIds, where }) {
-  userIds = [ ...(new Set(userIds)) ];
+ConversationModel.findOneWithUsers = async function({ authUserId, userIds, where }) {
+  userIds = [ ...new Set(userIds) ];
 
   const match = await ConversationUserModel.unscoped().findOne({
     attributes: [ 'conversationId' ],
@@ -145,7 +145,7 @@ ConversationModel.findOneWithUsers = async function({ userIds, where }) {
     ].join(' ')),
   });
 
-  const conversation = (match) ? await ConversationModel.findOne({
+  const conversation = (match) ? await ConversationModel.scope({ method: [ 'complete', authUserId ] }).findOne({
     where: { id: match.conversationId },
   }) : undefined;
 
