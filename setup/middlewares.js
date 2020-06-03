@@ -1,6 +1,7 @@
 const compression = require('compression');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
+const jsonQuery = rootRequire('/middlewares/jsonQuery');
 const logging = rootRequire('/middlewares/logging');
 const serverConfig = rootRequire('/config/server');
 
@@ -16,8 +17,9 @@ module.exports = app => {
     limit: serverConfig.maxRequestBodySize,
   }));
 
-
   app.use(fileUpload());
+
+  app.use(jsonQuery);
 
   app.use(logging);
 };

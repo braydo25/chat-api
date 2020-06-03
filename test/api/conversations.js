@@ -140,8 +140,7 @@ describe('Conversations', () => {
     it('200s with conversation object when provided user ids that are a part of existing conversation that includes authenticated user', done => {
       console.log(testPermissionsPrivateConversation);
       chai.request(server)
-        .get('/conversations')
-        .query({ privateUserIds: [ testPermissionsPrivateConversation.users ] })
+        .get(`/conversations?privateUserIds=${encodeURIComponent(JSON.stringify(testPermissionsPrivateConversation.users))}`)
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
