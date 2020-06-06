@@ -31,11 +31,15 @@ const ConversationModel = database.define('conversation', {
       },
     },
   },
+  title: {
+    type: Sequelize.STRING,
+  },
 }, {
   defaultScope: {
     attributes: [
       'id',
       'accessLevel',
+      'title',
       'createdAt',
     ],
   },
@@ -44,6 +48,7 @@ const ConversationModel = database.define('conversation', {
       attributes: [
         'id',
         'accessLevel',
+        'title',
         'createdAt',
       ],
       include: [
@@ -63,6 +68,7 @@ const ConversationModel = database.define('conversation', {
       attributes: [
         'id',
         'accessLevel',
+        'title',
         'createdAt',
       ],
       include: [

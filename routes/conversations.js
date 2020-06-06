@@ -64,7 +64,7 @@ router.get('/:conversationId', asyncMiddleware(async (request, response) => {
 router.post('/', userAuthorize);
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
-  const { accessLevel } = request.body;
+  const { accessLevel, title } = request.body;
   const message = request.body.message || {};
   const attachments = (Array.isArray(message.attachments)) ? message.attachments : [];
   const embeds = (Array.isArray(message.embeds)) ? message.embeds : [];
@@ -89,6 +89,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
       data: {
         userId: user.id,
         accessLevel,
+        title,
       },
       userIds: users,
       transaction,
@@ -134,6 +135,7 @@ router.patch('/:conversationId', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
 
   conversation.accessLevel = request.body.accessLevel || conversation.accessLevel;
+  conversation.title = request.body.title || conversation.title;
 
   await conversation.save();
 

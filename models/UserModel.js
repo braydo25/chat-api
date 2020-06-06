@@ -90,7 +90,7 @@ UserModel.prototype.updateAndSendPhoneLoginCode = async function() {
   if (process.env.NODE_ENV !== 'local') {
     await awsHelpers.sendTextMessage({
       phoneNumber: this.phone,
-      message: `Hey, this is Chat! Your one-time passcode is: ${this.phoneLoginCode}`,
+      message: `Hey, this is Babble! Your one-time passcode is: ${this.phoneLoginCode}`,
     });
   }
 

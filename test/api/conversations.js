@@ -11,6 +11,7 @@ describe('Conversations', () => {
     it('200s with created conversation object', done => {
       const fields = {
         accessLevel: 'public',
+        title: 'Testing this convo!!',
         message: {
           text: 'test test test!',
           nonce: '11h1h1h1h111',
@@ -26,7 +27,8 @@ describe('Conversations', () => {
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.userId.should.equal(testUserOne.id);
-          response.body.accessLevel.should.equal(fields.accessLevel),
+          response.body.accessLevel.should.equal(fields.accessLevel);
+          response.body.title.should.equal(fields.title);
           response.body.previewConversationMessage.should.be.an('object');
           response.body.conversationMessages.should.be.an('array');
           response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
@@ -181,6 +183,7 @@ describe('Conversations', () => {
     it('200s with updated conversation object', done => {
       const fields = {
         accessLevel: 'private',
+        title: 'Private message title test',
       };
 
       chai.request(server)
@@ -191,6 +194,7 @@ describe('Conversations', () => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.accessLevel.should.equal(fields.accessLevel);
+          response.body.title.should.equal(fields.title);
           done();
         });
     });
