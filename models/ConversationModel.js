@@ -19,6 +19,9 @@ const ConversationModel = database.define('conversation', {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
+  previewConversationMessageId: {
+    type: Sequelize.INTEGER(10).UNSIGNED,
+  },
   accessLevel: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -67,7 +70,7 @@ const ConversationModel = database.define('conversation', {
         'accessLevel',
         'title',
         'createdAt',
-        [ database.fn('COUNT', database.col('conversationImpressions.id')), 'impressionsCount' ],
+        [ database.fn('COUNT', 'conversationImpressions.id'), 'impressionsCount' ],
       ],
       include: [
         {
@@ -77,6 +80,7 @@ const ConversationModel = database.define('conversation', {
         {
           model: ConversationUserModel,
           as: 'previewConversationUsers',
+          // limit: 5, TODO: this fails and causes a query with duplicate left joins?
         },
         {
           attributes: [],
@@ -84,6 +88,7 @@ const ConversationModel = database.define('conversation', {
         },
         UserModel,
       ],
+      group: [ 'conversation.id' ], // TODO: This forces a filesort but is required for current setup of conversation impression... This will bottleneck.
     },
   },
 });

@@ -58,6 +58,10 @@ router.post('/', asyncMiddleware(async (request, response) => {
       transaction,
     });
 
+    conversation.previewConversationMessageId = conversationMessage.id;
+
+    await conversation.save({ transaction });
+
     await transaction.commit();
 
     response.success(conversationMessage);
