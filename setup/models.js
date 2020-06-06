@@ -1,6 +1,7 @@
 const AttachmentModel = rootRequire('/models/AttachmentModel');
 const ConversationModel = rootRequire('/models/ConversationModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
+const ConversationImpressionModel = rootRequire('/models/ConversationImpressionModel');
 const ConversationMessageAttachmentModel = rootRequire('/models/ConversationMessageAttachmentModel');
 const ConversationMessageEmbedModel = rootRequire('/models/ConversationMessageEmbedModel');
 const ConversationMessageReactionModel = rootRequire('/models/ConversationMessageReactionModel');
@@ -11,6 +12,7 @@ const UserFollowerModel = rootRequire('/models/UserFollowerModel');
 
 ConversationModel.belongsTo(UserModel);
 ConversationModel.belongsTo(ConversationMessageModel, { as: 'previewConversationMessage', constraints: false });
+ConversationModel.hasMany(ConversationImpressionModel);
 ConversationModel.hasMany(ConversationMessageModel);
 ConversationModel.hasMany(ConversationUserModel);
 

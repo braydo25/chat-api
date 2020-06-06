@@ -163,6 +163,7 @@ describe('Conversations', () => {
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversation => {
+            conversation.impressionsCount.should.be.a('number');
             conversation.previewConversationMessage.should.be.an('object');
             conversation.conversationMessages.should.be.an('array');
             conversation.conversationUsers.should.be.an('array');

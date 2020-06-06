@@ -3,6 +3,7 @@
  */
 
 const ConversationModel = rootRequire('/models/ConversationModel');
+const ConversationImpressionModel = rootRequire('/models/ConversationImpressionModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
@@ -52,6 +53,11 @@ router.get('/:conversationId', asyncMiddleware(async (request, response) => {
   const { conversation, user } = request;
   const completeConversation = await ConversationModel.scope({ method: [ 'complete', user.id ] }).findOne({
     where: { id: conversation.id },
+  });
+
+  ConversationImpressionModel.create({
+    userId: user.id,
+    conversationId: conversation.id,
   });
 
   response.success(completeConversation);

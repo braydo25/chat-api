@@ -1,4 +1,5 @@
 const UserModel = rootRequire('/models/UserModel');
+const ConversationImpressionModel = rootRequire('/models/ConversationImpressionModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 
@@ -70,6 +71,7 @@ const ConversationModel = database.define('conversation', {
         'accessLevel',
         'title',
         'createdAt',
+        [ database.fn('COUNT', database.col('conversationImpressions.id')), 'impressionsCount' ],
       ],
       include: [
         {
@@ -81,6 +83,10 @@ const ConversationModel = database.define('conversation', {
           separate: true,
           order: [ [ 'id', 'DESC' ] ],
           limit: 5,
+        },
+        {
+          attributes: [],
+          model: ConversationImpressionModel.unscoped(),
         },
         ConversationUserModel,
         UserModel,
