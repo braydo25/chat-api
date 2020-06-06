@@ -15,8 +15,6 @@ describe('User Conversations', () => {
         response.body.should.be.an('array');
         response.body.length.should.be.at.least(1);
         response.body.forEach(conversation => {
-          conversation.conversationMessages.should.be.an('array');
-          conversation.conversationUsers.should.be.an('array');
           conversation.user.should.be.an('object');
           conversation.user.id.should.equal(testUserOne.id);
         });
@@ -35,8 +33,6 @@ describe('User Conversations', () => {
         response.body.length.should.be.at.least(1);
         response.body.forEach(conversation => {
           conversation.accessLevel.should.not.equal('private');
-          conversation.conversationMessages.should.be.an('array');
-          conversation.conversationUsers.should.be.an('array');
           conversation.user.should.be.an('object');
           conversation.user.id.should.equal(testUserTwo.id);
         });

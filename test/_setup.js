@@ -254,19 +254,19 @@ before(done => {
 
     fatLog('Setting global test permissions public conversation admin user...');
     Object.assign(testPermissionsPublicConversationAdminUser, testUserOne);
-    testPermissionsPublicConversationAdminConversationUser = testPermissionsPublicConversation.conversationUsers.find(conversationUser => {
+    testPermissionsPublicConversationAdminConversationUser = testPermissionsPublicConversation.previewConversationUsers.find(conversationUser => {
       return conversationUser.user.id === testUserOne.id;
     });
 
     fatLog('Setting global test permissions public conversation general user...');
     Object.assign(testPermissionsPublicConversationGeneralUser, testUserTwo);
-    testPermissionsPublicConversationGeneralConversationUser = testPermissionsPublicConversation.conversationUsers.find(conversationUser => {
+    testPermissionsPublicConversationGeneralConversationUser = testPermissionsPublicConversation.previewConversationUsers.find(conversationUser => {
       return conversationUser.user.id === testUserTwo.id;
     });
 
     fatLog('Setting global test permissions public conversation permissionless user...');
     Object.assign(testPermissionsPublicConversationPermissionlessUser, testUserThree);
-    testPermissionsPublicConversationPermissionlessConversationUser = testPermissionsPublicConversation.conversationUsers.find(conversationUser => {
+    testPermissionsPublicConversationPermissionlessConversationUser = testPermissionsPublicConversation.previewConversationUsers.find(conversationUser => {
       return conversationUser.user.id === testUserThree.id;
     });
 
@@ -288,19 +288,19 @@ before(done => {
 
     fatLog('Setting global test permissions protected conversation admin user...');
     Object.assign(testPermissionsProtectedConversationAdminUser, testUserOne);
-    testPermissionsProtectedConversationAdminConversationUser = testPermissionsProtectedConversation.conversationUsers.find(conversationUser => {
+    testPermissionsProtectedConversationAdminConversationUser = testPermissionsProtectedConversation.previewConversationUsers.find(conversationUser => {
       return conversationUser.user.id === testUserOne.id;
     });
 
     fatLog('Setting global test permissions protected conversation general user...');
     Object.assign(testPermissionsProtectedConversationGeneralUser, testUserTwo);
-    testPermissionsProtectedConversationGeneralConversationUser = testPermissionsProtectedConversation.conversationUsers.find(conversationUser => {
+    testPermissionsProtectedConversationGeneralConversationUser = testPermissionsProtectedConversation.previewConversationUsers.find(conversationUser => {
       return conversationUser.user.id === testUserTwo.id;
     });
 
     fatLog('Setting global test permissions protected conversation permissionless user...');
     Object.assign(testPermissionsProtectedConversationPermissionlessUser, testUserThree);
-    testPermissionsProtectedConversationPermissionlessConversationUser = testPermissionsProtectedConversation.conversationUsers.find(conversationUser => {
+    testPermissionsProtectedConversationPermissionlessConversationUser = testPermissionsProtectedConversation.previewConversationUsers.find(conversationUser => {
       return conversationUser.user.id === testUserThree.id;
     });
 
@@ -322,19 +322,19 @@ before(done => {
 
     fatLog('Setting global test permissions private conversation admin user...');
     Object.assign(testPermissionsPrivateConversationAdminUser, testUserOne);
-    testPermissionsPrivateConversationAdminConversationUser = testPermissionsPrivateConversation.conversationUsers.find(conversationUser => {
+    testPermissionsPrivateConversationAdminConversationUser = testPermissionsPrivateConversation.previewConversationUsers.find(conversationUser => {
       return conversationUser.user.id === testUserOne.id;
     });
 
     fatLog('Setting global test permissions private conversation general user...');
     Object.assign(testPermissionsPrivateConversationGeneralUser, testUserTwo);
-    testPermissionsPrivateConversationGeneralConversationUser = testPermissionsPrivateConversation.conversationUsers.find(conversationUser => {
+    testPermissionsPrivateConversationGeneralConversationUser = testPermissionsPrivateConversation.previewConversationUsers.find(conversationUser => {
       return conversationUser.user.id === testUserTwo.id;
     });
 
     fatLog('Setting global test permissions private conversation permissionless user...');
     Object.assign(testPermissionsPrivateConversationPermissionlessUser, testUserThree);
-    testPermissionsPrivateConversationPermissionlessConversationUser = testPermissionsPrivateConversation.conversationUsers.find(conversationUser => {
+    testPermissionsPrivateConversationPermissionlessConversationUser = testPermissionsPrivateConversation.previewConversationUsers.find(conversationUser => {
       return conversationUser.user.id === testUserThree.id;
     });
 

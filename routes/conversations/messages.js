@@ -58,12 +58,6 @@ router.post('/', asyncMiddleware(async (request, response) => {
       transaction,
     });
 
-    if (conversation.accessLevel === 'private') {
-      conversation.previewConversationMessageId = conversationMessage.id;
-
-      await conversation.save({ transaction });
-    }
-
     await transaction.commit();
 
     response.success(conversationMessage);

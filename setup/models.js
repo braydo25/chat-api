@@ -11,10 +11,11 @@ const UserModel = rootRequire('/models/UserModel');
 const UserFollowerModel = rootRequire('/models/UserFollowerModel');
 
 ConversationModel.belongsTo(UserModel);
-ConversationModel.belongsTo(ConversationMessageModel, { as: 'previewConversationMessage', constraints: false });
 ConversationModel.hasMany(ConversationImpressionModel);
 ConversationModel.hasMany(ConversationMessageModel);
 ConversationModel.hasMany(ConversationUserModel);
+ConversationModel.hasMany(ConversationUserModel, { as: 'previewConversationUsers' });
+ConversationModel.hasOne(ConversationMessageModel, { as: 'previewConversationMessage', foreignKey: 'conversationId' });
 
 ConversationMessageModel.belongsToMany(AttachmentModel, { through: ConversationMessageAttachmentModel });
 ConversationMessageModel.belongsToMany(EmbedModel, { through: ConversationMessageEmbedModel });

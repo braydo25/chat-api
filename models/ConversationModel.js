@@ -19,9 +19,6 @@ const ConversationModel = database.define('conversation', {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
-  previewConversationMessageId: {
-    type: Sequelize.INTEGER(10).UNSIGNED,
-  },
   accessLevel: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -61,7 +58,6 @@ const ConversationModel = database.define('conversation', {
           order: [ [ 'id', 'DESC' ] ],
           limit: 25,
         },
-        ConversationUserModel,
         UserModel,
       ],
     }),
@@ -79,16 +75,13 @@ const ConversationModel = database.define('conversation', {
           as: 'previewConversationMessage',
         },
         {
-          model: ConversationMessageModel.unscoped(),
-          separate: true,
-          order: [ [ 'id', 'DESC' ] ],
-          limit: 5,
+          model: ConversationUserModel,
+          as: 'previewConversationUsers',
         },
         {
           attributes: [],
           model: ConversationImpressionModel.unscoped(),
         },
-        ConversationUserModel,
         UserModel,
       ],
     },
@@ -126,7 +119,7 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
   }, { transaction });
 
   conversation.setDataValue('user', users.find(user => user.id === data.userId));
-  conversation.setDataValue('conversationUsers', conversationUsers);
+  conversation.setDataValue('previewConversationUsers', conversationUsers);
 
   conversationUsers.forEach(conversationUser => {
     conversationUser.setDataValue('user', users.find(user => {

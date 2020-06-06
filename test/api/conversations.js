@@ -30,11 +30,10 @@ describe('Conversations', () => {
           response.body.accessLevel.should.equal(fields.accessLevel);
           response.body.title.should.equal(fields.title);
           response.body.previewConversationMessage.should.be.an('object');
+          response.body.previewConversationUsers.should.be.an('array');
           response.body.conversationMessages.should.be.an('array');
           response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
           response.body.conversationMessages[0].text.should.equal(fields.message.text);
-          response.body.conversationUsers.should.be.an('array');
-          response.body.conversationUsers[0].userId.should.equal(testUserOne.id);
           scopedConversation = response.body;
           done();
         });
@@ -62,15 +61,13 @@ describe('Conversations', () => {
           response.body.userId.should.equal(testUserOne.id);
           response.body.accessLevel.should.equal(fields.accessLevel);
           response.body.previewConversationMessage.should.be.an('object');
+          response.body.previewConversationUsers.should.be.an('array');
           response.body.conversationMessages.should.be.an('array');
           response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
           response.body.conversationMessages[0].attachments.should.be.an('array');
           response.body.conversationMessages[0].attachments[0].id.should.equal(testAttachmentOne.id);
           response.body.conversationMessages[0].embeds.should.be.an('array');
           response.body.conversationMessages[0].embeds[0].id.should.equal(testEmbedOne.id);
-          response.body.conversationUsers.should.be.an('array');
-          response.body.conversationUsers[0].userId.should.equal(testUserOne.id);
-          response.body.conversationUsers[1].userId.should.equal(testUserTwo.id);
           done();
         });
     });
@@ -133,14 +130,12 @@ describe('Conversations', () => {
           response.body.should.have.property('accessLevel');
           response.body.should.have.property('createdAt');
           response.body.conversationMessages.should.be.an('array');
-          response.body.conversationUsers.should.be.an('array');
           response.body.user.should.be.an('object');
           done();
         });
     });
 
     it('200s with conversation object when provided user ids that are a part of existing conversation that includes authenticated user', done => {
-      console.log(testPermissionsPrivateConversation);
       chai.request(server)
         .get(`/conversations?privateUserIds=${encodeURIComponent(JSON.stringify(testPermissionsPrivateConversation.users))}`)
         .set('X-Access-Token', testUserOne.accessToken)
@@ -165,8 +160,7 @@ describe('Conversations', () => {
           response.body.forEach(conversation => {
             conversation.impressionsCount.should.be.a('number');
             conversation.previewConversationMessage.should.be.an('object');
-            conversation.conversationMessages.should.be.an('array');
-            conversation.conversationUsers.should.be.an('array');
+            conversation.previewConversationUsers.should.be.an('array');
             conversation.user.should.be.an('object');
           });
           done();
