@@ -36,7 +36,7 @@ const ConversationModel = database.define('conversation', {
   },
   impressionsCount: {
     type: Sequelize.INTEGER(10),
-    defaultValue: 0,
+    defaultValue: 1,
   },
   usersCount: {
     type: Sequelize.INTEGER(10),

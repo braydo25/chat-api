@@ -63,7 +63,7 @@ router.get('/:conversationId', asyncMiddleware(async (request, response) => {
       conversationId: conversation.id,
     }, { transaction });
 
-    conversation.conversationImpressionsCount++;
+    conversation.impressionsCount++;
 
     await conversation.save({ transaction });
 
