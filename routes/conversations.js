@@ -55,12 +55,26 @@ router.get('/:conversationId', asyncMiddleware(async (request, response) => {
     where: { id: conversation.id },
   });
 
-  ConversationImpressionModel.create({
-    userId: user.id,
-    conversationId: conversation.id,
-  });
+  const transaction = await database.transaction(); // temporary? at scale consistently locking row will cause bottleneck
 
-  response.success(completeConversation);
+  try {
+    ConversationImpressionModel.create({
+      userId: user.id,
+      conversationId: conversation.id,
+    }, { transaction });
+
+    conversation.conversationImpressionsCount++;
+
+    await conversation.save({ transaction });
+
+    await transaction.commit();
+
+    response.success(completeConversation);
+  } catch (error) {
+    await transaction.rollback();
+
+    throw error;
+  }
 }));
 
 /*

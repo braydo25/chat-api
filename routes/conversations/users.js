@@ -66,10 +66,26 @@ router.put('/', asyncMiddleware(async (request, response) => {
       data.permissions.push('CONVERSATION_USERS_CREATE');
     }
 
-    conversationUser = await ConversationUserModel.create(data);
-  }
+    const transaction = await database.transaction(); // temporary? at scale consistently locking row will cause bottleneck
 
-  response.success(conversationUser);
+    try {
+      conversationUser = await ConversationUserModel.create(data, { transaction });
+
+      conversation.usersCount++;
+
+      await conversation.save({ transaction });
+
+      await transaction.commit();
+
+      response.success(conversationUser);
+    } catch(error) {
+      await transaction.rollback();
+
+      throw error;
+    }
+  } else {
+    response.success(conversationUser);
+  }
 }));
 
 /*
@@ -99,11 +115,25 @@ router.delete('/', conversationAssociate);
 router.delete('/', conversationUserAssociate);
 router.delete('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_USERS_DELETE' ] }));
 router.delete('/', asyncMiddleware(async (request, response) => {
-  const { conversationUser } = request;
+  const { conversation, conversationUser } = request;
 
-  await conversationUser.destroy();
+  const transaction = await database.transaction();
 
-  response.success();
+  try {
+    await conversationUser.destroy({ transaction });
+
+    conversation.usersCount--;
+
+    await conversation.save({ transaction });
+
+    await transaction.commit();
+
+    response.success();
+  } catch (error) {
+    await transaction.rollback();
+
+    throw error;
+  }
 }));
 
 /*

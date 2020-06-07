@@ -1,5 +1,4 @@
 const UserModel = rootRequire('/models/UserModel');
-const ConversationImpressionModel = rootRequire('/models/ConversationImpressionModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 
@@ -35,12 +34,22 @@ const ConversationModel = database.define('conversation', {
   title: {
     type: Sequelize.STRING,
   },
+  impressionsCount: {
+    type: Sequelize.INTEGER(10),
+    defaultValue: 0,
+  },
+  usersCount: {
+    type: Sequelize.INTEGER(10),
+    defaultValue: 1,
+  },
 }, {
   defaultScope: {
     attributes: [
       'id',
       'accessLevel',
       'title',
+      'impressionsCount',
+      'usersCount',
       'createdAt',
     ],
   },
@@ -50,6 +59,8 @@ const ConversationModel = database.define('conversation', {
         'id',
         'accessLevel',
         'title',
+        'impressionsCount',
+        'usersCount',
         'createdAt',
       ],
       include: [
@@ -69,8 +80,9 @@ const ConversationModel = database.define('conversation', {
         'id',
         'accessLevel',
         'title',
+        'impressionsCount',
+        'usersCount',
         'createdAt',
-        [ database.fn('COUNT', 'conversationImpressions.id'), 'impressionsCount' ],
       ],
       include: [
         {
@@ -82,13 +94,8 @@ const ConversationModel = database.define('conversation', {
           as: 'previewConversationUsers',
           // limit: 5, TODO: this fails and causes a query with duplicate left joins?
         },
-        {
-          attributes: [],
-          model: ConversationImpressionModel.unscoped(),
-        },
         UserModel,
       ],
-      group: [ 'conversation.id' ], // TODO: This forces a filesort but is required for current setup of conversation impression... This will bottleneck.
     },
   },
 });
@@ -100,7 +107,10 @@ const ConversationModel = database.define('conversation', {
 ConversationModel.createWithAssociations = async function({ data, userIds = [], transaction }) {
   userIds = [ ...new Set([ data.userId, ...userIds.map(id => +id) ]) ];
 
-  const conversation = await ConversationModel.create(data, { transaction });
+  const conversation = await ConversationModel.create({
+    ...data,
+    usersCount: userIds.length,
+  }, { transaction });
 
   const conversationUsers = await ConversationUserModel.bulkCreate((
     userIds.map(userId => ({
