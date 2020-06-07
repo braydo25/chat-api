@@ -126,7 +126,7 @@ router.patch('/', asyncMiddleware(async (request, response) => {
   user.avatarAttachmentId = avatarAttachmentId || user.avatarAttachmentId;
   user.username = request.body.username || user.username;
   user.name = request.body.name || user.name;
-  user.about = request.body.about || user.about;
+  user.about = (request.body.about) ? request.body.about.trim() : user.about;
 
   user.setDataValue('avatarAttachment', attachment || user.avatarAttachment);
 
