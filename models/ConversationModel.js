@@ -1,6 +1,7 @@
 const UserModel = rootRequire('/models/UserModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
+const UserFollowerModel = rootRequire('/models/UserFollowerModel');
 
 const accessLevels = [ 'public', 'protected', 'private' ];
 
@@ -61,6 +62,7 @@ const ConversationModel = database.define('conversation', {
         'title',
         'impressionsCount',
         'usersCount',
+        'updatedAt',
         'createdAt',
       ],
       include: [
@@ -82,6 +84,7 @@ const ConversationModel = database.define('conversation', {
         'title',
         'impressionsCount',
         'usersCount',
+        'updatedAt',
         'createdAt',
       ],
       include: [
@@ -167,9 +170,49 @@ ConversationModel.findOneWithUsers = async function({ authUserId, userIds, where
 
   const conversation = (match) ? await ConversationModel.scope({ method: [ 'complete', authUserId ] }).findOne({
     where: { id: match.conversationId },
-  }) : undefined;
+  }) : null;
 
   return conversation;
+};
+
+ConversationModel.findAllWithUser = async function({ userId, where, order, limit }) {
+  return await ConversationModel.scope('preview').findAll({
+    include: [
+      {
+        attributes: [],
+        model: ConversationUserModel,
+        where: { userId },
+        required: true,
+      },
+    ],
+    where,
+    order,
+    limit,
+  });
+};
+
+ConversationModel.findAllByFollowedUsers = async function({ userId, order, limit }) {
+  const followedUsers = await UserFollowerModel.findAll({
+    attributes: [ 'userId' ],
+    where: { followerUserId: userId },
+  });
+
+  return await ConversationModel.scope('preview').findAll({
+    where: {
+      accessLevel: [ 'public', 'protected' ],
+      userId: followedUsers.map(followedUser => followedUser.userId),
+    } ,
+    order,
+    limit,
+  });
+};
+
+ConversationModel.findAllRelevantConversationsForUser = async function({ userId, order, limit }) {
+  return await ConversationModel.scope('preview').findAll({
+    where: { accessLevel: [ 'public', 'protected' ] },
+    order,
+    limit,
+  });
 };
 
 /*

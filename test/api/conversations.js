@@ -135,6 +135,47 @@ describe('Conversations', () => {
         });
     });
 
+    it('200s with an array of recent conversations for the provided access levels the authenticated user is a part of', done => {
+      chai.request(server)
+        .get(`/conversations?accessLevels=${encodeURIComponent(JSON.stringify([ 'public', 'protected' ]))}`)
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(conversation => {
+            conversation.accessLevel.should.satisfy(accessLevel => (
+              [ 'public', 'protected' ].includes(accessLevel)
+            ));
+            conversation.impressionsCount.should.be.a('number');
+            conversation.previewConversationMessage.should.be.an('object');
+            conversation.previewConversationUsers.should.be.an('array');
+            conversation.user.should.be.an('object');
+          });
+          done();
+        });
+    });
+
+    it('200s with an array of recent conversations started by users the authenticated user follows', done => {
+      chai.request(server)
+        .get('/conversations?feed=true')
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(conversation => {
+            conversation.impressionsCount.should.be.a('number');
+            conversation.previewConversationMessage.should.be.an('object');
+            conversation.previewConversationUsers.should.be.an('array');
+            conversation.user.should.be.an('object');
+          });
+          done();
+        });
+    });
+
     it('200s with conversation object when provided user ids that are a part of existing conversation that includes authenticated user', done => {
       chai.request(server)
         .get(`/conversations?privateUserIds=${encodeURIComponent(JSON.stringify(testPermissionsPrivateConversation.users))}`)
@@ -148,7 +189,7 @@ describe('Conversations', () => {
         });
     });
 
-    it('200s with an array of conversation objects the user is a part of', done => {
+    it('200s with an array of relevant conversations for the authenticated user', done => {
       chai.request(server)
         .get('/conversations')
         .set('X-Access-Token', testUserOne.accessToken)

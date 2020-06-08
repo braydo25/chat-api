@@ -24,7 +24,7 @@ describe('User Conversations', () => {
 
   it('200s with an array of public conversation objects for provided userId', done => {
     chai.request(server)
-      .get(`/users/${testUserTwo.id}/conversations`)
+      .get(`/users/${testUserThree.id}/conversations`)
       .set('X-Access-Token', testUserOne.accessToken)
       .end((error, response) => {
         helpers.logExampleResponse(response);
@@ -34,7 +34,7 @@ describe('User Conversations', () => {
         response.body.forEach(conversation => {
           conversation.accessLevel.should.not.equal('private');
           conversation.user.should.be.an('object');
-          conversation.user.id.should.equal(testUserTwo.id);
+          conversation.user.id.should.equal(testUserThree.id);
         });
         done();
       });

@@ -5,7 +5,6 @@
 const ConversationModel = rootRequire('/models/ConversationModel');
 const ConversationImpressionModel = rootRequire('/models/ConversationImpressionModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
-const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const conversationAuthorize = rootRequire('/middlewares/conversations/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
@@ -22,7 +21,28 @@ const router = express.Router({
 router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
-  const { privateUserIds } = request.query;
+  const { accessLevels, feed, privateUserIds, limit } = request.query;
+
+  if (accessLevels) {
+    const conversations = await ConversationModel.findAllWithUser({
+      userId: user.id,
+      where: { [Sequelize.Op.or]: accessLevels.map(accessLevel => ({ accessLevel })) },
+      order: [ [ 'updatedAt', 'DESC' ] ],
+      limit: (limit && limit < 25) ? limit : 5,
+    });
+
+    return response.success(conversations);
+  }
+
+  if (feed) {
+    const conversations = await ConversationModel.findAllByFollowedUsers({
+      userId: user.id,
+      order: [ [ 'createdAt', 'DESC' ] ],
+      limit: (limit && limit < 25) ? limit : 5,
+    });
+
+    return response.success(conversations);
+  }
 
   if (privateUserIds) {
     const privateConversation = await ConversationModel.findOneWithUsers({
@@ -34,16 +54,13 @@ router.get('/', asyncMiddleware(async (request, response) => {
     return response.success(privateConversation);
   }
 
-  const conversationIds = (await ConversationUserModel.scope('complete').findAll({
-    where: { userId: user.id },
-  })).map(conversationUser => conversationUser.conversationId);
-
-  const conversations = await ConversationModel.scope('preview').findAll({
-    where: { id: conversationIds },
-    order: [ [ 'createdAt', 'DESC' ] ],
+  const relevantConversations = await ConversationModel.findAllRelevantConversationsForUser({
+    userId: user.id,
+    order: [ [ 'updatedAt', 'DESC' ] ],
+    limit: (limit && limit < 25) ? limit : 5,
   });
 
-  response.success(conversations);
+  response.success(relevantConversations);
 }));
 
 router.get('/:conversationId', userAuthorize);
