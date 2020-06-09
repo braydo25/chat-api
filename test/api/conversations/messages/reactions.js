@@ -126,7 +126,7 @@ describe('Conversation Message Reactions', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('put', `/conversations/${testConversationOne.id}/messages/${testConversationOneMessageOne.id}/reactions`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('put', '/conversations/1/messages/1/reactions');
   });
 
   /*
@@ -164,7 +164,7 @@ describe('Conversation Message Reactions', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('get', `/conversations/${testConversationOne.id}/messages/${testConversationOneMessageOne.id}/reactions?reaction=${encodeURI('🔥🔥🔥')}`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('get', `/conversations/1/messages/1/reactions?reaction=${encodeURI('🔥🔥🔥')}`);
   });
 
   /*
@@ -196,6 +196,6 @@ describe('Conversation Message Reactions', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('delete', `/conversations/${testConversationOne.id}/messages/${testConversationOneMessageOne.id}/reactions`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('delete', '/conversations/1/messages/1/reactions/1');
   });
 });

@@ -87,7 +87,7 @@ describe('Conversation Users', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('put', `/conversations/${testConversationOne.id}/users`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('put', '/conversations/1/users');
   });
 
   /*
@@ -126,7 +126,7 @@ describe('Conversation Users', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('get', `/conversations/${testConversationOne.id}/users`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('get', '/conversations/1/users');
   });
 
   /*
@@ -173,7 +173,7 @@ describe('Conversation Users', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('patch', `/conversations/${testConversationOne.id}/users/${testConversationOneUserOne.id}`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('patch', '/conversations/1/users/1');
   });
 
   /*
@@ -202,7 +202,7 @@ describe('Conversation Users', () => {
           done();
         });
     });
-
-    helpers.it401sWhenUserAuthorizationIsInvalid('delete', `/conversations/${testConversationOne.id}/users`);
+console.log(testConversationOne);
+    helpers.it401sWhenUserAuthorizationIsInvalid('delete', '/conversations/1/users');
   });
 });

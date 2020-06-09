@@ -81,7 +81,7 @@ describe('Conversation Messages', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('post', `/conversations/${testConversationOne.id}/messages`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('post', '/conversations/1/messages');
   });
 
   /*
@@ -124,7 +124,7 @@ describe('Conversation Messages', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('get', `/conversations/${testConversationOne.id}/messages`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('get', '/conversations/1/messages');
   });
 
   /*
@@ -151,7 +151,7 @@ describe('Conversation Messages', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('patch', `/conversations/${testConversationOne.id}/messages`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('patch', '/conversations/1/messages');
   });
 
   /*
@@ -170,6 +170,6 @@ describe('Conversation Messages', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('delete', `/conversations/${testConversationOne.id}/messages`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('delete', '/conversations/1/messages/1');
   });
 });

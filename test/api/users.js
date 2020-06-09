@@ -108,7 +108,7 @@ describe('Users', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('get', `/users/${testUserTwo.id}`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('get', '/users/2');
   });
 
   /*

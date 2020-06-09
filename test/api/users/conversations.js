@@ -40,5 +40,5 @@ describe('User Conversations', () => {
       });
   });
 
-  helpers.it401sWhenUserAuthorizationIsInvalid('get', `/users/${testUserOne.id}/conversations`);
+  helpers.it401sWhenUserAuthorizationIsInvalid('get', '/users/1/conversations');
 });

@@ -29,6 +29,6 @@ describe('Conversation Typing', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('post', `/conversations/${testConversationOne.id}/typing`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('post', '/conversations/1/typing');
   });
 });

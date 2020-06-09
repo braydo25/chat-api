@@ -209,6 +209,7 @@ describe('Conversations', () => {
     });
 
     helpers.it401sWhenUserAuthorizationIsInvalid('get', '/conversations');
+    helpers.it401sWhenUserAuthorizationIsInvalid('get', '/conversations/1');
   });
 
   /*
