@@ -47,6 +47,9 @@ const UserModel = database.define('user', {
   about: {
     type: Sequelize.STRING,
   },
+  lastActiveAt: {
+    type: Sequelize.DATE,
+  },
 }, {
   defaultScope: {
     attributes: [

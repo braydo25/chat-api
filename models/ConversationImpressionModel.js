@@ -1,3 +1,5 @@
+const ConversationModel = rootRequire('/models/ConversationModel');
+
 /*
  * Model Defintion
  */
@@ -16,6 +18,16 @@ const ConversationImpressionModel = database.define('conversationImpression', {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
+});
+
+/*
+ * Hooks
+ */
+
+ConversationImpressionModel.addHook('afterCreate', conversationImpression => {
+  ConversationModel.update({ usersCount: database.literal('usersCount + 1') }, {
+    where: { id: conversationImpression.conversationId },
+  });
 });
 
 /*

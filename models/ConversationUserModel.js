@@ -1,3 +1,4 @@
+const ConversationModel = rootRequire('/models/ConversationModel');
 const UserModel = rootRequire('/models/UserModel');
 
 const permissions = [
@@ -48,6 +49,9 @@ const ConversationUserModel = database.define('conversationUser', {
     },
     defaultValue: [],
   },
+  lastActiveAt: {
+    type: Sequelize.DATE,
+  },
 }, {
   defaultScope: {
     attributes: [ 'id', 'permissions' ],
@@ -58,6 +62,22 @@ const ConversationUserModel = database.define('conversationUser', {
       include: [ UserModel ],
     },
   },
+});
+
+/*
+ * Hooks
+ */
+
+ConversationUserModel.addHook('afterCreate', conversationUser => {
+  ConversationModel.update({ usersCount: database.literal('usersCount + 1') }, {
+    where: { id: conversationUser.conversationId },
+  });
+});
+
+ConversationUserModel.addHook('afterDestroy', conversationUser => {
+  ConversationModel.update({ usersCount: database.literal('usersCount - 1') }, {
+    where: { id: conversationUser.conversationId },
+  });
 });
 
 /*
