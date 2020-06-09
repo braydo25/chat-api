@@ -45,7 +45,7 @@ describe('User Followers', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('put', `/users/${testUserOne.id}/followers`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('put', '/users/1/followers');
   });
 
   /*
@@ -73,7 +73,7 @@ describe('User Followers', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('get', `/users/${testUserOne.id}/followers`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('get', '/users/1/followers');
   });
 
   /*
@@ -92,6 +92,6 @@ describe('User Followers', () => {
         });
     });
 
-    helpers.it401sWhenUserAuthorizationIsInvalid('delete', `/users/${testUserOne.id}/followers`);
+    helpers.it401sWhenUserAuthorizationIsInvalid('delete', '/users/1/followers');
   });
 });
