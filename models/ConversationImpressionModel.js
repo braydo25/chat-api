@@ -1,5 +1,3 @@
-const ConversationModel = rootRequire('/models/ConversationModel');
-
 /*
  * Model Defintion
  */
@@ -25,6 +23,8 @@ const ConversationImpressionModel = database.define('conversationImpression', {
  */
 
 ConversationImpressionModel.addHook('afterCreate', conversationImpression => {
+  const ConversationModel = database.models.conversation;
+  
   ConversationModel.update({ usersCount: database.literal('usersCount + 1') }, {
     where: { id: conversationImpression.conversationId },
   });

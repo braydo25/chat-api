@@ -1,4 +1,3 @@
-const ConversationModel = rootRequire('/models/ConversationModel');
 const UserModel = rootRequire('/models/UserModel');
 
 const permissions = [
@@ -69,12 +68,16 @@ const ConversationUserModel = database.define('conversationUser', {
  */
 
 ConversationUserModel.addHook('afterCreate', conversationUser => {
+  const ConversationModel = database.models.conversation;
+
   ConversationModel.update({ usersCount: database.literal('usersCount + 1') }, {
     where: { id: conversationUser.conversationId },
   });
 });
 
 ConversationUserModel.addHook('afterDestroy', conversationUser => {
+  const ConversationModel = database.models.conversation;
+
   ConversationModel.update({ usersCount: database.literal('usersCount - 1') }, {
     where: { id: conversationUser.conversationId },
   });

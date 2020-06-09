@@ -1,7 +1,6 @@
-const UserModel = rootRequire('/models/UserModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
-const UserFollowerModel = rootRequire('/models/UserFollowerModel');
+const UserModel = rootRequire('/models/UserModel');
 
 const accessLevels = [ 'public', 'protected', 'private' ];
 
@@ -192,6 +191,8 @@ ConversationModel.findAllWithUser = async function({ userId, where, order, limit
 };
 
 ConversationModel.findAllByFollowedUsers = async function({ userId, order, limit }) {
+  const UserFollowerModel = database.models.userFollower;
+
   const followedUsers = await UserFollowerModel.findAll({
     attributes: [ 'userId' ],
     where: { followerUserId: userId },

@@ -3,8 +3,6 @@
  */
 
 const AttachmentModel = rootRequire('/models/AttachmentModel');
-const ConversationMessageAttachmentModel = rootRequire('/models/ConversationMessageAttachmentModel');
-const ConversationMessageEmbedModel = rootRequire('/models/ConversationMessageEmbedModel');
 const ConversationMessageReactionModel = rootRequire('/models/ConversationMessageReactionModel');
 const EmbedModel = rootRequire('/models/EmbedModel');
 const UserModel = rootRequire('/models/UserModel');
@@ -81,6 +79,9 @@ const ConversationMessageModel = database.define('conversationMessage', {
  */
 
 ConversationMessageModel.createWithAssociations = async function({ data, attachmentIds = [], embedIds = [], transaction }) {
+  const ConversationMessageAttachmentModel = database.models.conversationMessageAttachment;
+  const ConversationMessageEmbedModel = database.models.conversationMessageEmbed;
+
   attachmentIds = [ ...new Set(attachmentIds) ];
   embedIds = [ ...new Set(embedIds) ];
 
