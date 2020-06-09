@@ -9,6 +9,7 @@ const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 module.exports = permissions => {
   return asyncMiddleware(async (request, response, next) => {
     const { user, conversation } = request;
+    const waiveNonConversationUser = permissions.waiveNonConversationUser || [];
     const conversationUser = await ConversationUserModel.findOne({
       where: {
         userId: user.id,
@@ -21,6 +22,10 @@ module.exports = permissions => {
       ...((permissions.anyAccessLevel) ? permissions.anyAccessLevel : []),
     ];
 
+    if (!conversationUser && waiveNonConversationUser.includes(conversation.accessLevel)) {
+      return next();
+    }
+
     if (requiredPermissions.length) {
       const authorized = (conversationUser) ? requiredPermissions.every(requiredPermission => {
         return conversationUser.permissions.includes(requiredPermission) ||
@@ -31,6 +36,8 @@ module.exports = permissions => {
         return response.respond(403, 'Insufficient conversation permissions.');
       }
     }
+
+    request.authConversationUser = conversationUser;
 
     next();
   });

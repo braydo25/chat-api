@@ -3,6 +3,7 @@
  */
 
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
+const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const conversationMessageAuthorize = rootRequire('/middlewares/conversations/messages/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
@@ -38,14 +39,32 @@ router.get('/', asyncMiddleware(async (request, response) => {
 
 router.post('/', userAuthorize);
 router.post('/', conversationAssociate);
-router.post('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_MESSAGES_CREATE' ] }));
+router.post('/', userConversationPermissions({
+  anyAccessLevel: [ 'CONVERSATION_MESSAGES_CREATE' ],
+  waiveNonConversationUser: [ 'public' ],
+}));
 router.post('/', asyncMiddleware(async (request, response) => {
-  const { user, conversation } = request;
+  const { user, conversation, authConversationUser } = request;
   const { nonce, text, attachments, embeds } = request.body;
 
   const transaction = await database.transaction();
 
   try {
+    if (!authConversationUser) {
+      await ConversationUserModel.create({
+        userId: user.id,
+        conversationId: conversation.id,
+        permissions: [
+          'CONVERSATION_MESSAGES_CREATE',
+          'CONVERSATION_MESSAGES_READ',
+          'CONVERSATION_MESSAGE_REACTIONS_CREATE',
+          'CONVERSATION_MESSAGE_REACTIONS_READ',
+          'CONVERSATION_USERS_CREATE',
+          'CONVERSATION_USERS_READ',
+        ],
+      }, { transaction });
+    }
+
     const conversationMessage = await ConversationMessageModel.createWithAssociations({
       data: {
         userId: user.id,

@@ -3,6 +3,7 @@
  */
 
 const ConversationMessageReactionModel = rootRequire('/models/ConversationMessageReactionModel');
+const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const conversationMessageAssociate = rootRequire('/middlewares/conversations/messages/associate');
 const conversationMessageReactionAuthorize = rootRequire('/middlewares/conversations/messages/reactions/authorize');
@@ -46,9 +47,12 @@ router.get('/', asyncMiddleware(async (request, response) => {
 router.put('/', userAuthorize);
 router.put('/', conversationAssociate);
 router.put('/', conversationMessageAssociate);
-router.put('/', userConversationPermissions({ private: [ 'CONVERSATION_MESSAGE_REACTIONS_CREATE' ] }));
+router.put('/', userConversationPermissions({
+  anyAccessLevel: [ 'CONVERSATION_MESSAGE_REACTIONS_CREATE' ],
+  waiveNonConversationUser: [ 'public', 'protected' ],
+}));
 router.put('/', asyncMiddleware(async (request, response) => {
-  const { user, conversationMessage } = request;
+  const { user, conversation, conversationMessage, authConversationUser } = request;
   const { reaction } = request.body;
   const data = {
     userId: user.id,
@@ -58,11 +62,38 @@ router.put('/', asyncMiddleware(async (request, response) => {
 
   let conversationMessageReaction = await ConversationMessageReactionModel.findOne({ where: data });
 
-  if (!conversationMessageReaction) {
-    conversationMessageReaction = await ConversationMessageReactionModel.create(data);
-  }
+  const transaction = await database.transaction();
 
-  response.success(conversationMessageReaction);
+  try {
+    if (!authConversationUser) {
+      await ConversationUserModel.create({
+        userId: user.id,
+        conversationId: conversation.id,
+        permissions: [
+          'CONVERSATION_MESSAGES_READ',
+          'CONVERSATION_MESSAGE_REACTIONS_CREATE',
+          'CONVERSATION_MESSAGE_REACTIONS_READ',
+          'CONVERSATION_USERS_READ',
+          ...((conversation.accessLevel === 'public') ? [
+            'CONVERSATION_MESSAGES_CREATE',
+            'CONVERSATION_USERS_CREATE',
+          ] : []),
+        ],
+      }, { transaction });
+    }
+
+    if (!conversationMessageReaction) {
+      conversationMessageReaction = await ConversationMessageReactionModel.create(data, { transaction });
+    }
+
+    await transaction.commit();
+
+    response.success(conversationMessageReaction);
+  } catch(error) {
+    await transaction.rollback();
+
+    throw error;
+  }
 }));
 
 /*

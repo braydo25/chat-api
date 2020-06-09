@@ -59,12 +59,11 @@ router.put('/', asyncMiddleware(async (request, response) => {
       'CONVERSATION_MESSAGE_REACTIONS_CREATE',
       'CONVERSATION_MESSAGE_REACTIONS_READ',
       'CONVERSATION_USERS_READ',
+      ...((conversation.accessLevel !== 'protected') ? [
+        'CONVERSATION_MESSAGES_CREATE',
+        'CONVERSATION_USERS_CREATE',
+      ] : []),
     ];
-
-    if (conversation.accessLevel !== 'protected') {
-      data.permissions.push('CONVERSATION_MESSAGES_CREATE');
-      data.permissions.push('CONVERSATION_USERS_CREATE');
-    }
 
     conversationUser = await ConversationUserModel.create(data);
   }

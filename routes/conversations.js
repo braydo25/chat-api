@@ -65,7 +65,10 @@ router.get('/', asyncMiddleware(async (request, response) => {
 
 router.get('/:conversationId', userAuthorize);
 router.get('/:conversationId', conversationAssociate);
-router.get('/:conversationId', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_MESSAGES_READ' ] }));
+router.get('/:conversationId', userConversationPermissions({
+  anyAccessLevel: [ 'CONVERSATION_MESSAGES_READ' ],
+  waiveNonConversationUser: [ 'public', 'protected' ],
+}));
 router.get('/:conversationId', asyncMiddleware(async (request, response) => {
   const { conversation, user } = request;
   const completeConversation = await ConversationModel.scope({ method: [ 'complete', user.id ] }).findOne({
