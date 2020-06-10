@@ -27,6 +27,7 @@ global.testUserFour = { phone: 19999999999 };
 
 global.testConversationOne = {
   accessLevel: 'public',
+  title: 'This is a wendys',
   message: {
     text: 'Sir, this is a wendys',
     nonce: 'abcdefg',
@@ -44,6 +45,7 @@ global.testConversationTwo = {
 
 global.testConversationThree = {
   accessLevel: 'public',
+  title: 'Just testing this out',
   message: {
     text: 'testing public',
     nonce: '777wdahwd',
@@ -64,6 +66,7 @@ global.testConversationOneMessageOneReactionOne = {
 
 global.testPermissionsPublicConversation = {
   accessLevel: 'public',
+  title: 'Lets talk public convo',
   message: {
     text: 'this is a public convo!',
     nonce: '8441hfaiheu3',
@@ -80,6 +83,7 @@ global.testPermissionsPublicConversationPermissionlessConversationUser = {};
 
 global.testPermissionsProtectedConversation = {
   accessLevel: 'protected',
+  title: 'Testing protected convos',
   message: {
     text: 'this is a protected convo!',
     nonce: 'b3ufb37f1038',

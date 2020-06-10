@@ -42,6 +42,7 @@ describe('Conversations', () => {
     it('200s with created conversation object when provided users, attachments and embeds', done => {
       const fields = {
         accessLevel: 'protected',
+        title: 'Check out my latest stuff!',
         message: {
           attachments: [ testAttachmentOne.id ],
           embeds: [ testEmbedOne.id ],
@@ -68,6 +69,25 @@ describe('Conversations', () => {
           response.body.conversationMessages[0].attachments[0].id.should.equal(testAttachmentOne.id);
           response.body.conversationMessages[0].embeds.should.be.an('array');
           response.body.conversationMessages[0].embeds[0].id.should.equal(testEmbedOne.id);
+          done();
+        });
+    });
+
+    it('400s when not provided title for protected or public conversation', done => {
+      const fields = {
+        accessLevel: 'public',
+        message: {
+          text: 'yo yo yo',
+          nonce: '13y13g13g',
+        },
+      };
+
+      chai.request(server)
+        .post('/conversations')
+        .set('X-Access-Token', testUserOne.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          response.should.have.status(400);
           done();
         });
     });

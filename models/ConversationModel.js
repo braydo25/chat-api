@@ -33,6 +33,14 @@ const ConversationModel = database.define('conversation', {
   },
   title: {
     type: Sequelize.STRING,
+    allowNull: true,
+    validate: {
+      hasTitle(value) {
+        if (!value && this.getDataValue('accessLevel') !== 'private') {
+          throw new Error('A title must be provided for public and protected conversations.');
+        }
+      },
+    },
   },
   impressionsCount: {
     type: Sequelize.INTEGER(10),
