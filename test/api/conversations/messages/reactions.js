@@ -76,6 +76,40 @@ describe('Conversation Message Reactions', () => {
         });
     });
 
+    it('200s with created conversation message reaction and adds authenticated user as conversation user when user is not a conversation user', done => {
+      const fields = {
+        reaction: '🐻',
+      };
+
+      chai.request(server)
+        .put(`/conversations/${testPermissionsPublicConversation.id}/messages/5/reactions`)
+        .set('X-Access-Token', testUserTwo.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('object');
+          chai.request(server)
+            .get(`/conversations/${testPermissionsPublicConversation.id}/users`)
+            .set('X-Access-Token', testUserTwo.accessToken)
+            .end((error, response) => {
+              let userAddedToConversation = false;
+
+              response.body.forEach(conversationUser => {
+                if (conversationUser.user.id === testUserTwo.id) {
+                  userAddedToConversation = true;
+                }
+              });
+
+              if (!userAddedToConversation) {
+                throw new Error('User was not added to conversation.');
+              }
+
+              done();
+            });
+        });
+    });
+
     it('200s with new conversation reaction message object when user has already reacted with a different reaction', done => {
       const fields = {
         reaction: '🍚',

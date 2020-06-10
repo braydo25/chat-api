@@ -10,18 +10,18 @@ describe('Conversation Users', () => {
   describe('PUT /conversations/:conversationId/users', () => {
     it('200s with created conversation user object', done => {
       const fields = {
-        userId: testUserThree.id,
+        userId: testUserTwo.id,
       };
 
       chai.request(server)
-        .put(`/conversations/${testConversationOne.id}/users`)
-        .set('X-Access-Token', testUserOne.accessToken)
+        .put(`/conversations/${testConversationThree.id}/users`)
+        .set('X-Access-Token', testUserThree.accessToken)
         .send(fields)
         .end((error, response) => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
-          response.body.conversationId.should.equal(testConversationOne.id);
+          response.body.conversationId.should.equal(testConversationThree.id);
           response.body.userId.should.equal(fields.userId);
           response.body.permissions.length.should.be.at.least(1);
           scopedConversationUser = response.body;
@@ -35,8 +35,8 @@ describe('Conversation Users', () => {
       };
 
       chai.request(server)
-        .put(`/conversations/${testConversationOne.id}/users`)
-        .set('X-Access-Token', testUserOne.accessToken)
+        .put(`/conversations/${testConversationThree.id}/users`)
+        .set('X-Access-Token', testUserThree.accessToken)
         .send(fields)
         .end((error, response) => {
           helpers.logExampleResponse(response);
@@ -183,8 +183,8 @@ describe('Conversation Users', () => {
   describe('DELETE /conversations/:conversationId/users', () => {
     it('204s and deletes conversation user', done => {
       chai.request(server)
-        .delete(`/conversations/${testConversationOne.id}/users/${scopedConversationUser.id}`)
-        .set('X-Access-Token', testUserOne.accessToken)
+        .delete(`/conversations/${testConversationThree.id}/users/${scopedConversationUser.id}`)
+        .set('X-Access-Token', testUserThree.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
           response.should.have.status(204);

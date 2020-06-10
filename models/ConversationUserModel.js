@@ -53,7 +53,7 @@ const ConversationUserModel = database.define('conversationUser', {
   },
 }, {
   defaultScope: {
-    attributes: [ 'id', 'permissions' ],
+    attributes: [ 'id', 'conversationId', 'permissions' ], // shouldn't have to return the conversation id..
     include: [ UserModel ],
   },
   scopes: {
@@ -67,19 +67,21 @@ const ConversationUserModel = database.define('conversationUser', {
  * Hooks
  */
 
-ConversationUserModel.addHook('afterCreate', conversationUser => {
+ConversationUserModel.addHook('afterCreate', (conversationUser, options) => {
   const ConversationModel = database.models.conversation;
 
   ConversationModel.update({ usersCount: database.literal('usersCount + 1') }, {
     where: { id: conversationUser.conversationId },
+    transaction: options.transaction,
   });
 });
 
-ConversationUserModel.addHook('afterDestroy', conversationUser => {
+ConversationUserModel.addHook('afterDestroy', (conversationUser, options) => {
   const ConversationModel = database.models.conversation;
 
   ConversationModel.update({ usersCount: database.literal('usersCount - 1') }, {
     where: { id: conversationUser.conversationId },
+    transaction: options.transaction,
   });
 });
 

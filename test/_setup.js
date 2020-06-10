@@ -190,7 +190,7 @@ before(done => {
 
     fatLog('Creating global test user four...');
     await chai.request(server).post('/users').send(testUserFour);
-    const createdTestUserFourResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserThree, { phoneLoginCode: '000000' }));
+    const createdTestUserFourResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserFour, { phoneLoginCode: '000000' }));
     Object.assign(testUserFour, createdTestUserFourResponse.body);
 
     fatLog('Setting test user one as a follower of test user three...');

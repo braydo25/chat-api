@@ -54,6 +54,41 @@ describe('Conversation Messages', () => {
         });
     });
 
+    it('200s with created conversation object and adds authenticated user as conversation user when user is not a conversation user', done => {
+      const fields = {
+        text: 'hey there',
+        nonce: 'deadlockbstest',
+      };
+
+      chai.request(server)
+        .post(`/conversations/${testConversationOne.id}/messages`)
+        .set('X-Access-Token', testUserFour.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('object');
+          chai.request(server)
+            .get(`/conversations/${testConversationOne.id}/users`)
+            .set('X-Access-Token', testUserFour.accessToken)
+            .end((error, response) => {
+              let userAddedToConversation = false;
+
+              response.body.forEach(conversationUser => {
+                if (conversationUser.user.id === testUserFour.id) {
+                  userAddedToConversation = true;
+                }
+              });
+
+              if (!userAddedToConversation) {
+                throw new Error('User was not added to conversation.');
+              }
+
+              done();
+            });
+        });
+    });
+
     it('400s when not provided content', done => {
       chai.request(server)
         .post(`/conversations/${testConversationOne.id}/messages`)

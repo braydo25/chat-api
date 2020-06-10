@@ -22,11 +22,12 @@ const ConversationImpressionModel = database.define('conversationImpression', {
  * Hooks
  */
 
-ConversationImpressionModel.addHook('afterCreate', conversationImpression => {
+ConversationImpressionModel.addHook('afterCreate', (conversationImpression, options) => {
   const ConversationModel = database.models.conversation;
-  
-  ConversationModel.update({ usersCount: database.literal('usersCount + 1') }, {
+
+  ConversationModel.update({ impressionsCount: database.literal('impressionsCount + 1') }, {
     where: { id: conversationImpression.conversationId },
+    transaction: options.transaction,
   });
 });
 
