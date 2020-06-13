@@ -56,8 +56,8 @@ router.get('/', asyncMiddleware(async (request, response) => {
 
   const relevantConversations = await ConversationModel.findAllRelevantConversationsForUser({
     userId: user.id,
-    order: [ [ 'updatedAt', 'DESC' ] ],
-    limit: (limit && limit < 25) ? limit : 5,
+    order: [ [ 'createdAt', 'DESC' ] ],
+    limit: (limit && limit < 25) ? limit : 10,
   });
 
   response.success(relevantConversations);

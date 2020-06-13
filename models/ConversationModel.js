@@ -74,7 +74,7 @@ const ConversationModel = database.define('conversation', {
       ],
       include: [
         {
-          model: ConversationMessageModel.scope([
+          model: ConversationMessageModel.scope('withReactions', [
             { method: [ 'withAuthUserReactions', userId ] },
           ]),
           separate: true,

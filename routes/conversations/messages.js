@@ -24,6 +24,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
   const { conversation, user } = request;
   const conversationMessages = await ConversationMessageModel.scope([
     'defaultScope',
+    'withReactions',
     { method: [ 'withAuthUserReactions', user.id ] },
   ]).findAll({
     where: { conversationId: conversation.id },

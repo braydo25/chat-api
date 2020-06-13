@@ -150,6 +150,19 @@ describe('Conversations', () => {
           response.body.should.have.property('accessLevel');
           response.body.should.have.property('createdAt');
           response.body.conversationMessages.should.be.an('array');
+          response.body.conversationMessages.forEach(conversationMessage => {
+            conversationMessage.should.have.property('id');
+            conversationMessage.should.have.property('text');
+            conversationMessage.should.have.property('userId');
+            conversationMessage.should.have.property('conversationId');
+            conversationMessage.should.have.property('nonce');
+            conversationMessage.should.have.property('attachments');
+            conversationMessage.should.have.property('embeds');
+            conversationMessage.should.have.property('user');
+            conversationMessage.should.have.property('conversationMessageReactions');
+            conversationMessage.should.have.property('authUserConversationMessageReactions');
+            conversationMessage.should.have.property('createdAt');
+          });
           response.body.user.should.be.an('object');
           done();
         });
