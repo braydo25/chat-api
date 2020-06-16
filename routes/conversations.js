@@ -21,12 +21,12 @@ const router = express.Router({
 router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
-  const { accessLevels, feed, privateUserIds, limit } = request.query;
+  const { accessLevels, feed, privateUserIds, search, limit } = request.query;
 
   if (accessLevels) {
     const conversations = await ConversationModel.findAllWithUser({
       userId: user.id,
-      where: { [Sequelize.Op.or]: accessLevels.map(accessLevel => ({ accessLevel })) },
+      where: { accessLevel: accessLevels },
       order: [ [ 'updatedAt', 'DESC' ] ],
       limit: (limit && limit < 25) ? limit : 5,
     });
@@ -52,6 +52,36 @@ router.get('/', asyncMiddleware(async (request, response) => {
     });
 
     return response.success(privateConversation);
+  }
+
+  if (search) {
+    const publicSearchConversations = await ConversationModel.findAll({
+      where: {
+        accessLevel: [ 'public', 'protected' ],
+        title: { [Sequelize.Op.like]: `%${search}%` },
+      },
+      order: [ [ 'updatedAt', 'DESC' ] ],
+      limit: (limit && limit < 25) ? Math.floor(limit / 2) : 10,
+    });
+
+    const privateSearchConversations = await ConversationModel.findAllWithUser({
+      userId: user.id,
+      where: { accessLevel: 'private' },
+      order: [ [ 'updatedAt', 'DESC' ] ],
+      limit: (limit && limit < 25) ? Math.floor(limit / 2) : 10,
+    });
+
+    const searchConversations = [
+      ...publicSearchConversations,
+      ...privateSearchConversations,
+    ].sort((a, b) => {
+      if (a.updatedAt < b.updatedAt) { return -1; }
+      if (a.updatedAt > b.updatedAt) { return 1; }
+
+      return 0;
+    });
+
+    response.success(searchConversations);
   }
 
   const relevantConversations = await ConversationModel.findAllRelevantConversationsForUser({

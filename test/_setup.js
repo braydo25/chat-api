@@ -115,7 +115,7 @@ global.testPermissionsPrivateConversationGeneralConversationUser = {};
 global.testPermissionsPrivateConversationPermissionlessConversationUser = {};
 
 global.testAttachmentOne = {};
-global.testEmbedOne = { url: 'https://www.instagram.com/p/B9aahmTHcVL/' };
+global.testEmbedOne = { url: 'https://www.youtube.com/watch?v=ac8lSE-7Jqs' };
 
 /*
  * Configure Chai

@@ -241,6 +241,20 @@ describe('Conversations', () => {
         });
     });
 
+    it('200s with an array of conversation objects when provided search', done => {
+      chai.request(server)
+        .get('/conversations')
+        .query({ search: 'test' })
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          done();
+        });
+    });
+
     helpers.it401sWhenUserAuthorizationIsInvalid('get', '/conversations');
     helpers.it401sWhenUserAuthorizationIsInvalid('get', '/conversations/1');
   });
