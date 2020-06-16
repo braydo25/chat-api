@@ -55,7 +55,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
   }
 
   if (search) {
-    const publicSearchConversations = await ConversationModel.findAll({
+    const searchConversations = await ConversationModel.findAll({
       where: {
         accessLevel: [ 'public', 'protected' ],
         title: { [Sequelize.Op.like]: `%${search}%` },
@@ -64,22 +64,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
       limit: (limit && limit < 25) ? Math.floor(limit / 2) : 10,
     });
 
-    const privateSearchConversations = await ConversationModel.findAllWithUser({
-      userId: user.id,
-      where: { accessLevel: 'private' },
-      order: [ [ 'updatedAt', 'DESC' ] ],
-      limit: (limit && limit < 25) ? Math.floor(limit / 2) : 10,
-    });
-
-    const searchConversations = [
-      ...publicSearchConversations,
-      ...privateSearchConversations,
-    ].sort((a, b) => {
-      if (a.updatedAt < b.updatedAt) { return -1; }
-      if (a.updatedAt > b.updatedAt) { return 1; }
-
-      return 0;
-    });
+    // TODO: support searching private convos, either by users in them or content?
 
     response.success(searchConversations);
   }
