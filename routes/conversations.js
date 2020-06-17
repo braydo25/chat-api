@@ -55,7 +55,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
   }
 
   if (search) {
-    const searchConversations = await ConversationModel.findAll({
+    const searchConversations = await ConversationModel.scope('preview').findAll({
       where: {
         accessLevel: [ 'public', 'protected' ],
         title: { [Sequelize.Op.like]: `%${search}%` },

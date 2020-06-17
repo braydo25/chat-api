@@ -251,6 +251,17 @@ describe('Conversations', () => {
           response.should.have.status(200);
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
+          response.body.forEach(conversation => {
+            conversation.should.have.property('id');
+            conversation.should.have.property('accessLevel');
+            conversation.should.have.property('title');
+            conversation.should.have.property('impressionsCount');
+            conversation.should.have.property('usersCount');
+            conversation.should.have.property('updatedAt');
+            conversation.should.have.property('createdAt');
+            conversation.should.have.property('previewConversationMessage');
+            conversation.should.have.property('previewConversationUsers');
+          });
           done();
         });
     });

@@ -59,7 +59,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
   }
 
   if (search) {
-    const users = await UserModel.findAll({
+    const users = await UserModel.scope('complete').findAll({
       where: {
         [Sequelize.Op.or]: {
           name: { [Sequelize.Op.like]: `%${search}%` },

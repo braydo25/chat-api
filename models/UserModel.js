@@ -56,6 +56,7 @@ const UserModel = database.define('user', {
       'id',
       'username',
       'name',
+      'lastActiveAt',
     ],
     include: [
       {
