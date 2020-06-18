@@ -16,6 +16,7 @@ describe('Conversations', () => {
           text: 'test test test!',
           nonce: '11h1h1h1h111',
         },
+        users: [ testUserTwo.id ],
       };
 
       chai.request(server)
@@ -141,7 +142,7 @@ describe('Conversations', () => {
     it('200s with conversation object when provided conversation id', done => {
       chai.request(server)
         .get(`/conversations/${scopedConversation.id}`)
-        .set('X-Access-Token', testUserOne.accessToken)
+        .set('X-Access-Token', testUserTwo.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
@@ -164,6 +165,8 @@ describe('Conversations', () => {
             conversationMessage.should.have.property('createdAt');
           });
           response.body.user.should.be.an('object');
+          response.body.authConversationUser.should.have.property('id');
+          response.body.authConversationUser.should.have.property('permissions');
           done();
         });
     });

@@ -16,6 +16,7 @@ ConversationModel.hasMany(ConversationImpressionModel);
 ConversationModel.hasMany(ConversationMessageModel);
 ConversationModel.hasMany(ConversationUserModel);
 ConversationModel.hasMany(ConversationUserModel, { as: 'previewConversationUsers' });
+ConversationModel.hasOne(ConversationUserModel, { as: 'authConversationUser', foreignKey: 'conversationId' });
 
 ConversationMessageModel.belongsToMany(AttachmentModel, { through: ConversationMessageAttachmentModel });
 ConversationMessageModel.belongsToMany(EmbedModel, { through: ConversationMessageEmbedModel });

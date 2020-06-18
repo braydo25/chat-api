@@ -81,6 +81,11 @@ const ConversationModel = database.define('conversation', {
           order: [ [ 'id', 'DESC' ] ],
           limit: 25,
         },
+        {
+          model: ConversationUserModel.scope('authUser'),
+          as: 'authConversationUser',
+          where: { userId },
+        },
         UserModel,
       ],
     }),
