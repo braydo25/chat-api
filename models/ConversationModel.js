@@ -151,6 +151,9 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
 
   conversation.setDataValue('user', users.find(user => user.id === data.userId));
   conversation.setDataValue('previewConversationUsers', conversationUsers);
+  conversation.setDataValue('authConversationUser', conversationUsers.find(conversationUser => {
+    return conversationUser.userId === data.userId;
+  }));
 
   conversationUsers.forEach(conversationUser => {
     conversationUser.setDataValue('user', users.find(user => {

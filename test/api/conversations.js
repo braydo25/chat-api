@@ -35,6 +35,7 @@ describe('Conversations', () => {
           response.body.conversationMessages.should.be.an('array');
           response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
           response.body.conversationMessages[0].text.should.equal(fields.message.text);
+          response.body.should.have.property('authConversationUser');
           scopedConversation = response.body;
           done();
         });
@@ -70,6 +71,7 @@ describe('Conversations', () => {
           response.body.conversationMessages[0].attachments[0].id.should.equal(testAttachmentOne.id);
           response.body.conversationMessages[0].embeds.should.be.an('array');
           response.body.conversationMessages[0].embeds[0].id.should.equal(testEmbedOne.id);
+          response.body.should.have.property('authConversationUser');
           done();
         });
     });
