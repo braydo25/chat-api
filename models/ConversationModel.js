@@ -85,6 +85,7 @@ const ConversationModel = database.define('conversation', {
           model: ConversationUserModel.scope('authUser'),
           as: 'authConversationUser',
           where: { userId },
+          required: false,
         },
         UserModel,
       ],

@@ -3,6 +3,7 @@
  */
 
 const ConversationModel = rootRequire('/models/ConversationModel');
+const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 
 const router = express.Router({
@@ -30,10 +31,19 @@ router.get('/', asyncMiddleware(async (request, response) => {
  * DELETE
  */
 
-router.delete('/', userAuthorize);
-router.delete('/', asyncMiddleware(async (request, response) => {
-  // TODO: Leave a convo?
-  response.success;
+router.delete('/:conversationId', userAuthorize);
+router.delete('/:conversationId', asyncMiddleware(async (request, response) => {
+  const { user } = request;
+  const { conversationId } = request.params;
+
+  await ConversationUserModel.destroy({
+    where: {
+      conversationId,
+      userId: user.id,
+    },
+  });
+
+  response.success();
 }));
 
 /*

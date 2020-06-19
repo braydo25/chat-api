@@ -21,7 +21,7 @@ module.exports = app => {
   app.use('/embeds', embedsRouter);
   app.use('/health', healthRouter);
   app.use('/users/:userId?', usersRouter);
-  app.use('/users/:userId/conversations/:conversationId?', userConversationsRouter);
+  app.use('/users/:userId/conversations', userConversationsRouter);
   app.use('/users/:userId/followers', userFollowersRouter);
 
   // Handle Various Errors
