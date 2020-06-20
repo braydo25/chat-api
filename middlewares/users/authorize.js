@@ -15,6 +15,8 @@ module.exports = asyncMiddleware(async (request, response, next) => {
     return response.respond(401, 'Invalid credentials.');
   }
 
+  user.update({ lastActiveAt: new Date() });
+
   request.user = user;
 
   next();

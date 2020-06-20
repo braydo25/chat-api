@@ -49,6 +49,7 @@ const UserModel = database.define('user', {
   },
   lastActiveAt: {
     type: Sequelize.DATE,
+    defaultValue: Sequelize.NOW,
   },
 }, {
   defaultScope: {
