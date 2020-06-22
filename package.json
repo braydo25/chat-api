@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/braydo25/chat-api#readme",
   "dependencies": {
+    "aws-iot-device-sdk": "^2.2.6",
     "aws-sdk": "^2.571.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
@@ -45,7 +46,8 @@
     "metascraper-video": "^5.11.6",
     "metascraper-youtube": "^5.11.6",
     "mysql2": "^2.0.0",
-    "sequelize": "^5.21.2"
+    "sequelize": "^5.21.2",
+    "uuid": "^8.1.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",

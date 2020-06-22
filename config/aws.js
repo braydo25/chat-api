@@ -11,3 +11,9 @@ module.exports.region = process.env.AWS_REGION;
  */
 
 module.exports.s3FileUploadsBucket = process.env.AWS_S3_FILE_UPLOADS_BUCKET;
+
+/*
+ * IOT
+ */
+
+module.exports.iotEndpoint = process.env.AWS_IOT_ENDPOINT;

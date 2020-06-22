@@ -7,6 +7,7 @@ rootRequire('/setup/prototypes');
 rootRequire('/setup/models').then(() => {
   rootRequire('/setup/middlewares')(app);
   rootRequire('/setup/routes')(app);
+  rootRequire('/libs/events'); // establish connection
 
   app.listen(process.env.PORT, () => {
     console.log(JSON.stringify({ event: 'start' }));
