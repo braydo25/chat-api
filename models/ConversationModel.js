@@ -21,6 +21,11 @@ const ConversationModel = database.define('conversation', {
   previewConversationMessageId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
   },
+  eventsToken: {
+    type: Sequelize.UUID,
+    unique: true,
+    defaultValue: Sequelize.UUIDV4,
+  },
   accessLevel: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -65,6 +70,7 @@ const ConversationModel = database.define('conversation', {
     complete: userId => ({
       attributes: [
         'id',
+        'eventsToken',
         'accessLevel',
         'title',
         'impressionsCount',
@@ -93,6 +99,7 @@ const ConversationModel = database.define('conversation', {
     preview: {
       attributes: [
         'id',
+        'eventsToken',
         'accessLevel',
         'title',
         'impressionsCount',
