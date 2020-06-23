@@ -33,8 +33,25 @@ mqttConnection.on('error', error => {
 });
 
 
-function publishEvent(topic, name, data) {
+function publish({ topic, name, data }) {
   mqttConnection.publish(topic, JSON.stringify({ event: name, data }), { qos: 1 });
 }
 
-module.exports = { publishEvent };
+module.exports = { publish };
+
+/*
+
+EVENTS
+
+topic: "user-{token}"
+CONVERSATION_CREATE
+
+topic "conversation-{token}"
+CONVERSATION_UPDATE x
+CONVERSATION_DELETE x
+CONVERSATION_MESSAGE_CREATE x
+CONVERSATION_MESSAGE_UPDATE x
+CONVERSATION_MESSAGE_DELETE x
+CONVERSATION_MESSAGE_TYPING_START x
+
+*/

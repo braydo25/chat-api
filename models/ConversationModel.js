@@ -59,6 +59,7 @@ const ConversationModel = database.define('conversation', {
   defaultScope: {
     attributes: [
       'id',
+      'eventsToken',
       'accessLevel',
       'title',
       'impressionsCount',

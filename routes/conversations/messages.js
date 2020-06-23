@@ -8,6 +8,7 @@ const conversationAssociate = rootRequire('/middlewares/conversations/associate'
 const conversationMessageAuthorize = rootRequire('/middlewares/conversations/messages/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const userConversationPermissions = rootRequire('/middlewares/users/conversations/permissions');
+const events = rootRequire('/libs/events');
 
 const router = express.Router({
   mergeParams: true,
@@ -84,6 +85,12 @@ router.post('/', asyncMiddleware(async (request, response) => {
 
     await transaction.commit();
 
+    events.publish({
+      topic: `conversation-${conversation.eventsToken}`,
+      name: 'CONVERSATION_MESSAGE_CREATE',
+      data: conversationMessage,
+    });
+
     response.success(conversationMessage);
   } catch(error) {
     await transaction.rollback();
@@ -97,13 +104,20 @@ router.post('/', asyncMiddleware(async (request, response) => {
  */
 
 router.patch('/', userAuthorize);
+router.patch('/', conversationAssociate);
 router.patch('/', conversationMessageAuthorize);
 router.patch('/', asyncMiddleware(async (request, response) => {
-  const { conversationMessage } = request;
+  const { conversation, conversationMessage } = request;
 
   conversationMessage.text = request.body.text || conversationMessage.text;
 
   await conversationMessage.save();
+
+  events.publish({
+    topic: `conversation-${conversation.eventsToken}`,
+    name: 'CONVERSATION_MESSAGE_UPDATE',
+    data: conversationMessage,
+  });
 
   response.success(conversationMessage);
 }));
@@ -113,11 +127,21 @@ router.patch('/', asyncMiddleware(async (request, response) => {
  */
 
 router.delete('/', userAuthorize);
+router.delete('/', conversationAssociate);
 router.delete('/', conversationMessageAuthorize);
 router.delete('/', asyncMiddleware(async (request, response) => {
-  const { conversationMessage } = request;
+  const { conversation, conversationMessage } = request;
 
   await conversationMessage.destroy();
+
+  events.publish({
+    topic: `conversation-${conversation.eventsToken}`,
+    name: 'CONVERSATION_MESSAGE_DELETE',
+    data: {
+      id: conversationMessage.id,
+      conversationId: conversation.id,
+    },
+  });
 
   response.success();
 }));
