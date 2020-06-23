@@ -169,7 +169,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
 
     eventUsers.forEach(eventUser => {
       events.publish({
-        topic: `user=${eventUser.accessToken}`,
+        topic: `user-${eventUser.accessToken}`,
         name: 'CONVERSATION_CREATE',
         data: createdConversation,
       });
