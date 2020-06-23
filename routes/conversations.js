@@ -5,6 +5,7 @@
 const ConversationModel = rootRequire('/models/ConversationModel');
 const ConversationImpressionModel = rootRequire('/models/ConversationImpressionModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
+const UserModel = rootRequire('/models/UserModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const conversationAuthorize = rootRequire('/middlewares/conversations/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
@@ -155,11 +156,26 @@ router.post('/', asyncMiddleware(async (request, response) => {
 
     await transaction.commit();
 
-    response.success({
+    const createdConversation = {
       ...conversation.toJSON(),
       previewConversationMessage: conversationMessage.toJSON(),
       conversationMessages: [ conversationMessage.toJSON() ],
+    };
+
+    const eventUsers = await UserModel.unscoped().findAll({
+      attributes: [ 'accessToken' ],
+      where: { id: userIds },
     });
+
+    eventUsers.forEach(eventUser => {
+      events.publish({
+        topic: `user=${eventUser.accessToken}`,
+        name: 'CONVERSATION_CREATE',
+        data: createdConversation,
+      });
+    });
+
+    response.success(createdConversation);
   } catch(error) {
     await transaction.rollback();
 
