@@ -108,16 +108,16 @@ router.post('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
   const { accessLevel, title } = request.body;
   const message = request.body.message || {};
-  const attachments = (Array.isArray(message.attachments)) ? message.attachments : [];
-  const embeds = (Array.isArray(message.embeds)) ? message.embeds : [];
-  const users = (Array.isArray(request.body.users)) ? request.body.users : [];
+  const attachmentIds = (Array.isArray(message.attachmentIds)) ? message.attachmentIds : [];
+  const embedIds = (Array.isArray(message.embedIds)) ? message.embedIds : [];
+  const userIds = (Array.isArray(request.body.userIds)) ? request.body.userIds : [];
 
   const transaction = await database.transaction();
 
   if (accessLevel === 'private') {
     const existingConversation = await ConversationModel.findOneWithUsers({
       authUserId: user.id,
-      userIds: [ ...new Set([ user.id, ...users.map(id => +id) ]) ],
+      userIds: [ ...new Set([ user.id, ...userIds.map(userId => +userId) ]) ],
       where: { accessLevel: 'private' },
     });
 
@@ -133,7 +133,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
         accessLevel,
         title,
       },
-      userIds: users,
+      userIds,
       transaction,
     });
 
@@ -144,8 +144,8 @@ router.post('/', asyncMiddleware(async (request, response) => {
         text: message.text,
         nonce: message.nonce,
       },
-      attachmentIds: attachments,
-      embedIds: embeds,
+      attachmentIds,
+      embedIds,
       transaction,
     });
 

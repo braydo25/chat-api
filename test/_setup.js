@@ -40,7 +40,7 @@ global.testConversationTwo = {
     text: 'testing private',
     nonce: 'aiwdaiwjd',
   },
-  users: [ 1 ],
+  userIds: [ 1 ],
 };
 
 global.testConversationThree = {
@@ -50,7 +50,7 @@ global.testConversationThree = {
     text: 'testing public',
     nonce: '777wdahwd',
   },
-  users: [ 1 ],
+  userIds: [ 1 ],
 };
 
 global.testConversationOneUserOne = {};
@@ -71,7 +71,7 @@ global.testPermissionsPublicConversation = {
     text: 'this is a public convo!',
     nonce: '8441hfaiheu3',
   },
-  users: [ 1, 2, 3 ],
+  userIds: [ 1, 2, 3 ],
 };
 global.testPermissionsPublicConversationMessageOne = {};
 global.testPermissionsPublicConversationAdminUser = {};
@@ -88,7 +88,7 @@ global.testPermissionsProtectedConversation = {
     text: 'this is a protected convo!',
     nonce: 'b3ufb37f1038',
   },
-  users: [ 1, 2, 3 ],
+  userIds: [ 1, 2, 3 ],
 };
 global.testPermissionsProtectedConversationMessageOne = {};
 global.testPermissionsProtectedConversationAdminUser = {};
@@ -104,7 +104,7 @@ global.testPermissionsPrivateConversation = {
     text: 'this is a private convo!',
     nonce: '0199191',
   },
-  users: [ 1, 2, 3 ],
+  userIds: [ 1, 2, 3 ],
 };
 global.testPermissionsPrivateConversationMessageOne = {};
 global.testPermissionsPrivateConversationAdminUser = {};

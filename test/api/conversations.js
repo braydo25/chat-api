@@ -16,7 +16,7 @@ describe('Conversations', () => {
           text: 'test test test!',
           nonce: '11h1h1h1h111',
         },
-        users: [ testUserTwo.id ],
+        userIds: [ testUserTwo.id ],
       };
 
       chai.request(server)
@@ -47,11 +47,11 @@ describe('Conversations', () => {
         accessLevel: 'protected',
         title: 'Check out my latest stuff!',
         message: {
-          attachments: [ testAttachmentOne.id ],
-          embeds: [ testEmbedOne.id ],
+          attachmentIds: [ testAttachmentOne.id ],
+          embedIds: [ testEmbedOne.id ],
           nonce: 'yoyoyoyo',
         },
-        users: [ testUserTwo.id ],
+        userIds: [ testUserTwo.id ],
       };
 
       chai.request(server)
@@ -116,7 +116,7 @@ describe('Conversations', () => {
     it('409s with already existing private conversation object when provided users of already existing private conversation', done => {
       const fields = {
         accessLevel: 'private',
-        users: [
+        userIds: [
           testPermissionsPrivateConversationAdminUser.id,
           testPermissionsPrivateConversationGeneralUser.id,
           testPermissionsPrivateConversationPermissionlessUser.id,
@@ -221,7 +221,7 @@ describe('Conversations', () => {
 
     it('200s with conversation object when provided user ids that are a part of existing conversation that includes authenticated user', done => {
       chai.request(server)
-        .get(`/conversations?privateUserIds=${encodeURIComponent(JSON.stringify(testPermissionsPrivateConversation.users))}`)
+        .get(`/conversations?privateUserIds=${encodeURIComponent(JSON.stringify(testPermissionsPrivateConversation.userIds))}`)
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
