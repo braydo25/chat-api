@@ -168,10 +168,15 @@ router.post('/', asyncMiddleware(async (request, response) => {
     });
 
     eventUsers.forEach(eventUser => {
+      const eventData = Object.assign({}, createdConversation);
+
+      delete eventData.authConversationUser;
+      delete eventData.conversationMessages;
+
       events.publish({
         topic: `user-${eventUser.accessToken}`,
         name: 'CONVERSATION_CREATE',
-        data: createdConversation,
+        data: eventData,
       });
     });
 
