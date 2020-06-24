@@ -32,8 +32,8 @@ describe('Conversation Messages', () => {
 
     it('200s with created conversation message object when provided attachments or embeds', done => {
       const fields = {
-        attachments: [ testAttachmentOne.id ],
-        embeds: [ testEmbedOne.id ],
+        attachmentIds: [ testAttachmentOne.id ],
+        embedIds: [ testEmbedOne.id ],
         nonce: 'attachio12412',
       };
 

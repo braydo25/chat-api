@@ -47,7 +47,7 @@ router.post('/', userConversationPermissions({
 }));
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user, conversation, authConversationUser } = request;
-  const { nonce, text, attachments, embeds } = request.body;
+  const { nonce, text, attachmentIds, embedIds } = request.body;
 
   const transaction = await database.transaction();
 
@@ -74,8 +74,8 @@ router.post('/', asyncMiddleware(async (request, response) => {
         nonce,
         text,
       },
-      attachmentIds: attachments,
-      embedIds: embeds,
+      attachmentIds,
+      embedIds,
       transaction,
     });
 
