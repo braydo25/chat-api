@@ -17,7 +17,10 @@ const router = express.Router({
 
 router.post('/', userAuthorize);
 router.post('/', conversationAssociate);
-router.post('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_MESSAGES_CREATE' ] }));
+router.post('/', userConversationPermissions({
+  anyAccessLevel: [ 'CONVERSATION_MESSAGES_CREATE' ],
+  waiveNonConversationUser: [ 'public' ],
+}));
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user, conversation } = request;
 
@@ -27,7 +30,9 @@ router.post('/', asyncMiddleware(async (request, response) => {
     data: {
       user: {
         id: user.id,
+        conversationId: conversation.id,
         name: user.name,
+        typingAt: new Date(),
       },
     },
   });
