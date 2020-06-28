@@ -9,6 +9,7 @@ const conversationMessageAssociate = rootRequire('/middlewares/conversations/mes
 const conversationMessageReactionAuthorize = rootRequire('/middlewares/conversations/messages/reactions/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const userConversationPermissions = rootRequire('/middlewares/users/conversations/permissions');
+const events = rootRequire('/libs/events');
 
 const router = express.Router({
   mergeParams: true,
@@ -88,6 +89,12 @@ router.put('/', asyncMiddleware(async (request, response) => {
 
     await transaction.commit();
 
+    events.publish({
+      topic: `conversation-${conversation.eventsToken}`,
+      name: 'CONVERSATION_MESSAGE_REACTION_CREATE',
+      data: conversationMessageReaction,
+    });
+
     response.success(conversationMessageReaction);
   } catch(error) {
     await transaction.rollback();
@@ -101,11 +108,23 @@ router.put('/', asyncMiddleware(async (request, response) => {
  */
 
 router.delete('/', userAuthorize);
+router.delete('/', conversationAssociate);
+router.delete('/', conversationMessageAssociate);
 router.delete('/', conversationMessageReactionAuthorize);
 router.delete('/', asyncMiddleware(async (request, response) => {
-  const { conversationMessageReaction } = request;
+  const { conversation, conversationMessage, conversationMessageReaction } = request;
 
   await conversationMessageReaction.destroy();
+
+  events.publish({
+    topic: `conversation-${conversation.eventsToken}`,
+    name: 'CONVERSATION_MESSAGE_REACTION_DELETE',
+    data: {
+      id: conversationMessageReaction.id,
+      conversationId: conversation.id,
+      conversationMessageId: conversationMessage.id,
+    },
+  });
 
   response.success();
 }));
