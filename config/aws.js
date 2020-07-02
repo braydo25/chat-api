@@ -17,3 +17,10 @@ module.exports.s3FileUploadsBucket = process.env.AWS_S3_FILE_UPLOADS_BUCKET;
  */
 
 module.exports.iotEndpoint = process.env.AWS_IOT_ENDPOINT;
+
+/*
+ * SNS
+ */
+
+module.exports.snsFcmPlatformApplicationArn = process.env.AWS_SNS_FCM_PLATFORM_APPLICATION_ARN;
+module.exports.snsApnsPlatformApplicationArn = process.env.AWS_SNS_APNS_PLATFORM_APPLICATION_ARN;

@@ -92,7 +92,10 @@ router.put('/', asyncMiddleware(async (request, response) => {
     events.publish({
       topic: `conversation-${conversation.eventsToken}`,
       name: 'CONVERSATION_MESSAGE_REACTION_CREATE',
-      data: conversationMessageReaction,
+      data: {
+        conversationId: conversation.id,
+        ...(conversationMessageReaction.toJSON()),
+      },
     });
 
     response.success(conversationMessageReaction);
@@ -112,7 +115,7 @@ router.delete('/', conversationAssociate);
 router.delete('/', conversationMessageAssociate);
 router.delete('/', conversationMessageReactionAuthorize);
 router.delete('/', asyncMiddleware(async (request, response) => {
-  const { conversation, conversationMessage, conversationMessageReaction } = request;
+  const { user, conversation, conversationMessage, conversationMessageReaction } = request;
 
   await conversationMessageReaction.destroy();
 
@@ -121,8 +124,10 @@ router.delete('/', asyncMiddleware(async (request, response) => {
     name: 'CONVERSATION_MESSAGE_REACTION_DELETE',
     data: {
       id: conversationMessageReaction.id,
+      userId: user.id,
       conversationId: conversation.id,
       conversationMessageId: conversationMessage.id,
+      reaction: conversationMessageReaction.reaction,
     },
   });
 

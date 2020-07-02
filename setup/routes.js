@@ -4,6 +4,7 @@ const conversationMessagesRouter = rootRequire('/routes/conversations/messages')
 const conversationMessageReactionsRouter = rootRequire('/routes/conversations/messages/reactions');
 const conversationTypingRouter = rootRequire('/routes/conversations/typing');
 const conversationUsersRouter = rootRequire('/routes/conversations/users');
+const devicesRouter = rootRequire('/routes/devices');
 const embedsRouter = rootRequire('/routes/embeds');
 const healthRouter = rootRequire('/routes/health');
 const usersRouter = rootRequire('/routes/users');
@@ -18,6 +19,7 @@ module.exports = app => {
   app.use('/conversations/:conversationId/messages/:conversationMessageId/reactions/:conversationMessageReactionId?', conversationMessageReactionsRouter);
   app.use('/conversations/:conversationId/typing', conversationTypingRouter);
   app.use('/conversations/:conversationId/users/:conversationUserId?', conversationUsersRouter);
+  app.use('/devices', devicesRouter);
   app.use('/embeds', embedsRouter);
   app.use('/health', healthRouter);
   app.use('/users/:userId?', usersRouter);

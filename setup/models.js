@@ -7,6 +7,8 @@ const ConversationMessageEmbedModel = rootRequire('/models/ConversationMessageEm
 const ConversationMessageReactionModel = rootRequire('/models/ConversationMessageReactionModel');
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const EmbedModel = rootRequire('/models/EmbedModel');
+const UserActivityModel = rootRequire('/models/UserActivityModel');
+const UserDeviceModel = rootRequire('/models/UserDeviceModel');
 const UserModel = rootRequire('/models/UserModel');
 const UserFollowerModel = rootRequire('/models/UserFollowerModel');
 
@@ -33,8 +35,14 @@ UserModel.belongsTo(AttachmentModel, { as: 'avatarAttachment' });
 UserModel.hasMany(AttachmentModel, { constraints: false });
 UserModel.hasMany(ConversationModel);
 UserModel.hasMany(EmbedModel);
+UserModel.hasMany(UserActivityModel);
+UserModel.hasMany(UserDeviceModel);
 UserModel.hasMany(UserFollowerModel);
 UserModel.hasOne(UserFollowerModel, { as: 'authUserFollower', foreignKey: 'userId' });
+
+UserActivityModel.belongsTo(UserFollowerModel);
+
+UserDeviceModel.belongsTo(UserModel);
 
 UserFollowerModel.belongsTo(UserModel);
 UserFollowerModel.belongsTo(UserModel, { as: 'followerUser' });
