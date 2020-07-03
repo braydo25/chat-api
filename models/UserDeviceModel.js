@@ -15,6 +15,10 @@ const UserDeviceModel = database.define('userDevice', {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
+  idfv: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
   details: {
     type: Sequelize.JSON,
     allowNull: false,

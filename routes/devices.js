@@ -16,22 +16,23 @@ const router = express.Router({
 router.put('/', userAuthorize);
 router.put('/', asyncMiddleware(async (request, response) => {
   const userId = request.user.id;
-  const { details, apnsToken, fcmRegistrationId } = request.body;
+  const { idfv, details, apnsToken, fcmRegistrationId } = request.body;
 
-  if (!details || (!apnsToken && !fcmRegistrationId) ) {
-    throw new Error('Details and a apnsToken or fcmRegistrationId must be provided.');
+  if (!idfv) {
+    throw new Error('idfv must be provided.');
   }
 
-  const options = (apnsToken) ? { where: { apnsToken } } : { where: { fcmRegistrationId } };
-  const userDevice = await UserDeviceModel.findOne(options);
+  const existingUserDevice = await UserDeviceModel.findOne({ where: { idfv } });
 
-  if (userDevice) {
-    userDevice.userId = userId;
-    userDevice.details = details;
+  if (existingUserDevice) {
+    existingUserDevice.userId = userId;
+    existingUserDevice.details = details || existingUserDevice.details;
+    existingUserDevice.apnsToken = (apnsToken !== undefined) ? apnsToken : existingUserDevice.apnsToken;
+    existingUserDevice.fcmRegistrationId = (fcmRegistrationId !== undefined) ? fcmRegistrationId : existingUserDevice.fcmRegistrationId;
 
-    await userDevice.save();
+    await existingUserDevice.save();
   } else {
-    await UserDeviceModel.create({ userId, details, apnsToken, fcmRegistrationId });
+    await UserDeviceModel.create({ userId, idfv, details, apnsToken, fcmRegistrationId });
   }
 
   response.success();
