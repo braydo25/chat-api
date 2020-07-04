@@ -3,6 +3,7 @@
  */
 
 const UserFollowerModel = rootRequire('/models/UserFollowerModel');
+const UserDeviceModel = rootRequire('/models/UserDeviceModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const userFollowerAuthorize = rootRequire('/middlewares/users/followers/authorize');
 
@@ -38,10 +39,21 @@ router.put('/', asyncMiddleware(async (request, response) => {
     followerUserId: user.id,
   };
 
-  let userFollower = await UserFollowerModel.findOne({ where: data });
+  let userFollower = await UserFollowerModel.findOne({
+    where: data,
+    paranoid: false,
+  });
 
   if (!userFollower) {
     userFollower = await UserFollowerModel.create(data);
+
+    UserDeviceModel.sendPushNotificationForUserId({
+      userId,
+      title: 'You have a new follower.',
+      message: `${user.name} (@${user.username}) is now following you 🎉`,
+    });
+  } else {
+    await userFollower.restore();
   }
 
   response.success(userFollower);
