@@ -91,6 +91,12 @@ router.post('/', asyncMiddleware(async (request, response) => {
       data: conversationMessage,
     });
 
+    conversation.sendNotificationToConversationUsers({
+      sendingUserId: user.id,
+      title: conversation.title,
+      message: (text) ? `${user.name}: ${text}` : `${user.name} sent an attachment(s).`,
+    });
+
     response.success(conversationMessage);
   } catch(error) {
     await transaction.rollback();

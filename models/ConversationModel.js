@@ -1,6 +1,7 @@
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const UserModel = rootRequire('/models/UserModel');
+const UserDeviceModel = rootRequire('/models/UserDeviceModel');
 
 const accessLevels = [ 'public', 'protected', 'private' ];
 
@@ -238,6 +239,30 @@ ConversationModel.findAllRelevantConversationsForUser = async function({ userId,
     where: { accessLevel: [ 'public', 'protected' ] },
     order,
     limit,
+  });
+};
+
+/*
+ * Instance Methods
+ */
+
+ConversationModel.prototype.sendNotificationToConversationUsers = async function({ sendingUserId, title, message, data }) {
+  const conversationUsers = await ConversationUserModel.unscoped().findAll({
+    attributes: [ 'userId' ],
+    where: { conversationId: this.id },
+  });
+
+  conversationUsers.forEach(conversationUser => {
+    if (conversationUser.userId === sendingUserId) {
+      return;
+    }
+
+    UserDeviceModel.sendPushNotificationForUserId({
+      userId: conversationUser.id,
+      title,
+      message,
+      data,
+    });
   });
 };
 
