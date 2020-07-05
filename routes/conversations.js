@@ -87,7 +87,7 @@ router.get('/:conversationId', userConversationPermissions({
   waiveNonConversationUser: [ 'public', 'protected' ],
 }));
 router.get('/:conversationId', asyncMiddleware(async (request, response) => {
-  const { conversation, user } = request;
+  const { conversation, authConversationUser, user } = request;
   const completeConversation = await ConversationModel.scope({ method: [ 'complete', user.id ] }).findOne({
     where: { id: conversation.id },
   });
@@ -96,6 +96,8 @@ router.get('/:conversationId', asyncMiddleware(async (request, response) => {
     userId: user.id,
     conversationId: conversation.id,
   });
+
+  authConversationUser.update({ lastActiveAt: new Date() });
 
   response.success(completeConversation);
 }));
