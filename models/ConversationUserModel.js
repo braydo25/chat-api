@@ -48,9 +48,6 @@ const ConversationUserModel = database.define('conversationUser', {
     },
     defaultValue: [],
   },
-  lastActiveAt: {
-    type: Sequelize.DATE,
-  },
 }, {
   defaultScope: {
     attributes: [ 'id', 'conversationId', 'permissions' ], // shouldn't have to return the conversation id..
