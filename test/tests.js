@@ -4,6 +4,7 @@
 
 require('./api/users');
 require('./api/users/conversations');
+require('./api/users/conversations/data');
 require('./api/users/followers');
 require('./api/attachments');
 require('./api/conversations');

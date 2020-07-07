@@ -1,8 +1,8 @@
-const ConversationImpressionModel = rootRequire('/models/ConversationImpressionModel');
 const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const UserModel = rootRequire('/models/UserModel');
 const UserDeviceModel = rootRequire('/models/UserDeviceModel');
+const UserConversationDataModel = rootRequire('/models/UserConversationDataModel');
 
 const accessLevels = [ 'public', 'protected', 'private' ];
 
@@ -121,8 +121,8 @@ const ConversationModel = database.define('conversation', {
           // limit: 5, TODO: this fails and causes a query with duplicate left joins?
         },
         {
-          model: ConversationImpressionModel,
-          as: 'authUserLastConversationImpression',
+          model: UserConversationDataModel,
+          as: 'authUserConversationData',
           where: { userId },
           required: false,
         },
@@ -160,6 +160,12 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
       ],
     }))
   ), { transaction });
+
+  await UserConversationDataModel.create({
+    userId: data.userId,
+    conversationId: conversation.id,
+    lastReadAt: new Date(),
+  }, { transaction });
 
   const users = await UserModel.findAll({
     where: { id: userIds },

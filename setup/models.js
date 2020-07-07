@@ -8,6 +8,7 @@ const ConversationMessageReactionModel = rootRequire('/models/ConversationMessag
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const EmbedModel = rootRequire('/models/EmbedModel');
 const UserActivityModel = rootRequire('/models/UserActivityModel');
+const UserConversationDataModel = rootRequire('/models/UserConversationDataModel');
 const UserDeviceModel = rootRequire('/models/UserDeviceModel');
 const UserModel = rootRequire('/models/UserModel');
 const UserFollowerModel = rootRequire('/models/UserFollowerModel');
@@ -19,7 +20,8 @@ ConversationModel.hasMany(ConversationMessageModel);
 ConversationModel.hasMany(ConversationUserModel);
 ConversationModel.hasMany(ConversationUserModel, { as: 'previewConversationUsers' });
 ConversationModel.hasOne(ConversationUserModel, { as: 'authConversationUser', foreignKey: 'conversationId' });
-ConversationModel.hasOne(ConversationImpressionModel, { as: 'authUserLastConversationImpression', foreignKey: 'conversationId' });
+ConversationModel.hasOne(UserConversationDataModel, { as: 'authUserConversationData', foreignKey: 'conversationId' });
+
 
 ConversationMessageModel.belongsToMany(AttachmentModel, { through: ConversationMessageAttachmentModel });
 ConversationMessageModel.belongsToMany(EmbedModel, { through: ConversationMessageEmbedModel });
@@ -38,11 +40,14 @@ UserModel.hasMany(ConversationModel);
 UserModel.hasMany(ConversationImpressionModel);
 UserModel.hasMany(EmbedModel);
 UserModel.hasMany(UserActivityModel);
+UserModel.hasMany(UserConversationDataModel);
 UserModel.hasMany(UserDeviceModel);
 UserModel.hasMany(UserFollowerModel);
 UserModel.hasOne(UserFollowerModel, { as: 'authUserFollower', foreignKey: 'userId' });
 
 UserActivityModel.belongsTo(UserFollowerModel);
+
+UserConversationDataModel.belongsTo(ConversationModel);
 
 UserDeviceModel.belongsTo(UserModel);
 

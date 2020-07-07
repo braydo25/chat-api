@@ -9,6 +9,7 @@ const embedsRouter = rootRequire('/routes/embeds');
 const healthRouter = rootRequire('/routes/health');
 const usersRouter = rootRequire('/routes/users');
 const userConversationsRouter = rootRequire('/routes/users/conversations');
+const userConversationDataRouter = rootRequire('/routes/users/conversations/data');
 const userFollowersRouter = rootRequire('/routes/users/followers');
 
 module.exports = app => {
@@ -25,6 +26,7 @@ module.exports = app => {
   app.use('/users/:userId?', usersRouter);
   app.use('/users/:userId/conversations', userConversationsRouter);
   app.use('/users/:userId/followers', userFollowersRouter);
+  app.use('/users/:userId/conversations/:conversationId/data', userConversationDataRouter);
 
   // Handle Various Errors
   app.use((error, request, response, next) => {
