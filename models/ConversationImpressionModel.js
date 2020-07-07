@@ -16,6 +16,12 @@ const ConversationImpressionModel = database.define('conversationImpression', {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
+}, {
+  defaultScope: {
+    attributes: [
+      'createdAt',
+    ],
+  },
 });
 
 /*

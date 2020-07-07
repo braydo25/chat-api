@@ -57,7 +57,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
   }
 
   if (search) {
-    const searchConversations = await ConversationModel.scope('preview').findAll({
+    const searchConversations = await ConversationModel.scope({ method: [ 'preview', user.id ] }).findAll({
       where: {
         accessLevel: [ 'public', 'protected' ],
         title: { [Sequelize.Op.like]: `%${search}%` },
@@ -87,7 +87,7 @@ router.get('/:conversationId', userConversationPermissions({
   waiveNonConversationUser: [ 'public', 'protected' ],
 }));
 router.get('/:conversationId', asyncMiddleware(async (request, response) => {
-  const { conversation, authConversationUser, user } = request;
+  const { conversation, user } = request;
   const completeConversation = await ConversationModel.scope({ method: [ 'complete', user.id ] }).findOne({
     where: { id: conversation.id },
   });
@@ -96,8 +96,6 @@ router.get('/:conversationId', asyncMiddleware(async (request, response) => {
     userId: user.id,
     conversationId: conversation.id,
   });
-
-  authConversationUser.update({ lastActiveAt: new Date() });
 
   response.success(completeConversation);
 }));

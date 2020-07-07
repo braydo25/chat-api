@@ -19,6 +19,7 @@ ConversationModel.hasMany(ConversationMessageModel);
 ConversationModel.hasMany(ConversationUserModel);
 ConversationModel.hasMany(ConversationUserModel, { as: 'previewConversationUsers' });
 ConversationModel.hasOne(ConversationUserModel, { as: 'authConversationUser', foreignKey: 'conversationId' });
+ConversationModel.hasOne(ConversationImpressionModel, { as: 'authUserLastConversationImpression', foreignKey: 'conversationId' });
 
 ConversationMessageModel.belongsToMany(AttachmentModel, { through: ConversationMessageAttachmentModel });
 ConversationMessageModel.belongsToMany(EmbedModel, { through: ConversationMessageEmbedModel });
@@ -34,6 +35,7 @@ ConversationUserModel.belongsTo(UserModel);
 UserModel.belongsTo(AttachmentModel, { as: 'avatarAttachment' });
 UserModel.hasMany(AttachmentModel, { constraints: false });
 UserModel.hasMany(ConversationModel);
+UserModel.hasMany(ConversationImpressionModel);
 UserModel.hasMany(EmbedModel);
 UserModel.hasMany(UserActivityModel);
 UserModel.hasMany(UserDeviceModel);
