@@ -20,6 +20,7 @@
     "testConversationOneUserOne": true,
     "testConversationOneMessageOne": true,
     "testConversationOneMessageOneReactionOne": true,
+    "testConversationOneRepostOne": true,
     "testPermissionsPublicConversation": true,
     "testPermissionsPublicConversationMessageOne": true,
     "testPermissionsPublicConversationAdminUser":  true,

@@ -61,6 +61,7 @@ const ConversationModel = database.define('conversation', {
   defaultScope: {
     attributes: [
       'id',
+      'userId',
       'eventsToken',
       'accessLevel',
       'title',
@@ -70,7 +71,7 @@ const ConversationModel = database.define('conversation', {
     ],
   },
   scopes: {
-    complete: userId => ({
+    complete: authUserId => ({
       attributes: [
         'id',
         'eventsToken',
@@ -84,7 +85,7 @@ const ConversationModel = database.define('conversation', {
       include: [
         {
           model: ConversationMessageModel.scope('withReactions', [
-            { method: [ 'withAuthUserReactions', userId ] },
+            { method: [ 'withAuthUserReactions', authUserId ] },
           ]),
           separate: true,
           order: [ [ 'id', 'DESC' ] ],
@@ -93,13 +94,13 @@ const ConversationModel = database.define('conversation', {
         {
           model: ConversationUserModel.scope('authUser'),
           as: 'authConversationUser',
-          where: { userId },
+          where: { userId: authUserId },
           required: false,
         },
         UserModel,
       ],
     }),
-    preview: userId => ({
+    preview: authUserId => ({
       attributes: [
         'id',
         'eventsToken',
@@ -123,7 +124,7 @@ const ConversationModel = database.define('conversation', {
         {
           model: UserConversationDataModel,
           as: 'authUserConversationData',
-          where: { userId },
+          where: { userId: authUserId },
           required: false,
         },
         UserModel,
@@ -230,6 +231,7 @@ ConversationModel.findAllWithUser = async function({ userId, where, order, limit
 };
 
 ConversationModel.findAllByFollowedUsers = async function({ userId, order, limit }) {
+  const ConversationRepostModel = database.models.conversationRepost;
   const UserFollowerModel = database.models.userFollower;
 
   const followedUsers = await UserFollowerModel.findAll({
@@ -237,14 +239,27 @@ ConversationModel.findAllByFollowedUsers = async function({ userId, order, limit
     where: { followerUserId: userId },
   });
 
-  return await ConversationModel.scope({ method: [ 'preview', userId ] }).findAll({
+  const followedUserIds = followedUsers.map(followedUser => followedUser.userId);
+
+  const conversationReposts = await ConversationRepostModel.scope({ method: [ 'complete', userId ] }).findAll({
+    where: { userId: followedUserIds },
+    limit,
+  });
+
+  const conversations = await ConversationModel.scope({ method: [ 'preview', userId ] }).findAll({
     where: {
       accessLevel: [ 'public', 'protected' ],
-      userId: followedUsers.map(followedUser => followedUser.userId),
-    } ,
+      userId: followedUserIds,
+    },
     order,
     limit,
   });
+
+  // TODO: look into single query?
+  return [
+    ...conversationReposts,
+    ...conversations,
+  ];
 };
 
 ConversationModel.findAllRelevantConversationsForUser = async function({ userId, order, limit }) {
@@ -271,7 +286,7 @@ ConversationModel.prototype.sendNotificationToConversationUsers = async function
     }
 
     UserDeviceModel.sendPushNotificationForUserId({
-      userId: conversationUser.id,
+      userId: conversationUser.userId,
       title,
       message,
       data,

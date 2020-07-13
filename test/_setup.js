@@ -64,6 +64,8 @@ global.testConversationOneMessageOneReactionOne = {
   reaction: '🐻',
 };
 
+global.testConversationOneRepostOne = {};
+
 global.testPermissionsPublicConversation = {
   accessLevel: 'public',
   title: 'Lets talk public convo',
@@ -250,6 +252,11 @@ before(done => {
       .send(testConversationOneMessageOneReactionOne);
     Object.assign(testConversationOneMessageOneReactionOne, createdTestConversationOneMessageOneReactionOne.body);
 
+    fatLog('Creating global test conversation one repost one...');
+    const createdTestConversationOneRepostOne = await chai.request(server)
+      .put(`/conversations/${testConversationOne.id}/reposts`)
+      .set('X-Access-Token', testUserThree.accessToken);
+    Object.assign(testConversationOneRepostOne, createdTestConversationOneRepostOne.body);
 
     fatLog('Creating global test permissions public conversation');
     const createdTestPermissionsPublicConversation = await chai.request(server)

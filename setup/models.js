@@ -5,6 +5,7 @@ const ConversationImpressionModel = rootRequire('/models/ConversationImpressionM
 const ConversationMessageAttachmentModel = rootRequire('/models/ConversationMessageAttachmentModel');
 const ConversationMessageEmbedModel = rootRequire('/models/ConversationMessageEmbedModel');
 const ConversationMessageReactionModel = rootRequire('/models/ConversationMessageReactionModel');
+const ConversationRepostModel = rootRequire('/models/ConversationRepostModel');
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const EmbedModel = rootRequire('/models/EmbedModel');
 const UserActivityModel = rootRequire('/models/UserActivityModel');
@@ -22,7 +23,6 @@ ConversationModel.hasMany(ConversationUserModel, { as: 'previewConversationUsers
 ConversationModel.hasOne(ConversationUserModel, { as: 'authConversationUser', foreignKey: 'conversationId' });
 ConversationModel.hasOne(UserConversationDataModel, { as: 'authUserConversationData', foreignKey: 'conversationId' });
 
-
 ConversationMessageModel.belongsToMany(AttachmentModel, { through: ConversationMessageAttachmentModel });
 ConversationMessageModel.belongsToMany(EmbedModel, { through: ConversationMessageEmbedModel });
 ConversationMessageModel.hasMany(ConversationMessageReactionModel);
@@ -30,6 +30,9 @@ ConversationMessageModel.hasMany(ConversationMessageReactionModel, { as: 'authUs
 ConversationMessageModel.belongsTo(UserModel);
 
 ConversationMessageReactionModel.belongsTo(UserModel);
+
+ConversationRepostModel.belongsTo(ConversationModel);
+ConversationRepostModel.belongsTo(UserModel);
 
 ConversationUserModel.belongsTo(ConversationModel);
 ConversationUserModel.belongsTo(UserModel);

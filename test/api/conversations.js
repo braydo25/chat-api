@@ -199,7 +199,7 @@ describe('Conversations', () => {
         });
     });
 
-    it('200s with an array of recent conversations started by users the authenticated user follows', done => {
+    it('200s with an array of recent conversations started or reposted by users the authenticated user follows', done => {
       chai.request(server)
         .get('/conversations?feed=true')
         .set('X-Access-Token', testUserOne.accessToken)
@@ -209,11 +209,20 @@ describe('Conversations', () => {
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversation => {
-            conversation.should.have.property('eventsToken');
-            conversation.impressionsCount.should.be.a('number');
-            conversation.previewConversationMessage.should.be.an('object');
-            conversation.previewConversationUsers.should.be.an('array');
-            conversation.user.should.be.an('object');
+            const conversationTest = conversation => {
+              conversation.should.have.property('eventsToken');
+              conversation.impressionsCount.should.be.a('number');
+              conversation.previewConversationMessage.should.be.an('object');
+              conversation.previewConversationUsers.should.be.an('array');
+              conversation.user.should.be.an('object');
+
+            };
+
+            if (!conversation.conversation) {
+              conversationTest(conversation);
+            } else {
+              conversationTest(conversation.conversation); // repost
+            }
           });
           done();
         });
