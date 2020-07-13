@@ -18,6 +18,7 @@ ConversationModel.belongsTo(UserModel);
 ConversationModel.belongsTo(ConversationMessageModel, { as: 'previewConversationMessage', constraints: false });
 ConversationModel.hasMany(ConversationImpressionModel);
 ConversationModel.hasMany(ConversationMessageModel);
+ConversationModel.hasMany(ConversationMessageModel, { as: 'pinnedConversationMessages' });
 ConversationModel.hasMany(ConversationUserModel);
 ConversationModel.hasMany(ConversationUserModel, { as: 'previewConversationUsers' });
 ConversationModel.hasOne(ConversationUserModel, { as: 'authConversationUser', foreignKey: 'conversationId' });
