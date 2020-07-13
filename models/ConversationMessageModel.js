@@ -33,6 +33,9 @@ const ConversationMessageModel = database.define('conversationMessage', {
       }
     },
   },
+  pinnedAt: {
+    type: Sequelize.DATE,
+  },
 }, {
   defaultScope: {
     attributes: [

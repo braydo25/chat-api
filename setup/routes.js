@@ -1,6 +1,7 @@
 const attachmentsRouter = rootRequire('/routes/attachments');
 const conversationsRouter = rootRequire('/routes/conversations');
 const conversationMessagesRouter = rootRequire('/routes/conversations/messages');
+const conversationMessagePinRouter = rootRequire('/routes/conversations/messages/pin');
 const conversationMessageReactionsRouter = rootRequire('/routes/conversations/messages/reactions');
 const conversationRepostsRouter = rootRequire('/routes/conversations/reposts');
 const conversationTypingRouter = rootRequire('/routes/conversations/typing');
@@ -18,6 +19,7 @@ module.exports = app => {
   app.use('/attachments', attachmentsRouter);
   app.use('/conversations', conversationsRouter);
   app.use('/conversations/:conversationId/messages/:conversationMessageId?', conversationMessagesRouter);
+  app.use('/conversations/:conversationId/messages/:conversationMessageId/pin', conversationMessagePinRouter);
   app.use('/conversations/:conversationId/messages/:conversationMessageId/reactions/:conversationMessageReactionId?', conversationMessageReactionsRouter);
   app.use('/conversations/:conversationId/reposts/:conversationRepostId?', conversationRepostsRouter);
   app.use('/conversations/:conversationId/typing', conversationTypingRouter);

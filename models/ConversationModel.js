@@ -87,6 +87,17 @@ const ConversationModel = database.define('conversation', {
           model: ConversationMessageModel.scope('withReactions', [
             { method: [ 'withAuthUserReactions', authUserId ] },
           ]),
+          as: 'pinnedConversationMessages',
+          separate: true,
+          where: {
+            pinnedAt: { [Sequelize.Op.ne]: null },
+          },
+          order: [ [ 'pinnedAt', 'DESC' ] ],
+        },
+        {
+          model: ConversationMessageModel.scope('withReactions', [
+            { method: [ 'withAuthUserReactions', authUserId ] },
+          ]),
           separate: true,
           order: [ [ 'id', 'DESC' ] ],
           limit: 25,
