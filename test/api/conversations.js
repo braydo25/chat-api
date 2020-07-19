@@ -169,6 +169,7 @@ describe('Conversations', () => {
             conversationMessage.should.have.property('authUserConversationMessageReactions');
             conversationMessage.should.have.property('createdAt');
           });
+          response.body.should.have.property('pinnedConversationMessages');
           response.body.user.should.be.an('object');
           response.body.authConversationUser.should.have.property('id');
           response.body.authConversationUser.should.have.property('permissions');

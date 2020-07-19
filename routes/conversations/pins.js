@@ -1,5 +1,5 @@
 /*
- * Route: /conversations/:conversationId/messages/:conversationMessageId/pin
+ * Route: /conversations/:conversationId/pins/:conversationMessageId
  */
 
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
