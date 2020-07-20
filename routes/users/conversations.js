@@ -20,8 +20,11 @@ router.get('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
   const { userId } = request.params;
 
-  const conversationReposts = await ConversationRepostModel.scope({ method: [ 'complete', user.id ] }).findAll({
-    where: { userId: user.id },
+  const conversationReposts = await ConversationRepostModel.findAllNormalized({
+    userId,
+    options: {
+      where: { userId: user.id },
+    },
   });
 
   const conversations = await ConversationModel.scope({ method: [ 'preview', user.id ] }).findAll({

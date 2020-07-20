@@ -32,6 +32,26 @@ const ConversationRepostModel = database.define('conversationRepost', {
 });
 
 /*
+ * Class Methods
+ */
+
+ConversationRepostModel.findAllNormalized = async function({ userId, options }) {
+  // TODO: it would be better if we could factor this into the ConversationModel
+  // complete scope somehow for just a singular conversations query to include
+  // reposts as well..?
+
+  const conversationReposts = await ConversationRepostModel.scope({
+    method: [ 'complete', userId ],
+  }).findAll(options);
+
+  return conversationReposts.map(conversationRepost => ({
+    ...conversationRepost.toJSON().conversation,
+    conversationRepostId: conversationRepost.id,
+    conversationRepostUser: conversationRepost.user,
+  }));
+};
+
+/*
  * Export
  */
 

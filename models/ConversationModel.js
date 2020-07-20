@@ -252,9 +252,12 @@ ConversationModel.findAllByFollowedUsers = async function({ userId, order, limit
 
   const followedUserIds = followedUsers.map(followedUser => followedUser.userId);
 
-  const conversationReposts = await ConversationRepostModel.scope({ method: [ 'complete', userId ] }).findAll({
-    where: { userId: followedUserIds },
-    limit,
+  const conversationReposts = await ConversationRepostModel.findAllNormalized({
+    userId,
+    options: {
+      where: { userId: followedUserIds },
+      limit,
+    },
   });
 
   const conversations = await ConversationModel.scope({ method: [ 'preview', userId ] }).findAll({
