@@ -1,13 +1,13 @@
 const helpers = require('../../helpers');
 
 describe('Conversation Reposts', () => {
-  let scopedConversationRepost = null;
-
   /*
    * PUT
    */
 
   describe('PUT /conversations/:conversationId/reposts', () => {
+    let scopedConversationRepost = null;
+
     it('200s with created conversation repost object', done => {
       chai.request(server)
         .put(`/conversations/${testConversationOne.id}/reposts`)
@@ -55,7 +55,7 @@ describe('Conversation Reposts', () => {
   describe('DELETE /conversation/:conversationId/reposts/:conversationRepostId', () => {
     it('204s and deletes conversation repost', done => {
       chai.request(server)
-        .delete(`/conversations/${testConversationOne.id}/reposts/${scopedConversationRepost.id}`)
+        .delete(`/conversations/${testConversationOne.id}/reposts`)
         .set('X-Access-Token', testUserTwo.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);

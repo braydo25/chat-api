@@ -1,11 +1,10 @@
 /*
- * Route: /conversations/:conversationId/reposts/:conversationRepostId?
+ * Route: /conversations/:conversationId/reposts
  */
 
 const ConversationRepostModel = rootRequire('/models/ConversationRepostModel');
 const UserDeviceModel = rootRequire('/models/UserDeviceModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
-const conversationRepostAuthorize = rootRequire('/middlewares/conversations/reposts/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 
 const router = express.Router({
@@ -61,9 +60,18 @@ router.put('/', asyncMiddleware(async (request, response) => {
 
 router.delete('/', userAuthorize);
 router.delete('/', conversationAssociate);
-router.delete('/', conversationRepostAuthorize);
 router.delete('/', asyncMiddleware(async (request, response) => {
-  const { conversationRepost } = request;
+  const { user, conversation } = request;
+  const conversationRepost = await ConversationRepostModel.findOne({
+    where: {
+      conversationId: conversation.id,
+      userId: user.id,
+    },
+  });
+
+  if (!conversationRepost) {
+    throw new Error('There is no active repost by you for this conversation.');
+  }
 
   await conversationRepost.destroy();
 
