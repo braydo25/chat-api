@@ -6,25 +6,7 @@ describe('User Conversations', () => {
    */
 
   describe('GET /users/:userId/conversations', () => {
-    it('200s with an array of conversation objects for authenticated user', done => {
-      chai.request(server)
-        .get(`/users/${testUserOne.id}/conversations`)
-        .set('X-Access-Token', testUserOne.accessToken)
-        .end((error, response) => {
-          helpers.logExampleResponse(response);
-          response.should.have.status(200);
-          response.body.should.be.an('array');
-          response.body.length.should.be.at.least(1);
-          response.body.forEach(conversation => {
-            conversation.should.have.property('eventsToken');
-            conversation.user.should.be.an('object');
-            conversation.user.id.should.equal(testUserOne.id);
-          });
-          done();
-        });
-    });
-
-    it('200s with an array of public conversation objects for provided userId', done => {
+    it('200s with an array of public and protected conversation and conversation repost objects for provided userId', done => {
       chai.request(server)
         .get(`/users/${testUserThree.id}/conversations`)
         .set('X-Access-Token', testUserOne.accessToken)

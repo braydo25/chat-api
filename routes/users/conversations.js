@@ -3,6 +3,7 @@
  */
 
 const ConversationModel = rootRequire('/models/ConversationModel');
+const ConversationRepostModel = rootRequire('/models/ConversationRepostModel');
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 
@@ -18,13 +19,23 @@ router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
   const { userId } = request.params;
-  const accessLevel = (user.id === userId) ? [ 'public', 'protected', 'private' ] : [ 'public', 'protected' ];
+
+  const conversationReposts = await ConversationRepostModel.scope({ method: [ 'complete', user.id ] }).findAll({
+    where: { userId: user.id },
+  });
+
   const conversations = await ConversationModel.scope({ method: [ 'preview', user.id ] }).findAll({
-    where: { userId, accessLevel },
+    where: {
+      userId,
+      accessLevel: [ 'public', 'protected' ],
+    },
     order: [ [ 'createdAt', 'DESC' ] ],
   });
 
-  response.success(conversations);
+  response.success([
+    ...conversationReposts,
+    ...conversations,
+  ]);
 }));
 
 /*
