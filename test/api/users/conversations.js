@@ -19,7 +19,11 @@ describe('User Conversations', () => {
             conversation.accessLevel.should.not.equal('private');
             conversation.should.have.property('eventsToken');
             conversation.user.should.be.an('object');
-            conversation.user.id.should.equal(testUserThree.id);
+            if (conversation.conversationRepostId) {
+              conversation.conversationRepostUser.id.should.equal(testUserThree.id);
+            } else {
+              conversation.user.id.should.equal(testUserThree.id);
+            }
           });
           done();
         });
