@@ -1,9 +1,3 @@
-const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
-const ConversationUserModel = rootRequire('/models/ConversationUserModel');
-const UserModel = rootRequire('/models/UserModel');
-const UserDeviceModel = rootRequire('/models/UserDeviceModel');
-const UserConversationDataModel = rootRequire('/models/UserConversationDataModel');
-
 const accessLevels = [ 'public', 'protected', 'private' ];
 
 /*
@@ -84,7 +78,7 @@ const ConversationModel = database.define('conversation', {
       ],
       include: [
         {
-          model: ConversationMessageModel.scope('withReactions', [
+          model: database.models.conversationMessage.scope('withReactions', [
             { method: [ 'withAuthUserReactions', authUserId ] },
           ]),
           as: 'pinnedConversationMessages',
@@ -95,7 +89,7 @@ const ConversationModel = database.define('conversation', {
           order: [ [ 'pinnedAt', 'DESC' ] ],
         },
         {
-          model: ConversationMessageModel.scope('withReactions', [
+          model: database.models.conversationMessage.scope('withReactions', [
             { method: [ 'withAuthUserReactions', authUserId ] },
           ]),
           separate: true,
@@ -103,12 +97,18 @@ const ConversationModel = database.define('conversation', {
           limit: 25,
         },
         {
-          model: ConversationUserModel.scope('authUser'),
+          model: database.models.conversationUser.scope('authUser'),
           as: 'authConversationUser',
           where: { userId: authUserId },
           required: false,
         },
-        UserModel,
+        {
+          model: database.models.conversationRepost,
+          as: 'authUserConversationRepost',
+          where: { userId: authUserId },
+          required: false,
+        },
+        database.models.user,
       ],
     }),
     preview: authUserId => ({
@@ -124,21 +124,21 @@ const ConversationModel = database.define('conversation', {
       ],
       include: [
         {
-          model: ConversationMessageModel,
+          model: database.models.conversationMessage,
           as: 'previewConversationMessage',
         },
         {
-          model: ConversationUserModel,
+          model: database.models.conversationUser,
           as: 'previewConversationUsers',
           // limit: 5, TODO: this fails and causes a query with duplicate left joins?
         },
         {
-          model: UserConversationDataModel,
+          model: database.models.userConversationData,
           as: 'authUserConversationData',
           where: { userId: authUserId },
           required: false,
         },
-        UserModel,
+        database.models.user,
       ],
     }),
   },
@@ -149,6 +149,10 @@ const ConversationModel = database.define('conversation', {
  */
 
 ConversationModel.createWithAssociations = async function({ data, userIds = [], transaction }) {
+  const ConversationUserModel = database.models.conversationUser;
+  const UserConversationDataModel = database.models.userConversationData;
+  const UserModel = database.models.user;
+
   userIds = [ ...new Set([ data.userId, ...userIds.map(id => +id) ]) ];
 
   const conversation = await ConversationModel.create({
@@ -199,6 +203,8 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
 };
 
 ConversationModel.findOneWithUsers = async function({ authUserId, userIds, where }) {
+  const ConversationUserModel = database.models.conversationUser;
+
   userIds = [ ...new Set(userIds) ];
 
   const match = await ConversationUserModel.unscoped().findOne({
@@ -226,6 +232,8 @@ ConversationModel.findOneWithUsers = async function({ authUserId, userIds, where
 };
 
 ConversationModel.findAllWithUser = async function({ authUserId, where, order, limit }) {
+  const ConversationUserModel = database.models.conversationUser;
+
   return await ConversationModel.scope({ method: [ 'preview', authUserId ] }).findAll({
     include: [
       {
@@ -289,6 +297,9 @@ ConversationModel.findAllRelevantConversationsForUser = async function({ authUse
  */
 
 ConversationModel.prototype.sendNotificationToConversationUsers = async function({ sendingUserId, title, message, data }) {
+  const ConversationUserModel = database.models.conversationUser;
+  const UserDeviceModel = database.models.userDevice;
+
   const conversationUsers = await ConversationUserModel.unscoped().findAll({
     attributes: [ 'userId' ],
     where: { conversationId: this.id },

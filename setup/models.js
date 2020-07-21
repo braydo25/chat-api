@@ -21,6 +21,7 @@ ConversationModel.hasMany(ConversationMessageModel);
 ConversationModel.hasMany(ConversationMessageModel, { as: 'pinnedConversationMessages' });
 ConversationModel.hasMany(ConversationUserModel);
 ConversationModel.hasMany(ConversationUserModel, { as: 'previewConversationUsers' });
+ConversationModel.hasOne(ConversationRepostModel, { as: 'authUserConversationRepost', foreignKey: 'conversationId' });
 ConversationModel.hasOne(ConversationUserModel, { as: 'authConversationUser', foreignKey: 'conversationId' });
 ConversationModel.hasOne(UserConversationDataModel, { as: 'authUserConversationData', foreignKey: 'conversationId' });
 

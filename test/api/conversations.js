@@ -177,6 +177,26 @@ describe('Conversations', () => {
         });
     });
 
+    it('200s with conversation object and includes authUserConversationRepost when provided conversation id', done => {
+      chai.request(server)
+        .put(`/conversations/${testConversationThree.id}/reposts`)
+        .set('X-Access-Token', testUserTwo.accessToken)
+        .end((error, response) => {
+          response.should.have.status(200);
+
+          chai.request(server)
+            .get(`/conversations/${testConversationThree.id}`)
+            .set('X-Access-Token', testUserTwo.accessToken)
+            .end((error, response) => {
+              helpers.logExampleResponse(response);
+              response.should.have.status(200);
+              response.body.should.be.an('object');
+              response.body.authUserConversationRepost.should.be.an('object');
+              done();
+            });
+        });
+    });
+
     it('200s with an array of recent conversations for the provided access levels the authenticated user is a part of', done => {
       chai.request(server)
         .get(`/conversations?accessLevels=${encodeURIComponent(JSON.stringify([ 'public', 'protected' ]))}`)
