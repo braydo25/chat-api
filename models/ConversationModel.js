@@ -225,13 +225,13 @@ ConversationModel.findOneWithUsers = async function({ authUserId, userIds, where
   return conversation;
 };
 
-ConversationModel.findAllWithUser = async function({ userId, where, order, limit }) {
-  return await ConversationModel.scope({ method: [ 'preview', userId ] }).findAll({
+ConversationModel.findAllWithUser = async function({ authUserId, where, order, limit }) {
+  return await ConversationModel.scope({ method: [ 'preview', authUserId ] }).findAll({
     include: [
       {
         attributes: [],
         model: ConversationUserModel,
-        where: { userId },
+        where: { userId: authUserId },
         required: true,
       },
     ],
@@ -241,26 +241,26 @@ ConversationModel.findAllWithUser = async function({ userId, where, order, limit
   });
 };
 
-ConversationModel.findAllByFollowedUsers = async function({ userId, order, limit }) {
+ConversationModel.findAllByFollowedUsers = async function({ authUserId, order, limit }) {
   const ConversationRepostModel = database.models.conversationRepost;
   const UserFollowerModel = database.models.userFollower;
 
   const followedUsers = await UserFollowerModel.findAll({
     attributes: [ 'userId' ],
-    where: { followerUserId: userId },
+    where: { followerUserId: authUserId },
   });
 
   const followedUserIds = followedUsers.map(followedUser => followedUser.userId);
 
   const conversationReposts = await ConversationRepostModel.findAllNormalized({
-    userId,
+    authUserId,
     options: {
       where: { userId: followedUserIds },
       limit,
     },
   });
 
-  const conversations = await ConversationModel.scope({ method: [ 'preview', userId ] }).findAll({
+  const conversations = await ConversationModel.scope({ method: [ 'preview', authUserId ] }).findAll({
     where: {
       accessLevel: [ 'public', 'protected' ],
       userId: followedUserIds,
@@ -276,8 +276,8 @@ ConversationModel.findAllByFollowedUsers = async function({ userId, order, limit
   ];
 };
 
-ConversationModel.findAllRelevantConversationsForUser = async function({ userId, order, limit }) {
-  return await ConversationModel.scope({ method: [ 'preview', userId ] }).findAll({
+ConversationModel.findAllRelevantConversationsForUser = async function({ authUserId, order, limit }) {
+  return await ConversationModel.scope({ method: [ 'preview', authUserId ] }).findAll({
     where: { accessLevel: [ 'public', 'protected' ] },
     order,
     limit,

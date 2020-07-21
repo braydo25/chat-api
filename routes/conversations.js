@@ -27,7 +27,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
 
   if (accessLevels) {
     const conversations = await ConversationModel.findAllWithUser({
-      userId: user.id,
+      authUserId: user.id,
       where: { accessLevel: accessLevels },
       order: [ [ 'updatedAt', 'DESC' ] ],
       limit: (limit && limit < 25) ? limit : 5,
@@ -38,7 +38,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
 
   if (feed) {
     const conversations = await ConversationModel.findAllByFollowedUsers({
-      userId: user.id,
+      authUserId: user.id,
       order: [ [ 'createdAt', 'DESC' ] ],
       limit: (limit && limit < 25) ? limit : 5,
     });
@@ -72,7 +72,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
   }
 
   const relevantConversations = await ConversationModel.findAllRelevantConversationsForUser({
-    userId: user.id,
+    authUserId: user.id,
     order: [ [ 'createdAt', 'DESC' ] ],
     limit: (limit && limit < 25) ? limit : 10,
   });
@@ -198,7 +198,7 @@ router.patch('/:conversationId', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
 
   conversation.accessLevel = request.body.accessLevel || conversation.accessLevel;
-  conversation.title = request.body.title || conversation.title;
+  conversation.title = (request.body.title !== undefined) ? request.body.title : conversation.title;
 
   await conversation.save();
 

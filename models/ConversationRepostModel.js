@@ -35,13 +35,13 @@ const ConversationRepostModel = database.define('conversationRepost', {
  * Class Methods
  */
 
-ConversationRepostModel.findAllNormalized = async function({ userId, options }) {
+ConversationRepostModel.findAllNormalized = async function({ authUserId, options }) {
   // TODO: it would be better if we could factor this into the ConversationModel
   // complete scope somehow for just a singular conversations query to include
   // reposts as well..?
 
   const conversationReposts = await ConversationRepostModel.scope({
-    method: [ 'complete', userId ],
+    method: [ 'complete', authUserId ],
   }).findAll(options);
 
   return conversationReposts.map(conversationRepost => ({

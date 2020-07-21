@@ -21,9 +21,9 @@ router.get('/', asyncMiddleware(async (request, response) => {
   const { userId } = request.params;
 
   const conversationReposts = await ConversationRepostModel.findAllNormalized({
-    userId,
+    authUserId: user.id,
     options: {
-      where: { userId: user.id },
+      where: { userId },
     },
   });
 
