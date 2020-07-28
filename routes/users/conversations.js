@@ -24,6 +24,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
     authUserId: user.id,
     options: {
       where: { userId },
+      order: [ [ 'createdAt', 'DESC' ] ],
     },
   });
 
