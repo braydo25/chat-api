@@ -46,14 +46,15 @@ router.post('/', userConversationPermissions({
   waiveNonConversationUser: [ 'public' ],
 }));
 router.post('/', asyncMiddleware(async (request, response) => {
-  const { user, conversation, authConversationUser } = request;
+  let authConversationUser = request.authConversationUser;
+  const { user, conversation } = request;
   const { nonce, text, attachmentIds, embedIds } = request.body;
 
   const transaction = await database.transaction();
 
   try {
     if (!authConversationUser) {
-      await ConversationUserModel.create({
+      authConversationUser = await ConversationUserModel.create({
         userId: user.id,
         conversationId: conversation.id,
         permissions: [
@@ -69,11 +70,12 @@ router.post('/', asyncMiddleware(async (request, response) => {
 
     const conversationMessage = await ConversationMessageModel.createWithAssociations({
       data: {
-        userId: user.id,
         conversationId: conversation.id,
+        conversationUserId: authConversationUser.id,
         nonce,
         text,
       },
+      conversationUser: authConversationUser,
       attachmentIds,
       embedIds,
       transaction,

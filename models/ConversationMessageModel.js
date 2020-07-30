@@ -4,8 +4,8 @@
 
 const AttachmentModel = rootRequire('/models/AttachmentModel');
 const ConversationMessageReactionModel = rootRequire('/models/ConversationMessageReactionModel');
+const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const EmbedModel = rootRequire('/models/EmbedModel');
-const UserModel = rootRequire('/models/UserModel');
 
 const ConversationMessageModel = database.define('conversationMessage', {
   id: {
@@ -13,11 +13,11 @@ const ConversationMessageModel = database.define('conversationMessage', {
     primaryKey: true,
     autoIncrement: true,
   },
-  userId: {
+  conversationId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
-  conversationId: {
+  conversationUserId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
@@ -46,8 +46,8 @@ const ConversationMessageModel = database.define('conversationMessage', {
     ],
     include: [
       AttachmentModel,
+      ConversationUserModel,
       EmbedModel,
-      UserModel,
     ],
   },
   scopes: {
@@ -85,7 +85,7 @@ const ConversationMessageModel = database.define('conversationMessage', {
  * Class Methods
  */
 
-ConversationMessageModel.createWithAssociations = async function({ data, attachmentIds = [], embedIds = [], transaction }) {
+ConversationMessageModel.createWithAssociations = async function({ data, conversationUser, attachmentIds = [], embedIds = [], transaction }) {
   const ConversationMessageAttachmentModel = database.models.conversationMessageAttachment;
   const ConversationMessageEmbedModel = database.models.conversationMessageEmbed;
 
@@ -114,13 +114,9 @@ ConversationMessageModel.createWithAssociations = async function({ data, attachm
     where: { id: embedIds },
   }, { transaction });
 
-  const user = await UserModel.findOne({
-    where: { id:  data.userId },
-  }, { transaction });
-
   conversationMessage.setDataValue('attachments', attachments);
   conversationMessage.setDataValue('embeds', embeds);
-  conversationMessage.setDataValue('user', user);
+  conversationMessage.setDataValue('conversationUser', conversationUser);
 
   return conversationMessage;
 };

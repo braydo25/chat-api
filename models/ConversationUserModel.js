@@ -52,7 +52,7 @@ const ConversationUserModel = database.define('conversationUser', {
   },
 }, {
   defaultScope: {
-    attributes: [ 'id', 'conversationId', 'permissions' ], // shouldn't have to return the conversation id..
+    attributes: [ 'id', 'userId', 'conversationId', 'permissions' ],
     include: [ UserModel ],
   },
   scopes: {

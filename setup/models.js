@@ -29,7 +29,7 @@ ConversationMessageModel.belongsToMany(AttachmentModel, { through: ConversationM
 ConversationMessageModel.belongsToMany(EmbedModel, { through: ConversationMessageEmbedModel });
 ConversationMessageModel.hasMany(ConversationMessageReactionModel);
 ConversationMessageModel.hasMany(ConversationMessageReactionModel, { as: 'authUserConversationMessageReactions' });
-ConversationMessageModel.belongsTo(UserModel);
+ConversationMessageModel.belongsTo(ConversationUserModel);
 
 ConversationMessageReactionModel.belongsTo(UserModel);
 

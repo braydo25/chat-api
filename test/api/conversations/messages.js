@@ -22,7 +22,7 @@ describe('Conversation Messages', () => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
-          response.body.userId.should.equal(testUserOne.id);
+          response.body.conversationUser.userId.should.equal(testUserOne.id);
           response.body.text.should.equal(fields.text);
           response.body.nonce.should.equal(fields.nonce);
           scopedConversationMessage = response.body;
@@ -45,7 +45,7 @@ describe('Conversation Messages', () => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
-          response.body.userId.should.equal(testUserOne.id);
+          response.body.conversationUser.userId.should.equal(testUserOne.id);
           response.body.attachments.should.be.an('array');
           response.body.attachments[0].id.should.equal(testAttachmentOne.id);
           response.body.embeds.should.be.an('array');
@@ -134,15 +134,16 @@ describe('Conversation Messages', () => {
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversationMessage => {
-            conversationMessage.should.have.property('user');
+            conversationMessage.should.have.property('conversationUser');
             conversationMessage.should.have.property('conversationMessageReactions');
             conversationMessage.should.have.property('authUserConversationMessageReactions');
             conversationMessage.should.have.property('createdAt');
             conversationMessage.should.have.property('updatedAt');
-            conversationMessage.user.should.have.property('id');
-            conversationMessage.user.should.have.property('name');
-            conversationMessage.user.should.have.property('username');
-            conversationMessage.user.should.have.property('avatarAttachment');
+            conversationMessage.conversationUser.permissions.should.be.an('array');
+            conversationMessage.conversationUser.user.should.have.property('id');
+            conversationMessage.conversationUser.user.should.have.property('name');
+            conversationMessage.conversationUser.user.should.have.property('username');
+            conversationMessage.conversationUser.user.should.have.property('avatarAttachment');
           });
           done();
         });

@@ -34,7 +34,7 @@ describe('Conversations', () => {
           response.body.previewConversationMessage.should.be.an('object');
           response.body.previewConversationUsers.should.be.an('array');
           response.body.conversationMessages.should.be.an('array');
-          response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
+          response.body.conversationMessages[0].conversationUser.userId.should.equal(testUserOne.id);
           response.body.conversationMessages[0].text.should.equal(fields.message.text);
           response.body.should.have.property('authConversationUser');
           scopedConversation = response.body;
@@ -68,7 +68,7 @@ describe('Conversations', () => {
           response.body.previewConversationMessage.should.be.an('object');
           response.body.previewConversationUsers.should.be.an('array');
           response.body.conversationMessages.should.be.an('array');
-          response.body.conversationMessages[0].userId.should.equal(testUserOne.id);
+          response.body.conversationMessages[0].conversationUser.userId.should.equal(testUserOne.id);
           response.body.conversationMessages[0].attachments.should.be.an('array');
           response.body.conversationMessages[0].attachments[0].id.should.equal(testAttachmentOne.id);
           response.body.conversationMessages[0].embeds.should.be.an('array');
@@ -159,12 +159,13 @@ describe('Conversations', () => {
           response.body.conversationMessages.forEach(conversationMessage => {
             conversationMessage.should.have.property('id');
             conversationMessage.should.have.property('text');
-            conversationMessage.should.have.property('userId');
+            conversationMessage.should.have.property('conversationUser');
+            conversationMessage.conversationUser.should.have.property('permissions');
+            conversationMessage.conversationUser.should.have.property('user');
             conversationMessage.should.have.property('conversationId');
             conversationMessage.should.have.property('nonce');
             conversationMessage.should.have.property('attachments');
             conversationMessage.should.have.property('embeds');
-            conversationMessage.should.have.property('user');
             conversationMessage.should.have.property('conversationMessageReactions');
             conversationMessage.should.have.property('authUserConversationMessageReactions');
             conversationMessage.should.have.property('createdAt');

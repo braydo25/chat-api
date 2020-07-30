@@ -141,10 +141,11 @@ router.post('/', asyncMiddleware(async (request, response) => {
     const conversationMessage = await ConversationMessageModel.createWithAssociations({
       data: {
         conversationId: conversation.id,
-        userId: user.id,
+        conversationUserId: conversation.getDataValue('authConversationUser').id,
         text: message.text,
         nonce: message.nonce,
       },
+      conversationUser: conversation.getDataValue('authConversationUser'),
       attachmentIds,
       embedIds,
       transaction,
