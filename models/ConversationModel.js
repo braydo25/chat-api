@@ -97,7 +97,7 @@ const ConversationModel = database.define('conversation', {
           limit: 25,
         },
         {
-          model: database.models.conversationUser.scope('authUser'),
+          model: database.models.conversationUser,
           as: 'authConversationUser',
           where: { userId: authUserId },
           required: false,

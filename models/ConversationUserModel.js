@@ -55,17 +55,6 @@ const ConversationUserModel = database.define('conversationUser', {
     attributes: [ 'id', 'userId', 'conversationId', 'permissions' ],
     include: [ UserModel ],
   },
-  scopes: {
-    authUser: {
-      attributes: [
-        'id',
-        'permissions',
-      ],
-    },
-    complete: {
-      include: [ UserModel ],
-    },
-  },
 });
 
 /*
