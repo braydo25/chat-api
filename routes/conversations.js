@@ -87,17 +87,22 @@ router.get('/:conversationId', userConversationPermissions({
   waiveNonConversationUser: [ 'public', 'protected' ],
 }));
 router.get('/:conversationId', asyncMiddleware(async (request, response) => {
-  const { conversation, user } = request;
-  const completeConversation = await ConversationModel.scope({ method: [ 'complete', user.id ] }).findOne({
-    where: { id: conversation.id },
+  const { user } = request;
+  const { preview } = request.query;
+  const conversationType = (preview) ? 'preview' : 'complete';
+
+  const conversation = await ConversationModel.scope({ method: [ conversationType, user.id ] }).findOne({
+    where: { id: request.conversation.id },
   });
 
-  ConversationImpressionModel.create({
-    userId: user.id,
-    conversationId: conversation.id,
-  });
+  if (!preview) {
+    ConversationImpressionModel.create({
+      userId: user.id,
+      conversationId: conversation.id,
+    });
+  }
 
-  response.success(completeConversation);
+  response.success(conversation);
 }));
 
 /*

@@ -178,6 +178,27 @@ describe('Conversations', () => {
         });
     });
 
+    it('200s with preview conversation object when provided conversation id and preview query parameter', done => {
+      chai.request(server)
+        .get(`/conversations/${scopedConversation.id}`)
+        .query({ preview: true })
+        .set('X-Access-Token', testUserTwo.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('object');
+          response.body.should.have.property('eventsToken');
+          response.body.accessLevel.should.satisfy(accessLevel => (
+            [ 'public', 'protected' ].includes(accessLevel)
+          ));
+          response.body.impressionsCount.should.be.a('number');
+          response.body.previewConversationMessage.should.be.an('object');
+          response.body.previewConversationUsers.should.be.an('array');
+          response.body.user.should.be.an('object');
+          done();
+        });
+    });
+
     it('200s with conversation object and includes authUserConversationRepost when provided conversation id', done => {
       chai.request(server)
         .put(`/conversations/${testConversationThree.id}/reposts`)
