@@ -133,6 +133,12 @@ const ConversationModel = database.define('conversation', {
           // limit: 5, TODO: this fails and causes a query with duplicate left joins?
         },
         {
+          model: database.models.conversationUser.unscoped().scope('preview'),
+          as: 'authConversationUser',
+          where: { userId: authUserId },
+          required: false,
+        },
+        {
           model: database.models.userConversationData,
           as: 'authUserConversationData',
           where: { userId: authUserId },

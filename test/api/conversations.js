@@ -233,6 +233,8 @@ describe('Conversations', () => {
             conversation.accessLevel.should.satisfy(accessLevel => (
               [ 'public', 'protected' ].includes(accessLevel)
             ));
+            conversation.authConversationUser.should.have.property('id');
+            conversation.authConversationUser.should.have.property('permissions');
             conversation.impressionsCount.should.be.a('number');
             conversation.previewConversationMessage.should.be.an('object');
             conversation.previewConversationUsers.should.be.an('array');
