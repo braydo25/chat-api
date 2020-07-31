@@ -45,16 +45,13 @@ describe('Conversation Pins', () => {
    */
 
   describe('DELETE /conversations/:conversationId/pins/:conversationMessageId', () => {
-    it('200s with unpinned conversation message object', done => {
+    it('204s and unpins conversation message', done => {
       chai.request(server)
         .delete(`/conversations/${testConversationOne.id}/pins/${testConversationOneMessageOne.id}`)
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
-          response.should.have.status(200);
-          if (response.body.pinnedAt) {
-            throw new Error('expected pinnedAt to be null');
-          }
+          response.should.have.status(204);
           done();
         });
     });

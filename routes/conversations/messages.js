@@ -66,6 +66,8 @@ router.post('/', asyncMiddleware(async (request, response) => {
           'CONVERSATION_USERS_READ',
         ],
       }, { transaction });
+
+      authConversationUser.setDataValue('user', user);
     }
 
     const conversationMessage = await ConversationMessageModel.createWithAssociations({

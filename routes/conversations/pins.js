@@ -44,7 +44,7 @@ router.delete('/', asyncMiddleware(async (request, response) => {
 
   await conversationMessage.save();
 
-  response.success(conversationMessage);
+  response.success();
 }));
 
 /*
