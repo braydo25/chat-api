@@ -10,7 +10,6 @@ const conversationAssociate = rootRequire('/middlewares/conversations/associate'
 const conversationAuthorize = rootRequire('/middlewares/conversations/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const userConversationPermissions = rootRequire('/middlewares/users/conversations/permissions');
-const events = rootRequire('/libs/events');
 
 const router = express.Router({
   mergeParams: true,
@@ -112,13 +111,8 @@ router.get('/:conversationId', asyncMiddleware(async (request, response) => {
 router.post('/', userAuthorize);
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
-  const { accessLevel, title } = request.body;
+  const { accessLevel, title, userIds } = request.body;
   const message = request.body.message || {};
-  const attachmentIds = (Array.isArray(message.attachmentIds)) ? message.attachmentIds : [];
-  const embedIds = (Array.isArray(message.embedIds)) ? message.embedIds : [];
-  const userIds = (Array.isArray(request.body.userIds)) ? request.body.userIds : [];
-
-  const transaction = await database.transaction();
 
   if (accessLevel === 'private') {
     const existingConversation = await ConversationModel.findOneWithUsers({
@@ -132,66 +126,17 @@ router.post('/', asyncMiddleware(async (request, response) => {
     }
   }
 
-  try {
-    const conversation = await ConversationModel.createWithAssociations({
-      data: {
-        userId: user.id,
-        accessLevel,
-        title,
-      },
-      userIds,
-      transaction,
-    });
+  const conversation = await ConversationModel.createWithAssociations({
+    data: {
+      userId: user.id,
+      accessLevel,
+      title,
+    },
+    userIds,
+    message,
+  });
 
-    const conversationMessage = await ConversationMessageModel.createWithAssociations({
-      data: {
-        conversationId: conversation.id,
-        conversationUserId: conversation.getDataValue('authConversationUser').id,
-        text: message.text,
-        nonce: message.nonce,
-      },
-      conversationUser: conversation.getDataValue('authConversationUser'),
-      attachmentIds,
-      embedIds,
-      transaction,
-    });
-
-    await conversation.update({
-      previewConversationMessageId: conversationMessage.id,
-    }, { transaction });
-
-    await transaction.commit(); // this should be later in the try block?..
-
-    const createdConversation = {
-      ...conversation.toJSON(),
-      previewConversationMessage: conversationMessage.toJSON(),
-      conversationMessages: [ conversationMessage.toJSON() ],
-    };
-
-    const eventUsers = await UserModel.unscoped().findAll({
-      attributes: [ 'accessToken' ],
-      where: { id: userIds },
-    });
-
-    eventUsers.forEach(eventUser => {
-      const eventData = Object.assign({}, createdConversation);
-
-      delete eventData.authConversationUser;
-      delete eventData.conversationMessages;
-
-      events.publish({
-        topic: `user-${eventUser.accessToken}`,
-        name: 'CONVERSATION_CREATE',
-        data: eventData,
-      });
-    });
-
-    response.success(createdConversation);
-  } catch(error) {
-    await transaction.rollback();
-
-    throw error;
-  }
+  response.success(conversation);
 }));
 
 /*
@@ -208,12 +153,6 @@ router.patch('/:conversationId', asyncMiddleware(async (request, response) => {
     title: (request.body.title !== undefined) ? request.body.title : conversation.title,
   });
 
-  events.publish({
-    topic: `conversation-${conversation.eventsToken}`,
-    name: 'CONVERSATION_UPDATE',
-    data: conversation,
-  });
-
   response.success(conversation);
 }));
 
@@ -227,12 +166,6 @@ router.delete('/:conversationId', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
 
   await conversation.destroy();
-
-  events.publish({
-    topic: `conversation-${conversation.eventsToken}`,
-    name: 'CONVERSATION_DELETE',
-    data: { id: conversation.id },
-  });
 
   response.success();
 }));

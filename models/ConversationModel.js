@@ -1,3 +1,4 @@
+const events = rootRequire('/libs/events');
 const accessLevels = [ 'public', 'protected', 'private' ];
 
 /*
@@ -170,61 +171,110 @@ const ConversationModel = database.define('conversation', {
 });
 
 /*
+ * Hooks
+ */
+
+ConversationModel.addHook('afterUpdate', conversation => {
+  conversation.publishConversationUpdateEvent();
+});
+
+ConversationModel.addHook('afterDestroy', conversation => {
+  conversation.publishConversationDeleteEvent();
+});
+
+/*
  * Class Methods
  */
 
-ConversationModel.createWithAssociations = async function({ data, userIds = [], transaction }) {
+ConversationModel.createWithAssociations = async function({ data, userIds = [], message }) {
+  const ConversationMessageModel = database.models.conversationMessage;
   const ConversationUserModel = database.models.conversationUser;
   const UserConversationDataModel = database.models.userConversationData;
   const UserModel = database.models.user;
+  const attachmentIds = (Array.isArray(message.attachmentIds)) ? message.attachmentIds : [];
+  const embedIds = (Array.isArray(message.embedIds)) ? message.embedIds : [];
 
   userIds = [ ...new Set([ data.userId, ...userIds.map(id => +id) ]) ];
 
-  const conversation = await ConversationModel.create({
-    ...data,
-    usersCount: userIds.length,
-  }, { transaction });
+  const transaction = await database.transaction();
 
-  const conversationUsers = await ConversationUserModel.bulkCreate((
-    userIds.map(userId => ({
-      userId,
+  try {
+    const conversation = await ConversationModel.create({
+      userId: data.userId,
+      accessLevel: data.accessLevel,
+      title: data.title,
+      usersCount: userIds.length,
+    }, { transaction });
+
+    const conversationUsers = await ConversationUserModel.bulkCreate((
+      userIds.map(userId => ({
+        userId,
+        conversationId: conversation.id,
+        permissions: (userId === data.userId) ? [
+          'CONVERSATION_ADMIN',
+        ] : [
+          'CONVERSATION_MESSAGES_CREATE',
+          'CONVERSATION_MESSAGES_READ',
+          'CONVERSATION_MESSAGE_REACTIONS_CREATE',
+          'CONVERSATION_MESSAGE_REACTIONS_READ',
+          'CONVERSATION_USERS_CREATE',
+          'CONVERSATION_USERS_READ',
+        ],
+      }))
+    ), { transaction });
+
+    const authConversationUser = conversationUsers.find(conversationUser => {
+      return conversationUser.userId === data.userId;
+    });
+
+    const conversationMessage = await ConversationMessageModel.createWithAssociations({
+      data: {
+        conversationId: conversation.id,
+        conversationUserId: authConversationUser.id,
+        text: message.text,
+        nonce: message.nonce,
+      },
+      conversationUser: authConversationUser,
+      attachmentIds,
+      embedIds,
+      transaction,
+    });
+
+    await conversation.update({
+      previewConversationMessageId: conversationMessage.id,
+    }, { transaction });
+
+    await UserConversationDataModel.create({
+      userId: data.userId,
       conversationId: conversation.id,
-      permissions: (userId === data.userId) ? [
-        'CONVERSATION_ADMIN',
-      ] : [
-        'CONVERSATION_MESSAGES_CREATE',
-        'CONVERSATION_MESSAGES_READ',
-        'CONVERSATION_MESSAGE_REACTIONS_CREATE',
-        'CONVERSATION_MESSAGE_REACTIONS_READ',
-        'CONVERSATION_USERS_CREATE',
-        'CONVERSATION_USERS_READ',
-      ],
-    }))
-  ), { transaction });
+      lastReadAt: new Date(),
+    }, { transaction });
 
-  await UserConversationDataModel.create({
-    userId: data.userId,
-    conversationId: conversation.id,
-    lastReadAt: new Date(),
-  }, { transaction });
+    await transaction.commit();
 
-  const users = await UserModel.findAll({
-    where: { id: userIds },
-  }, { transaction });
+    const users = await UserModel.findAll({
+      where: { id: userIds },
+    });
 
-  conversation.setDataValue('user', users.find(user => user.id === data.userId));
-  conversation.setDataValue('previewConversationUsers', conversationUsers);
-  conversation.setDataValue('authConversationUser', conversationUsers.find(conversationUser => {
-    return conversationUser.userId === data.userId;
-  }));
+    conversation.setDataValue('authConversationUser', authConversationUser);
+    conversation.setDataValue('conversationMessages', [ conversationMessage ]);
+    conversation.setDataValue('previewConversationMessage', conversationMessage);
+    conversation.setDataValue('previewConversationUsers', conversationUsers);
+    conversation.setDataValue('user', users.find(user => user.id === data.userId));
+    conversationUsers.forEach(conversationUser => {
+      conversationUser.setDataValue('user', users.find(user => {
+        return conversationUser.userId === user.id;
+      }));
+    });
 
-  conversationUsers.forEach(conversationUser => {
-    conversationUser.setDataValue('user', users.find(user => {
-      return conversationUser.userId === user.id;
-    }));
-  });
+    conversation.publishConversationCreateEvent(conversationUsers);
 
-  return conversation;
+    return conversation;
+  } catch(error) {
+    await transaction.rollback();
+
+    throw error;
+  }
 };
 
 ConversationModel.findOneWithUsers = async function({ authUserId, userIds, where }) {
@@ -341,6 +391,51 @@ ConversationModel.prototype.sendNotificationToConversationUsers = async function
       message,
       data,
     });
+  });
+};
+
+/*
+ * Events
+ */
+
+ConversationModel.prototype.publishConversationCreateEvent = async function(conversationUsers) {
+  const UserModel = database.models.user;
+
+  const eventUsers = await UserModel.unscoped().findAll({
+    attributes: [ 'id', 'accessToken' ],
+    where: { id: conversationUsers.map(conversationUser => conversationUser.userId) },
+  });
+
+  const eventData = { ...this.toJSON() };
+
+  delete eventData.conversationMessages;
+
+  eventUsers.forEach(eventUser => {
+    const authConversationUser = conversationUsers.find(conversationUser => {
+      return conversationUser.userId === eventUser.id;
+    });
+
+    events.publish({
+      topic: `user-${eventUser.accessToken}`,
+      name: 'CONVERSATION_CREATE',
+      data: { ...eventData, authConversationUser },
+    });
+  });
+};
+
+ConversationModel.prototype.publishConversationUpdateEvent = async function() {
+  events.publish({
+    topic: `conversation-${this.eventsToken}`,
+    name: 'CONVERSATION_UPDATE',
+    data: this,
+  });
+};
+
+ConversationModel.prototype.publishConversationDeleteEvent = async function() {
+  events.publish({
+    topic: `conversation-${this.eventsToken}`,
+    name: 'CONVERSATION_DELETE',
+    data: { id: this.id },
   });
 };
 
