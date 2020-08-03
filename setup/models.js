@@ -50,6 +50,7 @@ UserModel.hasMany(UserDeviceModel);
 UserModel.hasMany(UserFollowerModel);
 UserModel.hasOne(UserFollowerModel, { as: 'authUserFollower', foreignKey: 'userId' });
 
+UserActivityModel.belongsTo(ConversationRepostModel);
 UserActivityModel.belongsTo(UserFollowerModel);
 
 UserConversationDataModel.belongsTo(ConversationModel);

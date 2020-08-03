@@ -28,6 +28,13 @@ const ConversationRepostModel = database.define('conversationRepost', {
         UserModel,
       ],
     }),
+    activityPreview: () => ({
+      attributes: [ 'id' ],
+      include: [
+        ConversationModel.scope('activityPreview'),
+        UserModel,
+      ],
+    }),
   },
 });
 

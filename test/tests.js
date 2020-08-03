@@ -14,5 +14,6 @@ require('./api/conversations/pins');
 require('./api/conversations/reposts');
 require('./api/conversations/typing');
 require('./api/conversations/users');
+require('./api/activity');
 require('./api/devices');
 require('./api/embeds');

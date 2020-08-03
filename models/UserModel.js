@@ -67,21 +67,21 @@ const UserModel = database.define('user', {
     ],
   },
   scopes: {
-    noAvatar: {
+    noAvatar: () => ({
       attributes: [
         'id',
         'username',
         'name',
       ],
-    },
-    complete: {
+    }),
+    complete: () => ({
       include: [
         {
           model: AttachmentModel.scope('avatar'),
           as: 'avatarAttachment',
         },
       ],
-    },
+    }),
   },
 });
 

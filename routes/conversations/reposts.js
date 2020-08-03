@@ -3,6 +3,7 @@
  */
 
 const ConversationRepostModel = rootRequire('/models/ConversationRepostModel');
+const UserActivityModel = rootRequire('/models/UserActivityModel');
 const UserDeviceModel = rootRequire('/models/UserDeviceModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
@@ -37,15 +38,30 @@ router.put('/', asyncMiddleware(async (request, response) => {
   });
 
   if (!conversationRepost) {
-    conversationRepost = await ConversationRepostModel.create({
-      userId: user.id,
-      conversationId: conversation.id,
-    });
+    const transaction = await database.transaction();
+
+    try {
+      conversationRepost = await ConversationRepostModel.create({
+        userId: user.id,
+        conversationId: conversation.id,
+      }, { transaction });
+
+      await UserActivityModel.create({
+        userId: conversation.userId,
+        conversationRepostId: conversationRepost.id,
+      }, { transaction });
+
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+
+      throw error;
+    }
 
     UserDeviceModel.sendPushNotificationForUserId({
       userId: conversation.userId,
-      title: 'Your conversation was shared.',
-      message: `${user.name} (@${user.username}) shared your conversation "${conversation.title}" with all their followers.`,
+      title: 'Your conversation was reposted.',
+      message: `${user.name} (@${user.username}) reposted your conversation "${conversation.title}" with all their followers.`,
     });
   } else {
     await conversationRepost.restore();

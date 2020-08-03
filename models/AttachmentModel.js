@@ -42,13 +42,13 @@ const AttachmentModel = database.define('attachment', {
     ],
   },
   scopes: {
-    avatar: {
+    avatar: () => ({
       attributes: [
         'id',
         'url',
         'mimetype',
       ],
-    },
+    }),
   },
 });
 

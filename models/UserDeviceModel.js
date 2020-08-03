@@ -105,7 +105,7 @@ UserDeviceModel.prototype.sendPushNotification = function({ title, message, data
       }),
       TargetArn: this.apnsSnsArn,
       MessageStructure: 'json',
-    }).promise().catch(err => console.log(err));
+    }).promise().catch(err => { /* noop */ });
   }
 
   if (this.fcmSnsArn) {
@@ -118,7 +118,7 @@ UserDeviceModel.prototype.sendPushNotification = function({ title, message, data
       }),
       TargetArn: this.fcmSnsArn,
       MessageStructure: 'json',
-    }).promise().catch(err => console.log(err));
+    }).promise().catch(err => { /* noop */});
   }
 };
 

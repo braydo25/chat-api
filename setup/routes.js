@@ -1,3 +1,4 @@
+const activityRouter = rootRequire('/routes/activity');
 const attachmentsRouter = rootRequire('/routes/attachments');
 const conversationsRouter = rootRequire('/routes/conversations');
 const conversationMessagesRouter = rootRequire('/routes/conversations/messages');
@@ -16,6 +17,7 @@ const userFollowersRouter = rootRequire('/routes/users/followers');
 
 module.exports = app => {
   // API Route Definitions
+  app.use('/activity', activityRouter);
   app.use('/attachments', attachmentsRouter);
   app.use('/conversations', conversationsRouter);
   app.use('/conversations/:conversationId/messages/:conversationMessageId?', conversationMessagesRouter);

@@ -56,9 +56,9 @@ const ConversationUserModel = database.define('conversationUser', {
     include: [ UserModel ],
   },
   scopes: {
-    preview: {
+    preview: () => ({
       attributes: [ 'id', 'permissions' ],
-    },
+    }),
   },
 });
 

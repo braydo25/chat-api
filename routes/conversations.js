@@ -68,7 +68,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
 
     // TODO: support searching private convos, either by users in them or content?
 
-    response.success(searchConversations);
+    return response.success(searchConversations);
   }
 
   const relevantConversations = await ConversationModel.findAllRelevantConversationsForUser({
@@ -160,7 +160,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
 
     await conversation.save({ transaction });
 
-    await transaction.commit();
+    await transaction.commit(); // this should be later in the try block?..
 
     const createdConversation = {
       ...conversation.toJSON(),

@@ -2,6 +2,7 @@
  * Route: /users/:userId/followers
  */
 
+const UserActivityModel = rootRequire('/models/UserActivityModel');
 const UserFollowerModel = rootRequire('/models/UserFollowerModel');
 const UserDeviceModel = rootRequire('/models/UserDeviceModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
@@ -45,7 +46,22 @@ router.put('/', asyncMiddleware(async (request, response) => {
   });
 
   if (!userFollower) {
-    userFollower = await UserFollowerModel.create(data);
+    const transaction = await database.transaction();
+
+    try {
+      userFollower = await UserFollowerModel.create(data, { transaction });
+
+      await UserActivityModel.create({
+        userId,
+        userFollowerId: userFollower.id,
+      }, { transaction });
+
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+
+      throw error;
+    }
 
     UserDeviceModel.sendPushNotificationForUserId({
       userId,

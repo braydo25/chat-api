@@ -51,7 +51,7 @@ const ConversationMessageModel = database.define('conversationMessage', {
     ],
   },
   scopes: {
-    withReactions: {
+    withReactions: () => ({
       include: [
         {
           attributes: [
@@ -63,7 +63,7 @@ const ConversationMessageModel = database.define('conversationMessage', {
           group: [ 'conversationMessageId', 'reaction' ],
         },
       ],
-    },
+    }),
     withAuthUserReactions: userId => ({
       include: [
         {
