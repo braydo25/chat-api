@@ -25,6 +25,7 @@ describe('User Followers', () => {
             .set('X-Access-Token', testUserOne.accessToken)
             .end((error, response) => {
               response.should.have.status(200);
+              response.body.followersCount.should.not.equal(0);
               response.body.authUserFollower.should.be.an('object');
               response.body.authUserFollower.id.should.equal(scopedUserFollower.id);
               done();
