@@ -31,7 +31,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
         'username',
         'name',
         'about',
-        [ database.fn('COUNT', database.col('userFollowers.id')), 'followersCount' ],
+        'followersCount',
       ],
       include: [
         {
@@ -39,13 +39,10 @@ router.get('/', asyncMiddleware(async (request, response) => {
           as: 'avatarAttachment',
         },
         {
-          attributes: [],
-          model: UserFollowerModel.unscoped(),
-        },
-        {
           model: UserFollowerModel.unscoped(),
           as: 'authUserFollower',
           where: { followerUserId: request.user.id },
+          required: false,
         },
       ],
       where: { id: userId },
