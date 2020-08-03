@@ -55,6 +55,10 @@ const UserModel = database.define('user', {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW,
   },
+  lastViewedActivityAt: {
+    type: Sequelize.DATE,
+    defaultValue: Sequelize.NOW,
+  },
 }, {
   defaultScope: {
     attributes: [

@@ -33,6 +33,20 @@ describe('Activity', () => {
         });
     });
 
+    it('200s with an array of activity objects and updates the lastViewedActivityAt property of the user', done => {
+      chai.request(server)
+        .get('/activity')
+        .query({ viewed: true })
+        .set('X-Access-Token', testUserThree.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          done();
+        });
+    });
+
     helpers.it401sWhenUserAuthorizationIsInvalid('get', '/activity');
   });
 });
