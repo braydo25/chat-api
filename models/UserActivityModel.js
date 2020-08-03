@@ -23,7 +23,10 @@ const UserActivityModel = database.define('userActivity', {
   },
 }, {
   defaultScope: {
-    attributes: [ 'id' ],
+    attributes: [
+      'id',
+      'createdAt',
+    ],
     include: [
       {
         model: ConversationRepostModel.scope('activityPreview'),
