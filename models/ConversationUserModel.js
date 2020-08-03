@@ -69,7 +69,7 @@ const ConversationUserModel = database.define('conversationUser', {
 ConversationUserModel.addHook('afterCreate', (conversationUser, options) => {
   const ConversationModel = database.models.conversation;
 
-  ConversationModel.update({ usersCount: database.literal('usersCount + 1') }, {
+  return ConversationModel.update({ usersCount: database.literal('usersCount + 1') }, {
     where: { id: conversationUser.conversationId },
     transaction: options.transaction,
   });
@@ -78,7 +78,7 @@ ConversationUserModel.addHook('afterCreate', (conversationUser, options) => {
 ConversationUserModel.addHook('afterDestroy', (conversationUser, options) => {
   const ConversationModel = database.models.conversation;
 
-  ConversationModel.update({ usersCount: database.literal('usersCount - 1') }, {
+  return ConversationModel.update({ usersCount: database.literal('usersCount - 1') }, {
     where: { id: conversationUser.conversationId },
     transaction: options.transaction,
   });

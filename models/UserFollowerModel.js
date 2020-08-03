@@ -20,7 +20,11 @@ const UserFollowerModel = database.define('userFollower', {
   },
 }, {
   defaultScope: {
-    attributes: [ 'id' ],
+    attributes: [
+      'id',
+      'userId',
+      'createdAt',
+    ],
     include: [
       {
         model: UserModel,
@@ -28,6 +32,24 @@ const UserFollowerModel = database.define('userFollower', {
       },
     ],
   },
+});
+
+/*
+ * Hooks
+ */
+
+UserFollowerModel.addHook('afterCreate', (userFollower, options) => {
+  return UserModel.update({ followersCount: database.literal('followersCount + 1') }, {
+    where: { id: userFollower.userId },
+    transaction: options.transaction,
+  });
+});
+
+UserFollowerModel.addHook('afterDestroy', (userFollower, options) => {
+  return UserModel.update({ followersCount: database.literal('followersCount - 1') }, {
+    where: { id: userFollower.userId },
+    transaction: options.transaction,
+  });
 });
 
 /*

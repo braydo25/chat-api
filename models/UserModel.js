@@ -47,6 +47,10 @@ const UserModel = database.define('user', {
   about: {
     type: Sequelize.STRING,
   },
+  followersCount: {
+    type: Sequelize.INTEGER(10),
+    defaultValue: 0,
+  },
   lastActiveAt: {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW,
