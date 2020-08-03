@@ -120,14 +120,14 @@ router.patch('/', asyncMiddleware(async (request, response) => {
     }
   }
 
-  user.avatarAttachmentId = avatarAttachmentId || user.avatarAttachmentId;
-  user.username = request.body.username || user.username;
-  user.name = request.body.name || user.name;
-  user.about = (request.body.about) ? request.body.about.trim() : user.about;
+  await user.update({
+    avatarAttachmentId: avatarAttachmentId || user.avatarAttachmentId,
+    username: request.body.username || user.username,
+    name: request.body.name || user.name,
+    about: (request.body.about) ? request.body.about.trim() : user.about,
+  });
 
   user.setDataValue('avatarAttachment', attachment || user.avatarAttachment);
-
-  await user.save();
 
   response.success(user);
 }));

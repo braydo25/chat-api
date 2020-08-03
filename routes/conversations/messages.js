@@ -83,9 +83,9 @@ router.post('/', asyncMiddleware(async (request, response) => {
       transaction,
     });
 
-    conversation.previewConversationMessageId = conversationMessage.id;
-
-    await conversation.save({ transaction });
+    await conversation.update({
+      previewConversationMessageId: conversationMessage.id,
+    }, { transaction });
 
     await transaction.commit();
 
@@ -119,9 +119,9 @@ router.patch('/', conversationMessageAuthorize);
 router.patch('/', asyncMiddleware(async (request, response) => {
   const { conversation, conversationMessage } = request;
 
-  conversationMessage.text = request.body.text || conversationMessage.text;
-
-  await conversationMessage.save();
+  await conversationMessage.update({
+    text: request.body.text || conversationMessage.text,
+  });
 
   events.publish({
     topic: `conversation-${conversation.eventsToken}`,

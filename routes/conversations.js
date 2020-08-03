@@ -156,9 +156,9 @@ router.post('/', asyncMiddleware(async (request, response) => {
       transaction,
     });
 
-    conversation.previewConversationMessageId = conversationMessage.id;
-
-    await conversation.save({ transaction });
+    await conversation.update({
+      previewConversationMessageId: conversationMessage.id,
+    }, { transaction });
 
     await transaction.commit(); // this should be later in the try block?..
 
@@ -203,10 +203,10 @@ router.patch('/:conversationId', conversationAuthorize);
 router.patch('/:conversationId', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
 
-  conversation.accessLevel = request.body.accessLevel || conversation.accessLevel;
-  conversation.title = (request.body.title !== undefined) ? request.body.title : conversation.title;
-
-  await conversation.save();
+  await conversation.update({
+    accessLevel: request.body.accessLevel || conversation.accessLevel,
+    title: (request.body.title !== undefined) ? request.body.title : conversation.title,
+  });
 
   events.publish({
     topic: `conversation-${conversation.eventsToken}`,

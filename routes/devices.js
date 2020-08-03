@@ -25,12 +25,12 @@ router.put('/', asyncMiddleware(async (request, response) => {
   const existingUserDevice = await UserDeviceModel.findOne({ where: { idfv } });
 
   if (existingUserDevice) {
-    existingUserDevice.userId = userId;
-    existingUserDevice.details = details || existingUserDevice.details;
-    existingUserDevice.apnsToken = (apnsToken !== undefined) ? apnsToken : existingUserDevice.apnsToken;
-    existingUserDevice.fcmRegistrationId = (fcmRegistrationId !== undefined) ? fcmRegistrationId : existingUserDevice.fcmRegistrationId;
-
-    await existingUserDevice.save();
+    await existingUserDevice.update({
+      userId,
+      details: details || existingUserDevice.details,
+      apnsToken: (apnsToken !== undefined) ? apnsToken : existingUserDevice.apnsToken,
+      fcmRegistrationId: (fcmRegistrationId !== undefined) ? fcmRegistrationId : existingUserDevice.fcmRegistrationId,
+    });
   } else {
     await UserDeviceModel.create({ userId, idfv, details, apnsToken, fcmRegistrationId });
   }

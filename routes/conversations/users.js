@@ -82,9 +82,9 @@ router.patch('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_
 router.patch('/', asyncMiddleware(async (request, response) => {
   const { conversationUser } = request;
 
-  conversationUser.permissions = request.body.permissions || conversationUser.permissions;
-
-  await conversationUser.save();
+  await conversationUser.update({
+    permissions: request.body.permissions || conversationUser.permissions,
+  });
 
   response.success(conversationUser);
 }));

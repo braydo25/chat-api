@@ -98,16 +98,16 @@ const UserModel = database.define('user', {
  */
 
 UserModel.prototype.updateAndSendPhoneLoginCode = async function() {
-  this.phoneLoginCode = (process.env.NODE_ENV !== 'local') ? Math.floor(Math.random() * 900000) + 100000 : '000000';
+  const phoneLoginCode = (process.env.NODE_ENV !== 'local') ? Math.floor(Math.random() * 900000) + 100000 : '000000';
 
   if (process.env.NODE_ENV !== 'local') {
     await awsHelpers.sendTextMessage({
       phoneNumber: this.phone,
-      message: `Hey, this is Babble! Your one-time passcode is: ${this.phoneLoginCode}`,
+      message: `Hey, this is Babble! Your one-time passcode is: ${phoneLoginCode}`,
     });
   }
 
-  await this.save();
+  await this.update({ phoneLoginCode });
 };
 
 /*

@@ -22,9 +22,7 @@ router.put('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_ME
 router.put('/', asyncMiddleware(async (request, response) => {
   const { conversationMessage } = request;
 
-  conversationMessage.pinnedAt = new Date();
-
-  await conversationMessage.save();
+  await conversationMessage.update({ pinnedAt: new Date() });
 
   response.success(conversationMessage);
 }));
@@ -40,9 +38,7 @@ router.delete('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION
 router.delete('/', asyncMiddleware(async (request, response) => {
   const { conversationMessage } = request;
 
-  conversationMessage.pinnedAt = null;
-
-  await conversationMessage.save();
+  await conversationMessage.update({ pinnedAt: null });
 
   response.success();
 }));
