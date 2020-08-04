@@ -44,7 +44,10 @@ router.put('/', asyncMiddleware(async (request, response) => {
       conversationRepost = await ConversationRepostModel.create({
         userId: user.id,
         conversationId: conversation.id,
-      }, { transaction });
+      }, {
+        eventsTopic: conversation.eventsTopic,
+        transaction,
+      });
 
       await UserActivityModel.create({
         userId: conversation.userId,
@@ -89,7 +92,9 @@ router.delete('/', asyncMiddleware(async (request, response) => {
     throw new Error('There is no active repost by you for this conversation.');
   }
 
-  await conversationRepost.destroy();
+  await conversationRepost.destroy({
+    eventsTopic: conversation.eventsTopic,
+  });
 
   response.success();
 }));

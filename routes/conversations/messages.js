@@ -8,7 +8,6 @@ const conversationAssociate = rootRequire('/middlewares/conversations/associate'
 const conversationMessageAuthorize = rootRequire('/middlewares/conversations/messages/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const userConversationPermissions = rootRequire('/middlewares/users/conversations/permissions');
-const events = rootRequire('/libs/events');
 
 const router = express.Router({
   mergeParams: true,
@@ -121,12 +120,8 @@ router.patch('/', asyncMiddleware(async (request, response) => {
 
   await conversationMessage.update({
     text: request.body.text || conversationMessage.text,
-  });
-
-  events.publish({
-    topic: conversation.eventsTopic,
-    name: 'CONVERSATION_MESSAGE_UPDATE',
-    data: conversationMessage,
+  }, {
+    eventsTopic: conversation.eventsTopic,
   });
 
   response.success(conversationMessage);
@@ -142,15 +137,8 @@ router.delete('/', conversationMessageAuthorize);
 router.delete('/', asyncMiddleware(async (request, response) => {
   const { conversation, conversationMessage } = request;
 
-  await conversationMessage.destroy();
-
-  events.publish({
-    topic: conversation.eventsTopic,
-    name: 'CONVERSATION_MESSAGE_DELETE',
-    data: {
-      id: conversationMessage.id,
-      conversationId: conversation.id,
-    },
+  await conversationMessage.destroy({
+    eventsTopic: conversation.eventsTopic,
   });
 
   response.success();
