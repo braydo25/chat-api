@@ -1,5 +1,5 @@
-const events = rootRequire('/libs/events');
 const UserModel = rootRequire('/models/UserModel');
+const events = rootRequire('/libs/events');
 
 /*
  * Model Definition
