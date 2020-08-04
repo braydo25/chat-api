@@ -9,6 +9,9 @@ require('dotenv').config();
  */
 
 const fs = require('fs');
+const awsIot = require('aws-iot-device-sdk');
+const { v1: uuidV1 }  = require('uuid');
+const events = require('./events');
 
 /*
  * Set Globals
@@ -119,6 +122,14 @@ global.testPermissionsPrivateConversationPermissionlessConversationUser = {};
 global.testAttachmentOne = {};
 global.testEmbedOne = { url: 'https://www.youtube.com/watch?v=ac8lSE-7Jqs' };
 
+global.mqttConnection = awsIot.device({
+  caPath: './certificates/AmazonRootCA1.pem',
+  certPath: './certificates/publisher-certificate.pem.crt',
+  keyPath: './certificates/publisher-private.pem.key',
+  clientId: `server-${uuidV1()}`,
+  host: process.env.AWS_IOT_ENDPOINT,
+});
+
 /*
  * Configure Chai
  */
@@ -142,16 +153,34 @@ const {
 
 before(done => {
   (async () => {
-    const database = new Sequelize(MYSQL_DATABASE, MYSQL_USERNAME, MYSQL_PASSWORD, {
-      dialect: 'mysql',
-      host: MYSQL_WRITE_HOST,
-      port: MYSQL_PORT,
+    fatLog('Waiting for MQTT Connection...');
+    await new Promise(resolve => {
+      mqttConnection.on('connect', () => {
+        console.log('MQTT Connected!');
+        resolve();
+      });
+    });
+
+    fatLog('Setting up MQTT event handlers...');
+    mqttConnection.on('message', (topic, payload) => {
+      events.testPayload(payload);
+    });
+
+    mqttConnection.on('disconnect', () => {
+      throw new Error('MQTT connection was dropped. Aborting tests.');
     });
 
     fatLog('Waiting for API Server...');
     await waitPort({
       host: 'localhost',
       port: parseInt(process.env.PORT),
+    });
+
+    fatLog('Preparing for DB connection...');
+    const database = new Sequelize(MYSQL_DATABASE, MYSQL_USERNAME, MYSQL_PASSWORD, {
+      dialect: 'mysql',
+      host: MYSQL_WRITE_HOST,
+      port: MYSQL_PORT,
     });
 
     fatLog('Testing DB Connection...');
@@ -183,21 +212,25 @@ before(done => {
     await chai.request(server).post('/users').send(testUserOne);
     const createdTestUserOneResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserOne, { phoneLoginCode: '000000' }));
     Object.assign(testUserOne, createdTestUserOneResponse.body);
+    mqttConnection.subscribe(testUserOne.eventsTopic);
 
     fatLog('Creating global test user two...');
     await chai.request(server).post('/users').send(testUserTwo);
     const createdTestUserTwoResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserTwo, { phoneLoginCode: '000000' }));
     Object.assign(testUserTwo, createdTestUserTwoResponse.body);
+    mqttConnection.subscribe(testUserTwo.eventsTopic);
 
     fatLog('Creating global test user three...');
     await chai.request(server).post('/users').send(testUserThree);
     const createdTestUserThreeResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserThree, { phoneLoginCode: '000000' }));
     Object.assign(testUserThree, createdTestUserThreeResponse.body);
+    mqttConnection.subscribe(testUserThree.eventsTopic);
 
     fatLog('Creating global test user four...');
     await chai.request(server).post('/users').send(testUserFour);
     const createdTestUserFourResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserFour, { phoneLoginCode: '000000' }));
     Object.assign(testUserFour, createdTestUserFourResponse.body);
+    mqttConnection.subscribe(testUserFour.eventsTopic);
 
     fatLog('Setting test user one as a follower of test user three...');
     await chai.request(server)
@@ -216,6 +249,7 @@ before(done => {
       .set('X-Access-Token', testUserOne.accessToken)
       .send(testConversationOne);
     Object.assign(testConversationOne, createdTestConversationOne.body);
+    mqttConnection.subscribe(testConversationOne.eventsTopic);
 
     fatLog('Creating global test conversation two...');
     const createdTestConversationTwo = await chai.request(server)
@@ -223,6 +257,7 @@ before(done => {
       .set('X-Access-Token', testUserTwo.accessToken)
       .send(testConversationTwo);
     Object.assign(testConversationTwo, createdTestConversationTwo.body);
+    mqttConnection.subscribe(testConversationTwo.eventsTopic);
 
     fatLog('Creating global test conversation three...');
     const createdTestConversationThree = await chai.request(server)
@@ -230,6 +265,7 @@ before(done => {
       .set('X-Access-Token', testUserThree.accessToken)
       .send(testConversationThree);
     Object.assign(testConversationThree, createdTestConversationThree.body);
+    mqttConnection.subscribe(testConversationThree.eventsTopic);
 
     fatLog('Creating global test conversation one user one...');
     const createdTestConversationOneUserOne = await chai.request(server)

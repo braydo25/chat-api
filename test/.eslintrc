@@ -47,5 +47,6 @@
     "testPermissionsPrivateConversationPermissionlessConversationUser": true,
     "testAttachmentOne": true,
     "testEmbedOne": true,
+    "mqttConnection": true,
   },
 }

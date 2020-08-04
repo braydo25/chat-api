@@ -35,6 +35,7 @@ describe('Users', () => {
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.id.should.be.a('number');
+          mqttConnection.subscribe(response.body.eventsTopic);
           done();
         });
     });
