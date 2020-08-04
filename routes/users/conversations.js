@@ -59,7 +59,7 @@ router.delete('/:conversationId', asyncMiddleware(async (request, response) => {
   });
 
   await conversationUser.destroy({
-    eventTopic: conversationEventsTopic,
+    eventsTopic: conversationEventsTopic,
   });
 
   response.success();

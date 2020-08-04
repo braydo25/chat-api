@@ -81,7 +81,7 @@ router.put('/', asyncMiddleware(async (request, response) => {
           ] : []),
         ],
       }, {
-        eventTopic: conversation.eventsTopic,
+        eventsTopic: conversation.eventsTopic,
         transaction,
       });
     }

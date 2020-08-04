@@ -98,14 +98,14 @@ ConversationUserModel.addHook('afterDestroy', async (conversationUser, options) 
  */
 
 ConversationUserModel.prototype.publishEvent = async function ({ type, options }) {
-  const { eventTopic, transaction } = options || {};
+  const { eventsTopic, transaction } = options || {};
   let eventMethod = null;
 
-  eventMethod = (type === 'create') ? () => this._publishConversationUserCreateEvent(eventTopic) : eventMethod;
-  eventMethod = (type === 'update') ? () => this._publishConversationUserUpdateEvent(eventTopic) : eventMethod;
-  eventMethod = (type === 'delete') ? () => this._publishConversationUserDeleteEvent(eventTopic) : eventMethod;
+  eventMethod = (type === 'create') ? () => this._publishCreateEvent(eventsTopic) : eventMethod;
+  eventMethod = (type === 'update') ? () => this._publishUpdateEvent(eventsTopic) : eventMethod;
+  eventMethod = (type === 'delete') ? () => this._publishDeleteEvent(eventsTopic) : eventMethod;
 
-  if (eventMethod && eventTopic) {
+  if (eventMethod && eventsTopic) {
     if (transaction) {
       transaction.afterCommit(() => eventMethod());
     } else {
@@ -114,25 +114,25 @@ ConversationUserModel.prototype.publishEvent = async function ({ type, options }
   }
 };
 
-ConversationUserModel.prototype._publishConversationUserCreateEvent = async function(eventTopic) {
+ConversationUserModel.prototype._publishCreateEvent = async function(eventsTopic) {
   events.publish({
-    topic: eventTopic,
+    topic: eventsTopic,
     name: 'CONVERSATION_USER_CREATE',
     data: this,
   });
 };
 
-ConversationUserModel.prototype._publishConversationUserUpdateEvent = async function(eventTopic) {
+ConversationUserModel.prototype._publishUpdateEvent = async function(eventsTopic) {
   events.publish({
-    topic: eventTopic,
+    topic: eventsTopic,
     name: 'CONVERSATION_USER_UPDATE',
     data: this,
   });
 };
 
-ConversationUserModel.prototype._publishConversationUserDeleteEvent = async function(eventTopic) {
+ConversationUserModel.prototype._publishDeleteEvent = async function(eventsTopic) {
   events.publish({
-    topic: eventTopic,
+    topic: eventsTopic,
     name: 'CONVERSATION_USER_DELETE',
     data: {
       id: this.id,

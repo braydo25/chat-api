@@ -1,3 +1,5 @@
+const events = rootRequire('/libs/events');
+
 /*
  * Model Definition
  */
@@ -82,10 +84,26 @@ const ConversationMessageModel = database.define('conversationMessage', {
 });
 
 /*
+ * Hooks
+ */
+
+ConversationMessageModel.addHook('afterCreate', (conversationMessage, options) => {
+  conversationMessage.publishEvent({ type: 'create', options });
+});
+
+ConversationMessageModel.addHook('afterUpdate', (conversationMessage, options) => {
+  conversationMessage.publishEvent({ type: 'update', options });
+});
+
+ConversationMessageModel.addHook('afterDestroy', (conversationMessage, options) => {
+  conversationMessage.publishEvent({ type: 'delete', options });
+});
+
+/*
  * Class Methods
  */
 
-ConversationMessageModel.createWithAssociations = async function({ data, conversationUser, attachmentIds = [], embedIds = [], transaction }) {
+ConversationMessageModel.createWithAssociations = async function({ data, conversationUser, attachmentIds = [], embedIds = [], eventsTopic, transaction }) {
   const ConversationMessageAttachmentModel = database.models.conversationMessageAttachment;
   const ConversationMessageEmbedModel = database.models.conversationMessageEmbed;
 
@@ -96,7 +114,7 @@ ConversationMessageModel.createWithAssociations = async function({ data, convers
     throw new Error('You must provide text, an attachment, or embed.');
   }
 
-  const conversationMessage = await ConversationMessageModel.create(data, { transaction });
+  const conversationMessage = await ConversationMessageModel.create(data, { eventsTopic, transaction });
 
   await ConversationMessageAttachmentModel.bulkCreate((
     attachmentIds.map(attachmentId => ({ conversationMessageId: conversationMessage.id, attachmentId }))
@@ -119,6 +137,54 @@ ConversationMessageModel.createWithAssociations = async function({ data, convers
   conversationMessage.setDataValue('conversationUser', conversationUser);
 
   return conversationMessage;
+};
+
+/*
+ * Events
+ */
+
+ConversationMessageModel.prototype.publishEvent = async function({ type, options }) {
+  const { eventsTopic, transaction } = options || {};
+  let eventMethod = null;
+
+  eventMethod = (type === 'create') ? () => this._publishCreateEvent(eventsTopic) : eventMethod;
+  eventMethod = (type === 'update') ? () => this._publishUpdateEvent(eventsTopic) : eventMethod;
+  eventMethod = (type === 'delete') ? () => this._publishDeleteEvent(eventsTopic) : eventMethod;
+
+  if (eventMethod && eventsTopic) {
+    if (transaction) {
+      transaction.afterCommit(() => eventMethod());
+    } else {
+      eventMethod();
+    }
+  }
+};
+
+ConversationMessageModel.prototype._publishCreateEvent = async function(eventsTopic) {
+  events.publish({
+    topic: eventsTopic,
+    name: 'CONVERSATION_MESSAGE_CREATE',
+    data: this,
+  });
+};
+
+ConversationMessageModel.prototype._publishUpdateEvent = async function(eventsTopic) {
+  events.publish({
+    topic: eventsTopic,
+    name: 'CONVERSATION_MESSAGE_UPDATE',
+    data: this,
+  });
+};
+
+ConversationMessageModel.prototype._publishDeleteEvent = async function(eventsTopic) {
+  events.publish({
+    topic: eventsTopic,
+    name: 'CONVERSATION_MESSAGE_DELETE',
+    data: {
+      id: this.id,
+      conversationId: this.conversationId,
+    },
+  });
 };
 
 /*

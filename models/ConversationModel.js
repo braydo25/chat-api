@@ -414,9 +414,9 @@ ConversationModel.prototype.publishEvent = async function({ type, options, conve
   const { ignoreEvent, transaction } = options || {};
   let eventMethod = null;
 
-  eventMethod = (type === 'create') ? () => this._publishConversationCreateEvent(conversationUsers) : eventMethod;
-  eventMethod = (type === 'update') ? () => this._publishConversationUpdateEvent() : eventMethod;
-  eventMethod = (type === 'delete') ? () => this._publishConversationDeleteEvent() : eventMethod;
+  eventMethod = (type === 'create') ? () => this._publishCreateEvent(conversationUsers) : eventMethod;
+  eventMethod = (type === 'update') ? () => this._publishUpdateEvent() : eventMethod;
+  eventMethod = (type === 'delete') ? () => this._publishDeleteEvent() : eventMethod;
 
   if (eventMethod && !ignoreEvent) {
     if (transaction) {
@@ -427,7 +427,7 @@ ConversationModel.prototype.publishEvent = async function({ type, options, conve
   }
 };
 
-ConversationModel.prototype._publishConversationCreateEvent = async function(conversationUsers) {
+ConversationModel.prototype._publishCreateEvent = async function(conversationUsers) {
   const UserModel = database.models.user;
 
   const eventUsers = await UserModel.unscoped().findAll({
@@ -452,7 +452,7 @@ ConversationModel.prototype._publishConversationCreateEvent = async function(con
   });
 };
 
-ConversationModel.prototype._publishConversationUpdateEvent = async function() {
+ConversationModel.prototype._publishUpdateEvent = async function() {
   events.publish({
     topic: this.eventsTopic,
     name: 'CONVERSATION_UPDATE',
@@ -460,7 +460,7 @@ ConversationModel.prototype._publishConversationUpdateEvent = async function() {
   });
 };
 
-ConversationModel.prototype._publishConversationDeleteEvent = async function() {
+ConversationModel.prototype._publishDeleteEvent = async function() {
   events.publish({
     topic: this.eventsTopic,
     name: 'CONVERSATION_DELETE',

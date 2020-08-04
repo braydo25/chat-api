@@ -66,7 +66,7 @@ router.put('/', asyncMiddleware(async (request, response) => {
     ];
 
     conversationUser = await ConversationUserModel.create(data, {
-      eventTopic: conversation.eventsTopic,
+      eventsTopic: conversation.eventsTopic,
     });
   }
 
@@ -87,7 +87,7 @@ router.patch('/', asyncMiddleware(async (request, response) => {
   await conversationUser.update({
     permissions: request.body.permissions || conversationUser.permissions,
   }, {
-    eventTopic: conversation.eventsTopic,
+    eventsTopic: conversation.eventsTopic,
   });
 
   response.success(conversationUser);
@@ -105,7 +105,7 @@ router.delete('/', asyncMiddleware(async (request, response) => {
   const { conversation, conversationUser } = request;
 
   await conversationUser.destroy({
-    eventTopic: conversation.eventsTopic,
+    eventsTopic: conversation.eventsTopic,
   });
 
   response.success();

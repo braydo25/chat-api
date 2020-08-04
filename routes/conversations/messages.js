@@ -52,6 +52,8 @@ router.post('/', asyncMiddleware(async (request, response) => {
 
   const transaction = await database.transaction();
 
+  let conversationMessage = null;
+
   try {
     if (!authConversationUser) {
       authConversationUser = await ConversationUserModel.create({
@@ -65,18 +67,22 @@ router.post('/', asyncMiddleware(async (request, response) => {
           'CONVERSATION_USERS_CREATE',
           'CONVERSATION_USERS_READ',
         ],
-      }, { transaction });
+      }, {
+        eventsTopic: conversation.eventsTopic,
+        transaction,
+      });
 
       authConversationUser.setDataValue('user', user);
     }
 
-    const conversationMessage = await ConversationMessageModel.createWithAssociations({
+    conversationMessage = await ConversationMessageModel.createWithAssociations({
       data: {
         conversationId: conversation.id,
         conversationUserId: authConversationUser.id,
         nonce,
         text,
       },
+      eventsTopic: conversation.eventsTopic,
       conversationUser: authConversationUser,
       attachmentIds,
       embedIds,
@@ -88,25 +94,19 @@ router.post('/', asyncMiddleware(async (request, response) => {
     }, { transaction });
 
     await transaction.commit();
-
-    events.publish({
-      topic: `conversation-${conversation.eventsToken}`,
-      name: 'CONVERSATION_MESSAGE_CREATE',
-      data: conversationMessage,
-    });
-
-    conversation.sendNotificationToConversationUsers({
-      sendingUserId: user.id,
-      title: conversation.title,
-      message: (text) ? `${user.name}: ${text}` : `${user.name} sent an attachment(s).`,
-    });
-
-    response.success(conversationMessage);
   } catch(error) {
     await transaction.rollback();
 
     throw error;
   }
+
+  conversation.sendNotificationToConversationUsers({
+    sendingUserId: user.id,
+    title: conversation.title,
+    message: (text) ? `${user.name}: ${text}` : `${user.name} sent an attachment(s).`,
+  });
+
+  response.success(conversationMessage);
 }));
 
 /*
@@ -124,7 +124,7 @@ router.patch('/', asyncMiddleware(async (request, response) => {
   });
 
   events.publish({
-    topic: `conversation-${conversation.eventsToken}`,
+    topic: conversation.eventsTopic,
     name: 'CONVERSATION_MESSAGE_UPDATE',
     data: conversationMessage,
   });
@@ -145,7 +145,7 @@ router.delete('/', asyncMiddleware(async (request, response) => {
   await conversationMessage.destroy();
 
   events.publish({
-    topic: `conversation-${conversation.eventsToken}`,
+    topic: conversation.eventsTopic,
     name: 'CONVERSATION_MESSAGE_DELETE',
     data: {
       id: conversationMessage.id,
