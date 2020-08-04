@@ -9,7 +9,6 @@ const conversationMessageAssociate = rootRequire('/middlewares/conversations/mes
 const conversationMessageReactionAuthorize = rootRequire('/middlewares/conversations/messages/reactions/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const userConversationPermissions = rootRequire('/middlewares/users/conversations/permissions');
-const events = rootRequire('/libs/events');
 
 const router = express.Router({
   mergeParams: true,
@@ -87,19 +86,13 @@ router.put('/', asyncMiddleware(async (request, response) => {
     }
 
     if (!conversationMessageReaction) {
-      conversationMessageReaction = await ConversationMessageReactionModel.create(data, { transaction });
+      conversationMessageReaction = await ConversationMessageReactionModel.create(data, {
+        eventsTopic: conversation.eventsTopic,
+        transaction,
+      });
     }
 
     await transaction.commit();
-
-    events.publish({
-      topic: conversation.eventsTopic,
-      name: 'CONVERSATION_MESSAGE_REACTION_CREATE',
-      data: {
-        conversationId: conversation.id,
-        ...(conversationMessageReaction.toJSON()),
-      },
-    });
 
     response.success(conversationMessageReaction);
   } catch(error) {
@@ -118,20 +111,10 @@ router.delete('/', conversationAssociate);
 router.delete('/', conversationMessageAssociate);
 router.delete('/', conversationMessageReactionAuthorize);
 router.delete('/', asyncMiddleware(async (request, response) => {
-  const { user, conversation, conversationMessage, conversationMessageReaction } = request;
+  const { conversation, conversationMessageReaction } = request;
 
-  await conversationMessageReaction.destroy();
-
-  events.publish({
-    topic: conversation.eventsTopic,
-    name: 'CONVERSATION_MESSAGE_REACTION_DELETE',
-    data: {
-      id: conversationMessageReaction.id,
-      userId: user.id,
-      conversationId: conversation.id,
-      conversationMessageId: conversationMessage.id,
-      reaction: conversationMessageReaction.reaction,
-    },
+  await conversationMessageReaction.destroy({
+    eventsTopic: conversation.eventsTopic,
   });
 
   response.success();

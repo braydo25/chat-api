@@ -1,3 +1,4 @@
+const events = rootRequire('/libs/events');
 const UserModel = rootRequire('/models/UserModel');
 
 /*
@@ -45,6 +46,57 @@ const ConversationMessageReactionModel = database.define('conversationMessageRea
     },
   ],
 });
+
+/*
+ * Hooks
+ */
+
+ConversationMessageReactionModel.addHook('afterCreate', (conversationMessageReaction, options) => {
+  conversationMessageReaction.publishEvent({ type: 'create', options });
+});
+
+ConversationMessageReactionModel.addHook('afterDestroy', (conversationMessageReaction, options) => {
+  conversationMessageReaction.publishEvent({ type: 'delete', options });
+});
+
+/*
+ * Events
+ */
+
+ConversationMessageReactionModel.prototype.publishEvent = async function({ type, options }) {
+  const { eventsTopic, transaction } = options || {};
+  let eventMethod = null;
+
+  eventMethod = (type === 'create') ? () => this._publishCreateEvent(eventsTopic) : eventMethod;
+  eventMethod = (type === 'delete') ? () => this._publishDeleteEvent(eventsTopic) : eventMethod;
+
+  if (eventMethod && eventsTopic) {
+    if (transaction) {
+      transaction.afterCommit(() => eventMethod());
+    } else {
+      eventMethod();
+    }
+  }
+};
+
+ConversationMessageReactionModel.prototype._publishCreateEvent = async function(eventsTopic) {
+  events.publish({
+    topic: eventsTopic,
+    name: 'CONVERSATION_MESSAGE_REACTION_CREATE',
+    data: this,
+  });
+};
+
+ConversationMessageReactionModel.prototype._publishDeleteEvent = async function(eventsTopic) {
+  events.publish({
+    topic: eventsTopic,
+    name: 'CONVERSATION_MESSAGE_REACTION_DELETE',
+    data: {
+      id: this.id,
+      conversationId: this.conversationId,
+    },
+  });
+};
 
 /*
  * Export
