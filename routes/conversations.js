@@ -4,8 +4,6 @@
 
 const ConversationModel = rootRequire('/models/ConversationModel');
 const ConversationImpressionModel = rootRequire('/models/ConversationImpressionModel');
-const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
-const UserModel = rootRequire('/models/UserModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const conversationAuthorize = rootRequire('/middlewares/conversations/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');

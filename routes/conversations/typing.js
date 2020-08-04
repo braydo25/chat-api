@@ -25,7 +25,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
   const { user, conversation } = request;
 
   events.publish({
-    topic: `conversation-${conversation.eventsToken}`,
+    topic: conversation.eventsTopic,
     name: 'CONVERSATION_MESSAGE_TYPING_START',
     data: {
       user: {

@@ -17,7 +17,7 @@ describe('User Conversations', () => {
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversation => {
             conversation.accessLevel.should.not.equal('private');
-            conversation.should.have.property('eventsToken');
+            conversation.should.have.property('eventsTopic');
             conversation.user.should.be.an('object');
             if (conversation.conversationRepostId) {
               conversation.conversationRepostUser.id.should.equal(testUserThree.id);

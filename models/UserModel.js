@@ -1,3 +1,4 @@
+const { v4: uuidV4 }  = require('uuid');
 const AttachmentModel = rootRequire('/models/AttachmentModel');
 const awsHelpers = rootRequire('/libs/awsHelpers');
 
@@ -15,6 +16,13 @@ const UserModel = database.define('user', {
     type: Sequelize.UUID,
     unique: true,
     defaultValue: Sequelize.UUIDV4,
+  },
+  eventsTopic: {
+    type: Sequelize.STRING,
+    unique: true,
+    defaultValue: () => {
+      return `user-${uuidV4()}`;
+    },
   },
   avatarAttachmentId: {
     type: Sequelize.INTEGER(10).UNSIGNED,

@@ -28,7 +28,7 @@ describe('Conversations', () => {
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.userId.should.equal(testUserOne.id);
-          response.body.should.have.property('eventsToken');
+          response.body.should.have.property('eventsTopic');
           response.body.accessLevel.should.equal(fields.accessLevel);
           response.body.title.should.equal(fields.title);
           response.body.previewConversationMessage.should.be.an('object');
@@ -63,7 +63,7 @@ describe('Conversations', () => {
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.userId.should.equal(testUserOne.id);
-          response.body.should.have.property('eventsToken');
+          response.body.should.have.property('eventsTopic');
           response.body.accessLevel.should.equal(fields.accessLevel);
           response.body.previewConversationMessage.should.be.an('object');
           response.body.previewConversationUsers.should.be.an('array');
@@ -152,7 +152,7 @@ describe('Conversations', () => {
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.should.have.property('id');
-          response.body.should.have.property('eventsToken');
+          response.body.should.have.property('eventsTopic');
           response.body.should.have.property('accessLevel');
           response.body.should.have.property('createdAt');
           response.body.conversationMessages.should.be.an('array');
@@ -187,7 +187,7 @@ describe('Conversations', () => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
-          response.body.should.have.property('eventsToken');
+          response.body.should.have.property('eventsTopic');
           response.body.accessLevel.should.satisfy(accessLevel => (
             [ 'public', 'protected' ].includes(accessLevel)
           ));
@@ -229,7 +229,7 @@ describe('Conversations', () => {
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversation => {
-            conversation.should.have.property('eventsToken');
+            conversation.should.have.property('eventsTopic');
             conversation.accessLevel.should.satisfy(accessLevel => (
               [ 'public', 'protected' ].includes(accessLevel)
             ));
@@ -255,7 +255,7 @@ describe('Conversations', () => {
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversation => {
             const conversationTest = conversation => {
-              conversation.should.have.property('eventsToken');
+              conversation.should.have.property('eventsTopic');
               conversation.impressionsCount.should.be.a('number');
               conversation.previewConversationMessage.should.be.an('object');
               conversation.previewConversationUsers.should.be.an('array');
@@ -281,7 +281,7 @@ describe('Conversations', () => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
-          response.body.should.have.property('eventsToken');
+          response.body.should.have.property('eventsTopic');
           response.body.id.should.equal(testPermissionsPrivateConversation.id);
           done();
         });
@@ -297,7 +297,7 @@ describe('Conversations', () => {
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversation => {
-            conversation.should.have.property('eventsToken');
+            conversation.should.have.property('eventsTopic');
             conversation.impressionsCount.should.be.a('number');
             conversation.previewConversationMessage.should.be.an('object');
             conversation.previewConversationUsers.should.be.an('array');
@@ -319,7 +319,7 @@ describe('Conversations', () => {
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversation => {
             conversation.should.have.property('id');
-            conversation.should.have.property('eventsToken');
+            conversation.should.have.property('eventsTopic');
             conversation.should.have.property('accessLevel');
             conversation.should.have.property('title');
             conversation.should.have.property('impressionsCount');

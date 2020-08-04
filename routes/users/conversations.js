@@ -50,6 +50,7 @@ router.delete('/:conversationId', userAuthorize);
 router.delete('/:conversationId', asyncMiddleware(async (request, response) => {
   const { user } = request;
   const { conversationId } = request.params;
+  const conversationEventsTopic = await ConversationModel.getEventsTopic(conversationId);
   const conversationUser = await ConversationUserModel.findOne({
     where: {
       conversationId,
@@ -57,7 +58,9 @@ router.delete('/:conversationId', asyncMiddleware(async (request, response) => {
     },
   });
 
-  await conversationUser.destroy();
+  await conversationUser.destroy({
+    eventTopic: conversationEventsTopic,
+  });
 
   response.success();
 }));

@@ -80,7 +80,10 @@ router.put('/', asyncMiddleware(async (request, response) => {
             'CONVERSATION_USERS_CREATE',
           ] : []),
         ],
-      }, { transaction });
+      }, {
+        eventTopic: conversation.eventsTopic,
+        transaction,
+      });
     }
 
     if (!conversationMessageReaction) {
@@ -90,7 +93,7 @@ router.put('/', asyncMiddleware(async (request, response) => {
     await transaction.commit();
 
     events.publish({
-      topic: `conversation-${conversation.eventsToken}`,
+      topic: conversation.eventsTopic,
       name: 'CONVERSATION_MESSAGE_REACTION_CREATE',
       data: {
         conversationId: conversation.id,
@@ -120,7 +123,7 @@ router.delete('/', asyncMiddleware(async (request, response) => {
   await conversationMessageReaction.destroy();
 
   events.publish({
-    topic: `conversation-${conversation.eventsToken}`,
+    topic: conversation.eventsTopic,
     name: 'CONVERSATION_MESSAGE_REACTION_DELETE',
     data: {
       id: conversationMessageReaction.id,

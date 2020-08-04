@@ -65,7 +65,9 @@ router.put('/', asyncMiddleware(async (request, response) => {
       ] : []),
     ];
 
-    conversationUser = await ConversationUserModel.create(data);
+    conversationUser = await ConversationUserModel.create(data, {
+      eventTopic: conversation.eventsTopic,
+    });
   }
 
   response.success(conversationUser);
@@ -80,10 +82,12 @@ router.patch('/', conversationAssociate);
 router.patch('/', conversationUserAssociate);
 router.patch('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_USERS_UPDATE' ] }));
 router.patch('/', asyncMiddleware(async (request, response) => {
-  const { conversationUser } = request;
+  const { conversation, conversationUser } = request;
 
   await conversationUser.update({
     permissions: request.body.permissions || conversationUser.permissions,
+  }, {
+    eventTopic: conversation.eventsTopic,
   });
 
   response.success(conversationUser);
@@ -98,9 +102,11 @@ router.delete('/', conversationAssociate);
 router.delete('/', conversationUserAssociate);
 router.delete('/', userConversationPermissions({ anyAccessLevel: [ 'CONVERSATION_USERS_DELETE' ] }));
 router.delete('/', asyncMiddleware(async (request, response) => {
-  const { conversationUser } = request;
+  const { conversation, conversationUser } = request;
 
-  await conversationUser.destroy();
+  await conversationUser.destroy({
+    eventTopic: conversation.eventsTopic,
+  });
 
   response.success();
 }));

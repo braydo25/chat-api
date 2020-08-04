@@ -1,4 +1,5 @@
 const UserModel = rootRequire('/models/UserModel');
+const events = rootRequire('/libs/events');
 
 const permissions = [
   'CONVERSATION_ADMIN',
@@ -66,23 +67,79 @@ const ConversationUserModel = database.define('conversationUser', {
  * Hooks
  */
 
-ConversationUserModel.addHook('afterCreate', (conversationUser, options) => {
+ConversationUserModel.addHook('afterCreate', async (conversationUser, options) => {
   const ConversationModel = database.models.conversation;
 
-  return ConversationModel.update({ usersCount: database.literal('usersCount + 1') }, {
+  await ConversationModel.update({ usersCount: database.literal('usersCount + 1') }, {
     where: { id: conversationUser.conversationId },
     transaction: options.transaction,
   });
+
+  conversationUser.publishEvent({ type: 'create', options });
 });
 
-ConversationUserModel.addHook('afterDestroy', (conversationUser, options) => {
+ConversationUserModel.addHook('afterUpdate', async (conversationUser, options) => {
+  conversationUser.publishEvent({ type: 'update', options });
+});
+
+ConversationUserModel.addHook('afterDestroy', async (conversationUser, options) => {
   const ConversationModel = database.models.conversation;
 
-  return ConversationModel.update({ usersCount: database.literal('usersCount - 1') }, {
+  await ConversationModel.update({ usersCount: database.literal('usersCount - 1') }, {
     where: { id: conversationUser.conversationId },
     transaction: options.transaction,
   });
+
+  conversationUser.publishEvent({ type: 'delete', options });
 });
+
+/*
+ * Events
+ */
+
+ConversationUserModel.prototype.publishEvent = async function ({ type, options }) {
+  const { eventTopic, transaction } = options || {};
+  let eventMethod = null;
+
+  eventMethod = (type === 'create') ? () => this._publishConversationUserCreateEvent(eventTopic) : eventMethod;
+  eventMethod = (type === 'update') ? () => this._publishConversationUserUpdateEvent(eventTopic) : eventMethod;
+  eventMethod = (type === 'delete') ? () => this._publishConversationUserDeleteEvent(eventTopic) : eventMethod;
+
+  if (eventMethod && eventTopic) {
+    if (transaction) {
+      transaction.afterCommit(() => eventMethod());
+    } else {
+      eventMethod();
+    }
+  }
+};
+
+ConversationUserModel.prototype._publishConversationUserCreateEvent = async function(eventTopic) {
+  events.publish({
+    topic: eventTopic,
+    name: 'CONVERSATION_USER_CREATE',
+    data: this,
+  });
+};
+
+ConversationUserModel.prototype._publishConversationUserUpdateEvent = async function(eventTopic) {
+  events.publish({
+    topic: eventTopic,
+    name: 'CONVERSATION_USER_UPDATE',
+    data: this,
+  });
+};
+
+ConversationUserModel.prototype._publishConversationUserDeleteEvent = async function(eventTopic) {
+  events.publish({
+    topic: eventTopic,
+    name: 'CONVERSATION_USER_DELETE',
+    data: {
+      id: this.id,
+      conversationId: this.conversationId,
+    },
+  });
+};
 
 /*
  * Export

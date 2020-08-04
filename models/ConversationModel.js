@@ -1,3 +1,4 @@
+const { v4: uuidV4 }  = require('uuid');
 const events = rootRequire('/libs/events');
 const accessLevels = [ 'public', 'protected', 'private' ];
 
@@ -18,10 +19,12 @@ const ConversationModel = database.define('conversation', {
   previewConversationMessageId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
   },
-  eventsToken: {
-    type: Sequelize.UUID,
+  eventsTopic: {
+    type: Sequelize.STRING,
     unique: true,
-    defaultValue: Sequelize.UUIDV4,
+    defaultValue: () => {
+      return `conversation-${uuidV4()}`;
+    },
   },
   accessLevel: {
     type: Sequelize.STRING,
@@ -57,7 +60,7 @@ const ConversationModel = database.define('conversation', {
     attributes: [
       'id',
       'userId',
-      'eventsToken',
+      'eventsTopic',
       'accessLevel',
       'title',
       'impressionsCount',
@@ -69,7 +72,7 @@ const ConversationModel = database.define('conversation', {
     complete: authUserId => ({
       attributes: [
         'id',
-        'eventsToken',
+        'eventsTopic',
         'accessLevel',
         'title',
         'impressionsCount',
@@ -115,7 +118,7 @@ const ConversationModel = database.define('conversation', {
     preview: authUserId => ({
       attributes: [
         'id',
-        'eventsToken',
+        'eventsTopic',
         'accessLevel',
         'title',
         'impressionsCount',
@@ -151,7 +154,7 @@ const ConversationModel = database.define('conversation', {
     activityPreview: () => ({
       attributes: [ /* can probably reduce the attributes returned, most likely aren't used atm */
         'id',
-        'eventsToken',
+        'eventsTopic',
         'accessLevel',
         'title',
         'impressionsCount',
@@ -174,12 +177,12 @@ const ConversationModel = database.define('conversation', {
  * Hooks
  */
 
-ConversationModel.addHook('afterUpdate', conversation => {
-  conversation.publishConversationUpdateEvent();
+ConversationModel.addHook('afterUpdate', (conversation, options) => {
+  conversation.publishEvent({ type: 'update', options });
 });
 
-ConversationModel.addHook('afterDestroy', conversation => {
-  conversation.publishConversationDeleteEvent();
+ConversationModel.addHook('afterDestroy', (conversation, options) => {
+  conversation.publishEvent({ type: 'delete', options });
 });
 
 /*
@@ -242,7 +245,7 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
 
     await conversation.update({
       previewConversationMessageId: conversationMessage.id,
-    }, { transaction });
+    }, { transaction, ignoreEvent: true });
 
     await UserConversationDataModel.create({
       userId: data.userId,
@@ -267,7 +270,7 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
       }));
     });
 
-    conversation.publishConversationCreateEvent(conversationUsers);
+    conversation.publishEvent({ type: 'create', conversationUsers });
 
     return conversation;
   } catch(error) {
@@ -367,6 +370,15 @@ ConversationModel.findAllRelevantConversationsForUser = async function({ authUse
   });
 };
 
+ConversationModel.getEventsTopic = async function(conversationId) {
+  const conversation = await ConversationModel.unscoped().findOne({
+    attributes: [ 'eventsTopic' ],
+    where: { id: conversationId },
+  });
+
+  return conversation.eventsTopic;
+};
+
 /*
  * Instance Methods
  */
@@ -398,11 +410,28 @@ ConversationModel.prototype.sendNotificationToConversationUsers = async function
  * Events
  */
 
-ConversationModel.prototype.publishConversationCreateEvent = async function(conversationUsers) {
+ConversationModel.prototype.publishEvent = async function({ type, options, conversationUsers }) {
+  const { ignoreEvent, transaction } = options || {};
+  let eventMethod = null;
+
+  eventMethod = (type === 'create') ? () => this._publishConversationCreateEvent(conversationUsers) : eventMethod;
+  eventMethod = (type === 'update') ? () => this._publishConversationUpdateEvent() : eventMethod;
+  eventMethod = (type === 'delete') ? () => this._publishConversationDeleteEvent() : eventMethod;
+
+  if (eventMethod && !ignoreEvent) {
+    if (transaction) {
+      transaction.afterCommit(() => eventMethod());
+    } else {
+      eventMethod();
+    }
+  }
+};
+
+ConversationModel.prototype._publishConversationCreateEvent = async function(conversationUsers) {
   const UserModel = database.models.user;
 
   const eventUsers = await UserModel.unscoped().findAll({
-    attributes: [ 'id', 'accessToken' ],
+    attributes: [ 'id', 'eventsTopic' ],
     where: { id: conversationUsers.map(conversationUser => conversationUser.userId) },
   });
 
@@ -416,24 +445,24 @@ ConversationModel.prototype.publishConversationCreateEvent = async function(conv
     });
 
     events.publish({
-      topic: `user-${eventUser.accessToken}`,
+      topic: eventUser.eventsTopic,
       name: 'CONVERSATION_CREATE',
       data: { ...eventData, authConversationUser },
     });
   });
 };
 
-ConversationModel.prototype.publishConversationUpdateEvent = async function() {
+ConversationModel.prototype._publishConversationUpdateEvent = async function() {
   events.publish({
-    topic: `conversation-${this.eventsToken}`,
+    topic: this.eventsTopic,
     name: 'CONVERSATION_UPDATE',
     data: this,
   });
 };
 
-ConversationModel.prototype.publishConversationDeleteEvent = async function() {
+ConversationModel.prototype._publishConversationDeleteEvent = async function() {
   events.publish({
-    topic: `conversation-${this.eventsToken}`,
+    topic: this.eventsTopic,
     name: 'CONVERSATION_DELETE',
     data: { id: this.id },
   });
