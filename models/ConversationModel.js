@@ -152,23 +152,7 @@ const ConversationModel = database.define('conversation', {
       ],
     }),
     activityPreview: () => ({
-      attributes: [ /* can probably reduce the attributes returned, most likely aren't used atm */
-        'id',
-        'eventsTopic',
-        'accessLevel',
-        'title',
-        'impressionsCount',
-        'usersCount',
-        'updatedAt',
-        'createdAt',
-      ],
-      include: [
-        {
-          model: database.models.conversationUser,
-          as: 'previewConversationUsers',
-          // limit: 5, TODO: this fails and causes a query with duplicate left joins?
-        },
-      ],
+      attributes: [ 'id', 'title' ],
     }),
   },
 });

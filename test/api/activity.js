@@ -20,7 +20,6 @@ describe('Activity', () => {
               activity.conversationRepost.conversation.should.be.an('object');
               activity.conversationRepost.conversation.should.have.property('id');
               activity.conversationRepost.conversation.should.have.property('title');
-              activity.conversationRepost.conversation.should.have.property('previewConversationUsers');
               activity.conversationRepost.should.have.property('user');
             }
 
