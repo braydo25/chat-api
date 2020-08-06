@@ -6,11 +6,14 @@ const Joi = require('@hapi/joi');
 
 module.exports = payload => {
   const validationResult = Joi.object({
-    id: Joi.number(),
-    userId: Joi.number(),
-    conversationId: Joi.number(),
-    permissions: Joi.array().items(Joi.string()),
-    updatedAt: Joi.date(),
+    event: Joi.string(),
+    data: Joi.object({
+      id: Joi.number(),
+      userId: Joi.number(),
+      conversationId: Joi.number(),
+      permissions: Joi.array().items(Joi.string()),
+      updatedAt: Joi.date(),
+    }),
   }).validate(payload, {
     allowUnknown: true,
     presence: 'required',
