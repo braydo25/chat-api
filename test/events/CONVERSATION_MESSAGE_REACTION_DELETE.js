@@ -9,9 +9,9 @@ module.exports = payload => {
     event: Joi.string(),
     data: Joi.object({
       id: Joi.number(),
+      userId: Joi.number(),
       conversationId: Joi.number(),
       conversationMessageId: Joi.number(),
-      conversationUserId: Joi.number(),
     }),
   }).validate(payload, {
     allowUnknown: true,

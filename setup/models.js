@@ -31,7 +31,7 @@ ConversationMessageModel.hasMany(ConversationMessageReactionModel);
 ConversationMessageModel.hasMany(ConversationMessageReactionModel, { as: 'authUserConversationMessageReactions' });
 ConversationMessageModel.belongsTo(ConversationUserModel);
 
-ConversationMessageReactionModel.belongsTo(ConversationUserModel);
+ConversationMessageReactionModel.belongsTo(UserModel);
 
 ConversationRepostModel.belongsTo(ConversationModel);
 ConversationRepostModel.belongsTo(UserModel);
@@ -60,4 +60,4 @@ UserDeviceModel.belongsTo(UserModel);
 UserFollowerModel.belongsTo(UserModel);
 UserFollowerModel.belongsTo(UserModel, { as: 'followerUser' });
 
-module.exports = database.sync();
+module.exports = database.sync({ force: true });

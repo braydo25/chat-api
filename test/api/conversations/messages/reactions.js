@@ -21,7 +21,7 @@ describe('Conversation Message Reactions', () => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
-          response.body.conversationUserId.should.equal(testUserOne.id);
+          response.body.userId.should.equal(testUserOne.id);
           response.body.conversationMessageId.should.equal(testConversationOneMessageOne.id);
           response.body.reaction.should.equal(fields.reaction);
           scopedConversationMessageReaction = response.body;
@@ -35,7 +35,7 @@ describe('Conversation Message Reactions', () => {
               response.should.have.status(200);
               response.body.should.be.an('object');
               response.body.id.should.not.equal(scopedConversationMessageReaction.id);
-              response.body.conversationUserId.should.equal(testUserTwo.id);
+              response.body.userId.should.equal(testUserTwo.id);
               response.body.conversationMessageId.should.equal(testConversationOneMessageOne.id);
               response.body.reaction.should.equal(fields.reaction);
 
@@ -181,8 +181,7 @@ describe('Conversation Message Reactions', () => {
             conversationMessageReaction.should.have.property('id');
             conversationMessageReaction.should.have.property('reaction');
             conversationMessageReaction.should.have.property('createdAt');
-            conversationMessageReaction.should.have.property('conversationUser');
-            conversationMessageReaction.conversationUser.should.have.property('user');
+            conversationMessageReaction.should.have.property('user');
           });
           done();
         });
