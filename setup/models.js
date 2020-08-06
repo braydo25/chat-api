@@ -31,7 +31,7 @@ ConversationMessageModel.hasMany(ConversationMessageReactionModel);
 ConversationMessageModel.hasMany(ConversationMessageReactionModel, { as: 'authUserConversationMessageReactions' });
 ConversationMessageModel.belongsTo(ConversationUserModel);
 
-ConversationMessageReactionModel.belongsTo(UserModel);
+ConversationMessageReactionModel.belongsTo(ConversationUserModel);
 
 ConversationRepostModel.belongsTo(ConversationModel);
 ConversationRepostModel.belongsTo(UserModel);

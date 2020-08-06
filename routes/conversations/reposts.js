@@ -46,6 +46,7 @@ router.put('/', asyncMiddleware(async (request, response) => {
         conversationId: conversation.id,
       }, {
         eventsTopic: conversation.eventsTopic,
+        setDataValues: { conversation, user },
         transaction,
       });
 

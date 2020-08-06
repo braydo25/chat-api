@@ -5,16 +5,22 @@
  */
 
 const ConversationMessageReactionModel = rootRequire('/models/ConversationMessageReactionModel');
+const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 
 module.exports = asyncMiddleware(async (request, response, next) => {
   const { user } = request;
   const { conversationMessageReactionId } = request.params;
 
   const conversationMessageReaction = await ConversationMessageReactionModel.findOne({
-    where: {
-      id: conversationMessageReactionId,
-      userId: user.id,
-    },
+    include: [
+      {
+        attributes: [],
+        model: ConversationUserModel.unscoped(),
+        where: { userId: user.id },
+        required: true,
+      },
+    ],
+    where: { id: conversationMessageReactionId },
   });
 
   if (!conversationMessageReaction) {

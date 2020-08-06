@@ -1,4 +1,4 @@
-const UserModel = rootRequire('/models/UserModel');
+const ConversationUserModel = rootRequire('/models/ConversationUserModel');
 const events = rootRequire('/libs/events');
 
 /*
@@ -11,11 +11,11 @@ const ConversationMessageReactionModel = database.define('conversationMessageRea
     primaryKey: true,
     autoIncrement: true,
   },
-  userId: {
+  conversationMessageId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
-  conversationMessageId: {
+  conversationUserId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
@@ -34,12 +34,12 @@ const ConversationMessageReactionModel = database.define('conversationMessageRea
   defaultScope: {
     attributes: [
       'id',
-      'userId',
       'conversationMessageId',
+      'conversationUserId',
       'reaction',
       'createdAt',
     ],
-    include: [ UserModel.scope('noAvatar') ],
+    include: [ ConversationUserModel ],
   },
   indexes: [
     {

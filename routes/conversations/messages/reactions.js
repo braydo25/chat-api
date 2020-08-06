@@ -55,8 +55,8 @@ router.put('/', asyncMiddleware(async (request, response) => {
   const { user, conversation, conversationMessage, authConversationUser } = request;
   const { reaction } = request.body;
   const data = {
-    userId: user.id,
     conversationMessageId: conversationMessage.id,
+    conversationUserId: authConversationUser.userId,
     reaction,
   };
 

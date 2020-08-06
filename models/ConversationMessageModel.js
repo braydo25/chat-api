@@ -75,7 +75,14 @@ const ConversationMessageModel = database.define('conversationMessage', {
           ],
           model: ConversationMessageReactionModel.unscoped(),
           as: 'authUserConversationMessageReactions',
-          where: { userId },
+          include: [
+            {
+              attributes: [],
+              model: ConversationUserModel.unscoped(),
+              where: { userId },
+              required: true,
+            },
+          ],
           required: false,
         },
       ],
