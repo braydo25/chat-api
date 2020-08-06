@@ -3,6 +3,7 @@
  */
 
 const ConversationUserModel = rootRequire('/models/ConversationUserModel');
+const UserModel = rootRequire('/models/UserModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const conversationUserAssociate = rootRequire('/middlewares/conversations/users/associate');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
@@ -51,6 +52,14 @@ router.put('/', asyncMiddleware(async (request, response) => {
     throw new Error('A user must be provided.');
   }
 
+  const user = await UserModel.findOne({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new Error('The user provided does not exist.');
+  }
+
   let conversationUser = await ConversationUserModel.findOne({ where: data });
 
   if (!conversationUser) {
@@ -67,6 +76,7 @@ router.put('/', asyncMiddleware(async (request, response) => {
 
     conversationUser = await ConversationUserModel.create(data, {
       eventsTopic: conversation.eventsTopic,
+      setDataValues: { user },
     });
   }
 

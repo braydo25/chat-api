@@ -114,16 +114,6 @@ ConversationMessageModel.createWithAssociations = async function({ data, convers
     throw new Error('You must provide text, an attachment, or embed.');
   }
 
-  const conversationMessage = await ConversationMessageModel.create(data, { eventsTopic, transaction });
-
-  await ConversationMessageAttachmentModel.bulkCreate((
-    attachmentIds.map(attachmentId => ({ conversationMessageId: conversationMessage.id, attachmentId }))
-  ), { transaction });
-
-  await ConversationMessageEmbedModel.bulkCreate((
-    embedIds.map(embedId => ({ conversationMessageId: conversationMessage.id, embedId }))
-  ), { transaction });
-
   const attachments = await AttachmentModel.findAll({
     where: { id: attachmentIds },
   }, { transaction });
@@ -132,9 +122,19 @@ ConversationMessageModel.createWithAssociations = async function({ data, convers
     where: { id: embedIds },
   }, { transaction });
 
-  conversationMessage.setDataValue('attachments', attachments);
-  conversationMessage.setDataValue('embeds', embeds);
-  conversationMessage.setDataValue('conversationUser', conversationUser);
+  const conversationMessage = await ConversationMessageModel.create(data, {
+    eventsTopic,
+    transaction,
+    setDataValues: { attachments, embeds, conversationUser },
+  });
+
+  await ConversationMessageAttachmentModel.bulkCreate((
+    attachmentIds.map(attachmentId => ({ conversationMessageId: conversationMessage.id, attachmentId }))
+  ), { transaction });
+
+  await ConversationMessageEmbedModel.bulkCreate((
+    embedIds.map(embedId => ({ conversationMessageId: conversationMessage.id, embedId }))
+  ), { transaction });
 
   return conversationMessage;
 };

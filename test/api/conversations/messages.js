@@ -46,6 +46,7 @@ describe('Conversation Messages', () => {
           response.should.have.status(200);
           response.body.should.be.an('object');
           response.body.conversationUser.userId.should.equal(testUserOne.id);
+          response.body.conversationUser.user.should.be.an('object');
           response.body.attachments.should.be.an('array');
           response.body.attachments[0].id.should.equal(testAttachmentOne.id);
           response.body.embeds.should.be.an('array');
@@ -54,7 +55,7 @@ describe('Conversation Messages', () => {
         });
     });
 
-    it('200s with created conversation object and adds authenticated user as conversation user when user is not a conversation user', done => {
+    it('200s with created conversation message object and adds authenticated user as conversation user when user is not a conversation user', done => {
       const fields = {
         text: 'hey there',
         nonce: 'deadlockbstest',
@@ -68,6 +69,8 @@ describe('Conversation Messages', () => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('object');
+          response.body.conversationUser.should.be.an('object');
+          response.body.conversationUser.user.should.be.an('object');
           chai.request(server)
             .get(`/conversations/${testConversationOne.id}/users`)
             .set('X-Access-Token', testUserFour.accessToken)

@@ -81,6 +81,7 @@ router.put('/', asyncMiddleware(async (request, response) => {
         ],
       }, {
         eventsTopic: conversation.eventsTopic,
+        setDataValues: { user },
         transaction,
       });
     }
@@ -115,6 +116,7 @@ router.delete('/', asyncMiddleware(async (request, response) => {
 
   await conversationMessageReaction.destroy({
     eventsTopic: conversation.eventsTopic,
+    setDataValues: { conversationId: conversation.id },
   });
 
   response.success();

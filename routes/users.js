@@ -125,9 +125,9 @@ router.patch('/', asyncMiddleware(async (request, response) => {
     username: request.body.username || user.username,
     name: request.body.name || user.name,
     about: (request.body.about) ? request.body.about.trim() : user.about,
+  }, {
+    setDataValues: { avatarAttachment: attachment || user.avatarAttachment },
   });
-
-  user.setDataValue('avatarAttachment', attachment || user.avatarAttachment);
 
   response.success(user);
 }));

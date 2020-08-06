@@ -34,6 +34,8 @@ const ConversationMessageReactionModel = database.define('conversationMessageRea
   defaultScope: {
     attributes: [
       'id',
+      'userId',
+      'conversationMessageId',
       'reaction',
       'createdAt',
     ],
@@ -91,10 +93,7 @@ ConversationMessageReactionModel.prototype._publishDeleteEvent = async function(
   events.publish({
     topic: eventsTopic,
     name: 'CONVERSATION_MESSAGE_REACTION_DELETE',
-    data: {
-      id: this.id,
-      conversationId: this.conversationId,
-    },
+    data: this,
   });
 };
 

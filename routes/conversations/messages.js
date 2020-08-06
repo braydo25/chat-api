@@ -49,61 +49,68 @@ router.post('/', asyncMiddleware(async (request, response) => {
   const { user, conversation } = request;
   const { nonce, text, attachmentIds, embedIds } = request.body;
 
-  const transaction = await database.transaction();
+  let conversationMessage = (authConversationUser) ? await ConversationMessageModel.findOne({
+    where: {
+      conversationId: conversation.id,
+      conversationUserId: authConversationUser.id,
+      nonce,
+    },
+  }) : null;
 
-  let conversationMessage = null;
+  if (!conversationMessage) {
+    const transaction = await database.transaction();
 
-  try {
-    if (!authConversationUser) {
-      authConversationUser = await ConversationUserModel.create({
-        userId: user.id,
-        conversationId: conversation.id,
-        permissions: [
-          'CONVERSATION_MESSAGES_CREATE',
-          'CONVERSATION_MESSAGES_READ',
-          'CONVERSATION_MESSAGE_REACTIONS_CREATE',
-          'CONVERSATION_MESSAGE_REACTIONS_READ',
-          'CONVERSATION_USERS_CREATE',
-          'CONVERSATION_USERS_READ',
-        ],
-      }, {
+    try {
+      if (!authConversationUser) {
+        authConversationUser = await ConversationUserModel.create({
+          userId: user.id,
+          conversationId: conversation.id,
+          permissions: [
+            'CONVERSATION_MESSAGES_CREATE',
+            'CONVERSATION_MESSAGES_READ',
+            'CONVERSATION_MESSAGE_REACTIONS_CREATE',
+            'CONVERSATION_MESSAGE_REACTIONS_READ',
+            'CONVERSATION_USERS_CREATE',
+            'CONVERSATION_USERS_READ',
+          ],
+        }, {
+          eventsTopic: conversation.eventsTopic,
+          setDataValues: { user },
+          transaction,
+        });
+      }
+
+      conversationMessage = await ConversationMessageModel.createWithAssociations({
+        data: {
+          conversationId: conversation.id,
+          conversationUserId: authConversationUser.id,
+          nonce,
+          text,
+        },
         eventsTopic: conversation.eventsTopic,
+        conversationUser: authConversationUser,
+        attachmentIds,
+        embedIds,
         transaction,
       });
 
-      authConversationUser.setDataValue('user', user);
+      await conversation.update({
+        previewConversationMessageId: conversationMessage.id,
+      }, { transaction });
+
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+
+      throw error;
     }
 
-    conversationMessage = await ConversationMessageModel.createWithAssociations({
-      data: {
-        conversationId: conversation.id,
-        conversationUserId: authConversationUser.id,
-        nonce,
-        text,
-      },
-      eventsTopic: conversation.eventsTopic,
-      conversationUser: authConversationUser,
-      attachmentIds,
-      embedIds,
-      transaction,
+    conversation.sendNotificationToConversationUsers({
+      sendingUserId: user.id,
+      title: conversation.title,
+      message: (text) ? `${user.name}: ${text}` : `${user.name} sent an attachment(s).`,
     });
-
-    await conversation.update({
-      previewConversationMessageId: conversationMessage.id,
-    }, { transaction });
-
-    await transaction.commit();
-  } catch(error) {
-    await transaction.rollback();
-
-    throw error;
   }
-
-  conversation.sendNotificationToConversationUsers({
-    sendingUserId: user.id,
-    title: conversation.title,
-    message: (text) ? `${user.name}: ${text}` : `${user.name} sent an attachment(s).`,
-  });
 
   response.success(conversationMessage);
 }));
@@ -139,6 +146,7 @@ router.delete('/', asyncMiddleware(async (request, response) => {
 
   await conversationMessage.destroy({
     eventsTopic: conversation.eventsTopic,
+    setDataValues: { conversationId: conversation.id },
   });
 
   response.success();

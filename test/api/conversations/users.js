@@ -59,6 +59,22 @@ describe('Conversation Users', () => {
         });
     });
 
+    it('400s when provided an invalid user id', done => {
+      const fields = {
+        userId: 51251,
+      };
+
+      chai.request(server)
+        .put(`/conversations/${testConversationOne.id}/users`)
+        .set('X-Access-Token', testUserOne.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(400);
+          done();
+        });
+    });
+
     it('400s when adding user to private conversation', done => {
       const fields = {
         userId: testUserFour.id,

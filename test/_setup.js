@@ -23,10 +23,29 @@ global.server = `http://localhost:${process.env.PORT}`;
 
 global.enableTestResponseLogging = true;
 
-global.testUserOne = { phone: 15555555555 };
-global.testUserTwo = { phone: 16666666666 };
-global.testUserThree = { phone: 18888888888 };
-global.testUserFour = { phone: 19999999999 };
+global.testUserOne = {
+  phone: 15555555555,
+  name: 'Yolo Bolo',
+  username: 'yolobolo',
+};
+
+global.testUserTwo = {
+  phone: 16666666666,
+  name: 'Ralph Lauren',
+  username: 'ralphlauren',
+};
+
+global.testUserThree = {
+  phone: 18888888888,
+  name: 'Lang Spay',
+  username: 'lang',
+};
+
+global.testUserFour = {
+  phone: 19999999999,
+  name: 'Larry',
+  username: '@larry',
+};
 
 global.testConversationOne = {
   accessLevel: 'public',
@@ -211,26 +230,44 @@ before(done => {
     fatLog('Creating global test user one...');
     await chai.request(server).post('/users').send(testUserOne);
     const createdTestUserOneResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserOne, { phoneLoginCode: '000000' }));
-    Object.assign(testUserOne, createdTestUserOneResponse.body);
+    testUserOne = { ...createdTestUserOneResponse.body, ...testUserOne };
     mqttConnection.subscribe(testUserOne.eventsTopic);
+    await chai.request(server)
+      .patch('/users')
+      .set('X-Access-Token', testUserOne.accessToken)
+      .send(testUserOne);
+
 
     fatLog('Creating global test user two...');
     await chai.request(server).post('/users').send(testUserTwo);
     const createdTestUserTwoResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserTwo, { phoneLoginCode: '000000' }));
-    Object.assign(testUserTwo, createdTestUserTwoResponse.body);
+    testUserTwo = { ...createdTestUserTwoResponse.body, ...testUserTwo };
     mqttConnection.subscribe(testUserTwo.eventsTopic);
+    await chai.request(server)
+      .patch('/users')
+      .set('X-Access-Token', testUserTwo.accessToken)
+      .send(testUserTwo);
+
 
     fatLog('Creating global test user three...');
     await chai.request(server).post('/users').send(testUserThree);
     const createdTestUserThreeResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserThree, { phoneLoginCode: '000000' }));
-    Object.assign(testUserThree, createdTestUserThreeResponse.body);
+    testUserThree = { ...createdTestUserThreeResponse.body, ...testUserThree };
     mqttConnection.subscribe(testUserThree.eventsTopic);
+    await chai.request(server)
+      .patch('/users')
+      .set('X-Access-Token', testUserThree.accessToken)
+      .send(testUserThree);
 
     fatLog('Creating global test user four...');
     await chai.request(server).post('/users').send(testUserFour);
     const createdTestUserFourResponse = await chai.request(server).post('/users').send(Object.assign({}, testUserFour, { phoneLoginCode: '000000' }));
-    Object.assign(testUserFour, createdTestUserFourResponse.body);
+    testUserFour = { ...createdTestUserFourResponse.body, ...testUserFour };
     mqttConnection.subscribe(testUserFour.eventsTopic);
+    await chai.request(server)
+      .patch('/users')
+      .set('X-Access-Token', testUserFour.accessToken)
+      .send(testUserFour);
 
     fatLog('Setting test user one as a follower of test user three...');
     await chai.request(server)
