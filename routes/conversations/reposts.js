@@ -5,6 +5,7 @@
 const ConversationRepostModel = rootRequire('/models/ConversationRepostModel');
 const UserActivityModel = rootRequire('/models/UserActivityModel');
 const UserDeviceModel = rootRequire('/models/UserDeviceModel');
+const UserModel = rootRequire('/models/UserModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 
@@ -50,10 +51,16 @@ router.put('/', asyncMiddleware(async (request, response) => {
         transaction,
       });
 
+      const eventsTopic = await UserModel.getEventsTopic(conversation.userId);
+
       await UserActivityModel.create({
         userId: conversation.userId,
         conversationRepostId: conversationRepost.id,
-      }, { transaction });
+      }, {
+        eventsTopic,
+        setDataValues: { conversationRepost },
+        transaction,
+      });
 
       await transaction.commit();
     } catch (error) {

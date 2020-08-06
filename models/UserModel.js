@@ -102,6 +102,19 @@ const UserModel = database.define('user', {
 });
 
 /*
+ * Class Methods
+ */
+
+UserModel.getEventsTopic = async function(userId) {
+  const user = await UserModel.findOne({
+    attributes: [ 'eventsTopic' ],
+    where: { id: userId },
+  });
+
+  return user.eventsTopic;
+};
+
+/*
  * Instance Methods
  */
 

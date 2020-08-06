@@ -5,6 +5,7 @@
 const UserActivityModel = rootRequire('/models/UserActivityModel');
 const UserFollowerModel = rootRequire('/models/UserFollowerModel');
 const UserDeviceModel = rootRequire('/models/UserDeviceModel');
+const UserModel = rootRequire('/models/UserModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const userFollowerAuthorize = rootRequire('/middlewares/users/followers/authorize');
 
@@ -49,12 +50,21 @@ router.put('/', asyncMiddleware(async (request, response) => {
     const transaction = await database.transaction();
 
     try {
-      userFollower = await UserFollowerModel.create(data, { transaction });
+      userFollower = await UserFollowerModel.create(data, {
+        setDataValues: { followerUser: user },
+        transaction,
+      });
+
+      const eventsTopic = await UserModel.getEventsTopic(userId);
 
       await UserActivityModel.create({
         userId,
         userFollowerId: userFollower.id,
-      }, { transaction });
+      }, {
+        eventsTopic,
+        setDataValues: { userFollower },
+        transaction,
+      });
 
       await transaction.commit();
     } catch (error) {

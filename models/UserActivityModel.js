@@ -1,5 +1,6 @@
 const ConversationRepostModel = rootRequire('/models/ConversationRepostModel');
 const UserFollowerModel = rootRequire('/models/UserFollowerModel');
+const events = rootRequire('/libs/events');
 
 /*
  * Model Definition
@@ -39,6 +40,41 @@ const UserActivityModel = database.define('userActivity', {
     ],
   },
 });
+
+/*
+ * Hooks
+ */
+
+UserActivityModel.addHook('afterCreate', async (userActivity, options) => {
+  userActivity.publishEvent({ type: 'create', options });
+});
+
+/*
+ * Events
+ */
+
+UserActivityModel.prototype.publishEvent = async function({ type, options }) {
+  const { eventsTopic, transaction } = options || {};
+  let eventMethod = null;
+
+  eventMethod = (type === 'create') ? () => this._publishCreateEvent(eventsTopic) : eventMethod;
+
+  if (eventMethod && eventsTopic) {
+    if (transaction) {
+      transaction.afterCommit(() => eventMethod());
+    } else {
+      eventMethod();
+    }
+  }
+};
+
+UserActivityModel.prototype._publishCreateEvent = async function(eventsTopic) {
+  events.publish({
+    topic: eventsTopic,
+    name: 'USER_ACTIVITY_CREATE',
+    data: this,
+  });
+};
 
 /*
  * Export
