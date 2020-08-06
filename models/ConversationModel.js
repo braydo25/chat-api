@@ -118,6 +118,8 @@ const ConversationModel = database.define('conversation', {
     preview: authUserId => ({
       attributes: [
         'id',
+        'userId',
+        'previewConversationMessageId',
         'eventsTopic',
         'accessLevel',
         'title',
