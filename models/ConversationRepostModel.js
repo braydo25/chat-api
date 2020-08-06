@@ -25,7 +25,10 @@ const ConversationRepostModel = database.define('conversationRepost', {
     complete: authUserId => ({
       attributes: [ 'id' ],
       include: [
-        ConversationModel.scope({ method: [ 'preview', authUserId ] }),
+        {
+          model: ConversationModel.scope({ method: [ 'preview', authUserId ] }),
+          required: true,
+        },
         UserModel,
       ],
     }),
@@ -35,7 +38,10 @@ const ConversationRepostModel = database.define('conversationRepost', {
         'createdAt',
       ],
       include: [
-        ConversationModel.scope('activityPreview'),
+        {
+          model: ConversationModel.scope('activityPreview'),
+          required: true,
+        },
         UserModel,
       ],
     }),

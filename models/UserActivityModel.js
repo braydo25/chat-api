@@ -38,6 +38,12 @@ const UserActivityModel = database.define('userActivity', {
         required: false,
       },
     ],
+    having: {
+      [Sequelize.Op.or]: {
+        'conversationRepost.id': { [Sequelize.Op.ne]: null },
+        'userFollower.id': { [Sequelize.Op.ne]: null },
+      },
+    },
   },
 });
 
