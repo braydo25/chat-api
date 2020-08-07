@@ -18,7 +18,7 @@ const router = express.Router({
 router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
   const { userId } = request.params;
-  const { search } = request.query;
+  const { before, after, search } = request.query;
 
   if (!userId && !search) {
     throw new Error('A user id or search must be provided.');
@@ -62,6 +62,8 @@ router.get('/', asyncMiddleware(async (request, response) => {
           name: { [Sequelize.Op.like]: `%${search}%` },
           username: { [Sequelize.Op.like]: `%${search}%` },
         },
+        ...((before) ? { id: { [Sequelize.Op.lt]: before } } : {}),
+        ...((after) ? { id: { [Sequelize.Op.gt]: after } } : {}),
       },
     });
 

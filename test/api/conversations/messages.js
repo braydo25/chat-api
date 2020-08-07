@@ -152,6 +152,40 @@ describe('Conversation Messages', () => {
         });
     });
 
+    it('200s with an array of conversation message objects before provided conversation message id', done => {
+      chai.request(server)
+        .get(`/conversations/${testConversationOne.id}/messages`)
+        .query({ before: 11 })
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(conversation => {
+            conversation.id.should.be.lessThan(11);
+          });
+          done();
+        });
+    });
+
+    it('200s with an array of conversation message objects after provided conversation message id', done => {
+      chai.request(server)
+        .get(`/conversations/${testConversationOne.id}/messages`)
+        .query({ after: 11 })
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(conversation => {
+            conversation.id.should.be.greaterThan(11);
+          });
+          done();
+        });
+    });
+
     it('403s when requesting user does not have CONVERSATION_MESSAGES_READ permission for conversation with private access level', done => {
       chai.request(server)
         .get(`/conversations/${testPermissionsPrivateConversation.id}/messages`)

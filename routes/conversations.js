@@ -20,12 +20,28 @@ const router = express.Router({
 router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
-  const { accessLevels, feed, privateUserIds, search, limit } = request.query;
+  const { accessLevels, feed, privateUserIds, before, after, search, limit } = request.query;
+  const where = {};
+
+  if (before) {
+    where.id = { [Sequelize.Op.lt]: before };
+  }
+
+  if (after) {
+    where.id = { [Sequelize.Op.gt]: after };
+  }
+
+  if (search) {
+    where.title = { [Sequelize.Op.like]: `%${search}%` };
+  }
 
   if (accessLevels) {
     const conversations = await ConversationModel.findAllWithUser({
       authUserId: user.id,
-      where: { accessLevel: accessLevels },
+      where: {
+        accessLevel: accessLevels,
+        ...where,
+      },
       order: [ [ 'updatedAt', 'DESC' ] ],
       limit: (limit && limit < 25) ? limit : 5,
     });
@@ -36,6 +52,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
   if (feed) {
     const conversations = await ConversationModel.findAllByFollowedUsers({
       authUserId: user.id,
+      where,
       order: [ [ 'createdAt', 'DESC' ] ],
       limit: (limit && limit < 25) ? limit : 5,
     });
@@ -47,7 +64,10 @@ router.get('/', asyncMiddleware(async (request, response) => {
     const privateConversation = await ConversationModel.findOneWithUsers({
       authUserId: user.id,
       userIds: [ ...new Set([ user.id, ...privateUserIds.map(id => +id) ]) ],
-      where: { accessLevel: 'private' },
+      where: {
+        accessLevel: 'private',
+        ...where,
+      },
     });
 
     return response.success(privateConversation);
@@ -57,7 +77,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
     const searchConversations = await ConversationModel.scope({ method: [ 'preview', user.id ] }).findAll({
       where: {
         accessLevel: [ 'public', 'protected' ],
-        title: { [Sequelize.Op.like]: `%${search}%` },
+        ...where,
       },
       order: [ [ 'updatedAt', 'DESC' ] ],
       limit: (limit && limit < 25) ? Math.floor(limit / 2) : 10,
@@ -70,6 +90,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
 
   const relevantConversations = await ConversationModel.findAllRelevantConversationsForUser({
     authUserId: user.id,
+    where,
     order: [ [ 'createdAt', 'DESC' ] ],
     limit: (limit && limit < 25) ? limit : 10,
   });

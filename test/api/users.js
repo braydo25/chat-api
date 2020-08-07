@@ -109,6 +109,40 @@ describe('Users', () => {
         });
     });
 
+    it('200s with an array of user objects before provided user id and matching search', done => {
+      chai.request(server)
+        .get('/users')
+        .query({ search: 'a', before: 3 })
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(user => {
+            user.id.should.be.lessThan(3);
+          });
+          done();
+        });
+    });
+
+    it('200s with an array of user objects after provided user id and matching search', done => {
+      chai.request(server)
+        .get('/users')
+        .query({ search: 'a', after: 3 })
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(user => {
+            user.id.should.be.greaterThan(3);
+          });
+          done();
+        });
+    });
+
     helpers.it401sWhenUserAuthorizationIsInvalid('get', '/users/2');
   });
 

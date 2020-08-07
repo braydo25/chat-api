@@ -275,6 +275,40 @@ describe('Conversations', () => {
         });
     });
 
+    it('200s with an array of conversations before provided conversation id', done => {
+      chai.request(server)
+        .get('/conversations')
+        .query({ before: 5 })
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(conversation => {
+            conversation.id.should.be.lessThan(5);
+          });
+          done();
+        });
+    });
+
+    it('200s with an array of conversations after provided conversation id', done => {
+      chai.request(server)
+        .get('/conversations')
+        .query({ after: 5 })
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(conversation => {
+            conversation.id.should.be.greaterThan(5);
+          });
+          done();
+        });
+    });
+
     it('200s with conversation object when provided user ids that are a part of existing conversation that includes authenticated user', done => {
       chai.request(server)
         .get(`/conversations?privateUserIds=${encodeURIComponent(JSON.stringify(testPermissionsPrivateConversation.userIds))}`)

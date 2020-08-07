@@ -22,12 +22,23 @@ router.get('/', conversationAssociate);
 router.get('/', userConversationPermissions({ private: [ 'CONVERSATION_MESSAGES_READ' ] }));
 router.get('/', asyncMiddleware(async (request, response) => {
   const { conversation, user } = request;
+  const { before, after } = request.query;
+  const where = { conversationId: conversation.id };
+
+  if (before) {
+    where.id = { [Sequelize.Op.lt]: before };
+  }
+
+  if (after) {
+    where.id = { [Sequelize.Op.gt]: after };
+  }
+
   const conversationMessages = await ConversationMessageModel.scope([
     'defaultScope',
     'withReactions',
     { method: [ 'withAuthUserReactions', user.id ] },
   ]).findAll({
-    where: { conversationId: conversation.id },
+    where,
     order: [ [ 'createdAt', 'DESC' ] ],
   });
 

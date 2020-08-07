@@ -46,6 +46,40 @@ describe('Activity', () => {
         });
     });
 
+    it('200s with an array of activity objects before provided user activity id', done => {
+      chai.request(server)
+        .get('/activity')
+        .query({ before: 4 })
+        .set('X-Access-Token', testUserThree.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(conversation => {
+            conversation.id.should.be.lessThan(4);
+          });
+          done();
+        });
+    });
+
+    it('200s with an array of activity objects after provided user activity id', done => {
+      chai.request(server)
+        .get('/activity')
+        .query({ after: 1 })
+        .set('X-Access-Token', testUserThree.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(conversation => {
+            conversation.id.should.be.greaterThan(1);
+          });
+          done();
+        });
+    });
+
     helpers.it401sWhenUserAuthorizationIsInvalid('get', '/activity');
   });
 });

@@ -348,9 +348,12 @@ ConversationModel.findAllByFollowedUsers = async function({ authUserId, order, l
   ];
 };
 
-ConversationModel.findAllRelevantConversationsForUser = async function({ authUserId, order, limit }) {
+ConversationModel.findAllRelevantConversationsForUser = async function({ authUserId, where, order, limit }) {
   return await ConversationModel.scope({ method: [ 'preview', authUserId ] }).findAll({
-    where: { accessLevel: [ 'public', 'protected' ] },
+    where: {
+      accessLevel: [ 'public', 'protected' ],
+      ...where,
+    },
     order,
     limit,
   });
