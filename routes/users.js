@@ -65,6 +65,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
         ...((before) ? { id: { [Sequelize.Op.lt]: before } } : {}),
         ...((after) ? { id: { [Sequelize.Op.gt]: after } } : {}),
       },
+      limit: 10,
     });
 
     return response.success(users);

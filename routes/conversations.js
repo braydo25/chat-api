@@ -20,7 +20,7 @@ const router = express.Router({
 router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
-  const { accessLevels, feed, privateUserIds, before, after, search, limit } = request.query;
+  const { accessLevels, feed, privateUserIds, before, after, staler, fresher, search, limit } = request.query;
   const where = {};
 
   if (before) {
@@ -29,6 +29,14 @@ router.get('/', asyncMiddleware(async (request, response) => {
 
   if (after) {
     where.id = { [Sequelize.Op.gt]: after };
+  }
+
+  if (staler) {
+    where.updatedAt = { [Sequelize.Op.lt]: new Date(staler) };
+  }
+
+  if (fresher) {
+    where.updatedAt = { [Sequelize.Op.gt]: new Date(fresher) };
   }
 
   if (search) {
@@ -53,7 +61,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
     const conversations = await ConversationModel.findAllByFollowedUsers({
       authUserId: user.id,
       where,
-      order: [ [ 'createdAt', 'DESC' ] ],
+      order: [ [ 'id', 'DESC' ] ],
       limit: (limit && limit < 25) ? limit : 5,
     });
 
@@ -91,7 +99,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
   const relevantConversations = await ConversationModel.findAllRelevantConversationsForUser({
     authUserId: user.id,
     where,
-    order: [ [ 'createdAt', 'DESC' ] ],
+    order: [ [ 'updatedAt', 'DESC' ] ],
     limit: (limit && limit < 25) ? limit : 10,
   });
 

@@ -309,6 +309,44 @@ describe('Conversations', () => {
         });
     });
 
+    it('200s with an array of conversations updated after provided staler date', done => {
+      chai.request(server)
+        .get('/conversations')
+        .query({ staler: scopedConversation.updatedAt })
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(conversation => {
+            if ((new Date(conversation.updatedAt)).getTime() >= (new Date(scopedConversation.updatedAt)).getTime()) {
+              throw Error('Expected conversation updated at to be older than provided staler date.');
+            }
+          });
+          done();
+        });
+    });
+
+    it('200s with an array of conversations updated before provider fresher date', done => {
+      chai.request(server)
+        .get('/conversations')
+        .query({ fresher: testConversationOne.updatedAt })
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(conversation => {
+            if ((new Date(conversation.updatedAt)).getTime() <= (new Date(testConversationOne.updatedAt)).getTime()) {
+              throw Error('Expected conversation updated at to be newer than provided fresher date.');
+            }
+          });
+          done();
+        });
+    });
+
     it('200s with conversation object when provided user ids that are a part of existing conversation that includes authenticated user', done => {
       chai.request(server)
         .get(`/conversations?privateUserIds=${encodeURIComponent(JSON.stringify(testPermissionsPrivateConversation.userIds))}`)
