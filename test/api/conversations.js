@@ -275,10 +275,10 @@ describe('Conversations', () => {
         });
     });
 
-    it('200s with an array of conversations before provided conversation id', done => {
+    it('200s with an array of conversations before provided conversation createdAt datetime', done => {
       chai.request(server)
         .get('/conversations')
-        .query({ before: 5 })
+        .query({ before: scopedConversation.createdAt })
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
@@ -286,16 +286,18 @@ describe('Conversations', () => {
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversation => {
-            conversation.id.should.be.lessThan(5);
+            if ((new Date(conversation.createdAt)).getTime() >= (new Date(scopedConversation.createdAt)).getTime()) {
+              throw Error('Expected conversation updated at to be older than provided before date.');
+            }
           });
           done();
         });
     });
 
-    it('200s with an array of conversations after provided conversation id', done => {
+    it('200s with an array of conversations after provided conversation createdAt datetime', done => {
       chai.request(server)
         .get('/conversations')
-        .query({ after: 5 })
+        .query({ after: testConversationOne.createdAt })
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
@@ -303,7 +305,9 @@ describe('Conversations', () => {
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversation => {
-            conversation.id.should.be.greaterThan(5);
+            if ((new Date(conversation.createdAt)).getTime() <= (new Date(testConversationOne.createdAt)).getTime()) {
+              throw Error('Expected conversation updated at to be newer than provided after date.');
+            }
           });
           done();
         });

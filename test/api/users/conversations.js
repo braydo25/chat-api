@@ -29,6 +29,44 @@ describe('User Conversations', () => {
         });
     });
 
+    it('200s with an array of converasations before provided conversation createdAt datetime', done => {
+      chai.request(server)
+        .get(`/users/${testUserOne.id}/conversations`)
+        .query({ before: testPermissionsPublicConversation.createdAt })
+        .set('X-Access-Token', testUserThree.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(conversation => {
+            if ((new Date(conversation.createdAt)).getTime() >= (new Date(testPermissionsPublicConversation.createdAt)).getTime()) {
+              throw Error('Expected conversation updated at to be older than provided before date.');
+            }
+          });
+          done();
+        });
+    });
+
+    it('200s with an array of converasations after provided conversation createdAt datetime', done => {
+      chai.request(server)
+        .get(`/users/${testUserOne.id}/conversations`)
+        .query({ after: testConversationOne.createdAt })
+        .set('X-Access-Token', testUserThree.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('array');
+          response.body.length.should.be.at.least(1);
+          response.body.forEach(conversation => {
+            if ((new Date(conversation.createdAt)).getTime() <= (new Date(testConversationOne.createdAt)).getTime()) {
+              throw Error('Expected conversation updated at to be newer than provided after date.');
+            }
+          });
+          done();
+        });
+    });
+
     helpers.it401sWhenUserAuthorizationIsInvalid('get', '/users/1/conversations');
   });
 

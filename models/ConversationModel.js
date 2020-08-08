@@ -313,7 +313,7 @@ ConversationModel.findAllWithUser = async function({ authUserId, where, order, l
   });
 };
 
-ConversationModel.findAllByFollowedUsers = async function({ authUserId, order, limit }) {
+ConversationModel.findAllByFollowedUsers = async function({ authUserId, where, order, limit }) {
   const ConversationRepostModel = database.models.conversationRepost;
   const UserFollowerModel = database.models.userFollower;
 
@@ -327,7 +327,10 @@ ConversationModel.findAllByFollowedUsers = async function({ authUserId, order, l
   const conversationReposts = await ConversationRepostModel.findAllNormalized({
     authUserId,
     options: {
-      where: { userId: followedUserIds },
+      where: {
+        userId: followedUserIds,
+        ...where,
+      },
       limit,
     },
   });
@@ -336,6 +339,7 @@ ConversationModel.findAllByFollowedUsers = async function({ authUserId, order, l
     where: {
       accessLevel: [ 'public', 'protected' ],
       userId: followedUserIds,
+      ...where,
     },
     order,
     limit,

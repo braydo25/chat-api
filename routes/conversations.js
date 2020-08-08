@@ -24,11 +24,11 @@ router.get('/', asyncMiddleware(async (request, response) => {
   const where = {};
 
   if (before) {
-    where.id = { [Sequelize.Op.lt]: before };
+    where.createdAt = { [Sequelize.Op.lt]: new Date(before) };
   }
 
   if (after) {
-    where.id = { [Sequelize.Op.gt]: after };
+    where.createdAt = { [Sequelize.Op.gt]: new Date(after) };
   }
 
   if (staler) {
@@ -61,7 +61,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
     const conversations = await ConversationModel.findAllByFollowedUsers({
       authUserId: user.id,
       where,
-      order: [ [ 'id', 'DESC' ] ],
+      order: [ [ 'createdAt', 'DESC' ] ],
       limit: (limit && limit < 25) ? limit : 5,
     });
 

@@ -23,7 +23,7 @@ const ConversationRepostModel = database.define('conversationRepost', {
 }, {
   scopes: {
     complete: authUserId => ({
-      attributes: [ 'id' ],
+      attributes: [ 'id', 'userId', 'conversationId' ],
       include: [
         {
           model: ConversationModel.scope({ method: [ 'preview', authUserId ] }),

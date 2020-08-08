@@ -19,21 +19,37 @@ router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
   const { userId } = request.params;
+  const { before, after, limit } = request.query;
+  const where = {};
+
+  if (before) {
+    where.createdAt = { [Sequelize.Op.lt]: new Date(before) };
+  }
+
+  if (after) {
+    where.createdAt = { [Sequelize.Op.gt]: new Date(after) };
+  }
 
   const conversationReposts = await ConversationRepostModel.findAllNormalized({
     authUserId: user.id,
     options: {
-      where: { userId },
+      where: {
+        userId,
+        ...where,
+      },
       order: [ [ 'createdAt', 'DESC' ] ],
     },
+    limit: (limit && limit < 25) ? limit : 10,
   });
 
   const conversations = await ConversationModel.scope({ method: [ 'preview', user.id ] }).findAll({
     where: {
       userId,
       accessLevel: [ 'public', 'protected' ],
+      ...where,
     },
     order: [ [ 'createdAt', 'DESC' ] ],
+    limit: (limit && limit < 25) ? limit : 10,
   });
 
   response.success([
