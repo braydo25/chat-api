@@ -28,7 +28,7 @@ const EmbedModel = database.define('embed', {
     type: Sequelize.TEXT,
   },
   date: {
-    type: Sequelize.DATE,
+    type: Sequelize.DATE(4),
   },
   contentType: {
     type: Sequelize.STRING,

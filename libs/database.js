@@ -15,10 +15,10 @@ const setDataValues = (instance, options) => {
 };
 
 /*
- * Export
+ * Initialize
  */
 
-module.exports = new Sequelize(databaseConfig.database, null, null, {
+const database = new Sequelize(databaseConfig.database, null, null, {
   dialect: 'mysql',
   dialectOptions: { decimalNumbers: true },
   port: databaseConfig.port,
@@ -60,3 +60,27 @@ module.exports = new Sequelize(databaseConfig.database, null, null, {
   },
   logging: false,
 });
+
+database.beforeDefine(attributes => {
+  attributes.createdAt = {
+    type: Sequelize.DATE(4),
+    allowNull: false,
+    defaultValue: Sequelize.NOW,
+  };
+
+  attributes.updatedAt = {
+    type: Sequelize.DATE(4),
+    allowNull: false,
+    defaultValue: Sequelize.NOW,
+  };
+
+  attributes.deletedAt = {
+    type: Sequelize.DATE(4),
+  };
+});
+
+/*
+ * Export
+ */
+
+module.exports = database;

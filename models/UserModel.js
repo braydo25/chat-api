@@ -60,11 +60,11 @@ const UserModel = database.define('user', {
     defaultValue: 0,
   },
   lastActiveAt: {
-    type: Sequelize.DATE,
+    type: Sequelize.DATE(4),
     defaultValue: Sequelize.NOW,
   },
   lastViewedActivityAt: {
-    type: Sequelize.DATE,
+    type: Sequelize.DATE(4),
     defaultValue: Sequelize.NOW,
   },
 }, {

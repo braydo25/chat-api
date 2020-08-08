@@ -17,7 +17,7 @@ const UserConversationDataModel = database.define('userConversationData', {
     allowNull: false,
   },
   lastReadAt: {
-    type: Sequelize.DATE,
+    type: Sequelize.DATE(4),
     defaultValue: Sequelize.NOW,
   },
 }, {
