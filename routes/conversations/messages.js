@@ -26,11 +26,11 @@ router.get('/', asyncMiddleware(async (request, response) => {
   const where = { conversationId: conversation.id };
 
   if (before) {
-    where.id = { [Sequelize.Op.lt]: before };
+    where.createdAt = { [Sequelize.Op.lt]: new Date(before) };
   }
 
   if (after) {
-    where.id = { [Sequelize.Op.gt]: after };
+    where.createdAt = { [Sequelize.Op.gt]: new Date(after) };
   }
 
   const conversationMessages = await ConversationMessageModel.scope([

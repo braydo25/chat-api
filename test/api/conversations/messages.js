@@ -155,15 +155,17 @@ describe('Conversation Messages', () => {
     it('200s with an array of conversation message objects before provided conversation message id', done => {
       chai.request(server)
         .get(`/conversations/${testConversationOne.id}/messages`)
-        .query({ before: 11 })
+        .query({ before: scopedConversationMessage.createdAt })
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
-          response.body.forEach(conversation => {
-            conversation.id.should.be.lessThan(11);
+          response.body.forEach(conversationMessage => {
+            if ((new Date(conversationMessage.createdAt)).getTime() >= (new Date(scopedConversationMessage.createdAt)).getTime()) {
+              throw Error('Expected conversation updated at to be older than provided before date.');
+            }
           });
           done();
         });
@@ -172,15 +174,17 @@ describe('Conversation Messages', () => {
     it('200s with an array of conversation message objects after provided conversation message id', done => {
       chai.request(server)
         .get(`/conversations/${testConversationOne.id}/messages`)
-        .query({ after: 11 })
+        .query({ after: testConversationOneMessageOne.createdAt })
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
           response.should.have.status(200);
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
-          response.body.forEach(conversation => {
-            conversation.id.should.be.greaterThan(11);
+          response.body.forEach(conversationMessage => {
+            if ((new Date(conversationMessage.createdAt)).getTime() <= (new Date(testConversationOneMessageOne.createdAt)).getTime()) {
+              throw Error('Expected conversation updated at to be newer than provided after date.');
+            }
           });
           done();
         });
