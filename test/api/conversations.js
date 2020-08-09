@@ -160,6 +160,7 @@ describe('Conversations', () => {
           response.body.conversationMessages.should.be.an('array');
           response.body.conversationMessages.forEach(conversationMessage => {
             conversationMessage.should.have.property('id');
+            conversationMessage.should.have.property('conversationId');
             conversationMessage.should.have.property('text');
             conversationMessage.should.have.property('conversationUser');
             conversationMessage.conversationUser.should.have.property('permissions');

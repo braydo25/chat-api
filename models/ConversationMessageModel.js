@@ -42,6 +42,7 @@ const ConversationMessageModel = database.define('conversationMessage', {
   defaultScope: {
     attributes: [
       'id',
+      'conversationId',
       'text',
       'createdAt',
       'updatedAt',

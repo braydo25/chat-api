@@ -137,6 +137,8 @@ describe('Conversation Messages', () => {
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversationMessage => {
+            conversationMessage.should.have.property('id');
+            conversationMessage.should.have.property('conversationId');
             conversationMessage.should.have.property('conversationUser');
             conversationMessage.should.have.property('conversationMessageReactions');
             conversationMessage.should.have.property('authUserConversationMessageReactions');
