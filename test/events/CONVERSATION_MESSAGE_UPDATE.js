@@ -26,7 +26,7 @@ module.exports = payload => {
         author: Joi.string().allow(null),
         publisher: Joi.string().allow(null),
         date: Joi.date().allow(null),
-        contentType: Joi.string().allow(null),
+        mimetype: Joi.string().allow(null),
         url: Joi.string().allow(null),
         logoUrl: Joi.string().allow(null),
         audioUrl: Joi.string().allow(null),

@@ -36,7 +36,7 @@ router.put('/', asyncMiddleware(async (request, response) => {
       author: metadata.author,
       publisher: metadata.publisher,
       date: metadata.date,
-      contentType: metadata.responseHeaders['content-type'],
+      mimetype: metadata.responseHeaders['content-type'],
       responseHeaders: metadata.responseHeaders,
       url: url,
       logoUrl: metadata.logo,

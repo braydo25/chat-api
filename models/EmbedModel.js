@@ -30,7 +30,7 @@ const EmbedModel = database.define('embed', {
   date: {
     type: Sequelize.DATE(4),
   },
-  contentType: {
+  mimetype: {
     type: Sequelize.STRING,
   },
   responseHeaders: {
@@ -61,7 +61,7 @@ const EmbedModel = database.define('embed', {
       'author',
       'publisher',
       'date',
-      'contentType',
+      'mimetype',
       'url',
       'logoUrl',
       'audioUrl',
