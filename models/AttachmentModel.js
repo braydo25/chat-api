@@ -31,6 +31,12 @@ const AttachmentModel = database.define('attachment', {
   checksum: {
     type: Sequelize.STRING,
   },
+  width: {
+    type: Sequelize.INTEGER.UNSIGNED,
+  },
+  height: {
+    type: Sequelize.INTEGER.UNSIGNED,
+  },
 }, {
   defaultScope: {
     attributes: [
