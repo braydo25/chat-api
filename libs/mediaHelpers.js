@@ -25,7 +25,7 @@ async function getVideoDimensions(videoBuffer) {
   return new Promise((resolve, reject) => {
     ffmpeg.ffprobe(readableStream, (error, metadata) => {
       if (error) {
-        reject(error);
+        return reject(error);
       }
 
       const { width, height } = metadata.streams[0];
