@@ -45,6 +45,24 @@ describe('Embeds', () => {
         });
     });
 
+    it('200s with embed object with width and height when provided image url', done => {
+      const fields = {
+        url: 'https://buffer.com/library/content/images/library/wp-content/uploads/2016/06/giphy.gif',
+      };
+
+      chai.request(server)
+        .put('/embeds')
+        .set('X-Access-Token', testUserOne.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.width.should.be.a('number');
+          response.body.height.should.be.a('number');
+          done();
+        });
+    });
+
     it('400s when not provided url', done => {
       chai.request(server)
         .put('/embeds')

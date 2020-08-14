@@ -5,6 +5,7 @@
 const EmbedModel = rootRequire('/models/EmbedModel');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
 const metascraperHelpers = rootRequire('/libs/metascraperHelpers');
+const mediaHelpers = rootRequire('/libs/mediaHelpers');
 
 const router = express.Router({
   mergeParams: true,
@@ -27,6 +28,12 @@ router.put('/', asyncMiddleware(async (request, response) => {
 
   if (!embed) {
     const metadata = await metascraperHelpers.extractMetadata(url);
+    const mimetype = metadata.responseHeaders['content-type'];
+    let dimensions = null;
+
+    if (mimetype.includes('image/')) {
+      dimensions = await mediaHelpers.getImageDimensionsFromUrl(metadata.image);
+    }
 
     embed = await EmbedModel.create({
       userId: user.id,
@@ -36,13 +43,15 @@ router.put('/', asyncMiddleware(async (request, response) => {
       author: metadata.author,
       publisher: metadata.publisher,
       date: metadata.date,
-      mimetype: metadata.responseHeaders['content-type'],
+      mimetype: mimetype,
       responseHeaders: metadata.responseHeaders,
       url: url,
       logoUrl: metadata.logo,
       audioUrl: metadata.audio,
       imageUrl: metadata.image,
       videoUrl: metadata.video,
+      width: (dimensions) ? dimensions.width : null,
+      height: (dimensions) ? dimensions.height : null,
     });
   }
 

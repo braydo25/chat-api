@@ -1,3 +1,5 @@
+const http = require('http');
+const https = require('https');
 const stream = require('stream');
 const imageSize = require('image-size');
 const ffmpeg = require('fluent-ffmpeg');
@@ -11,6 +13,34 @@ ffmpeg.setFfprobePath(ffprobeStatic.path);
 
 function getImageDimensionsSync(imageBuffer) {
   return imageSize(imageBuffer);
+}
+
+function getImageDimensionsFromUrl(imageUrl) {
+  let client = http;
+
+  if (imageUrl.includes('https')) {
+    client = https;
+  }
+
+  return new Promise(resolve => {
+    client.get(imageUrl, response => {
+      const chunks = [];
+
+      response.on('data', chunk => {
+        chunks.push(chunk);
+
+        try {
+          const dimensions = getImageDimensionsSync(Buffer.concat(chunks));
+
+          if (dimensions) {
+            resolve(dimensions);
+            console.log('dim!!', dimensions);
+            response.destroy();
+          }
+        } catch (error) { /* noop */ }
+      });
+    });
+  });
 }
 
 /*
@@ -28,9 +58,16 @@ async function getVideoDimensions(videoBuffer) {
         return reject(error);
       }
 
-      const { width, height } = metadata.streams[0];
+      for (let i = 0; i < metadata.streams.length; i++) {
+        const stream = metadata.streams[i];
+        const { width, height } = stream;
 
-      resolve({ width, height });
+        if (width && height) {
+          return resolve({ width, height });
+        }
+      }
+
+      resolve({ width: null, height: null });
     });
   });
 }
@@ -40,6 +77,7 @@ async function getVideoDimensions(videoBuffer) {
  */
 
 module.exports = {
+  getImageDimensionsFromUrl,
   getImageDimensionsSync,
   getVideoDimensions,
 };

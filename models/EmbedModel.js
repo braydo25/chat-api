@@ -51,6 +51,12 @@ const EmbedModel = database.define('embed', {
   videoUrl: {
     type: Sequelize.TEXT,
   },
+  width: {
+    type: Sequelize.INTEGER.UNSIGNED,
+  },
+  height: {
+    type: Sequelize.INTEGER.UNSIGNED,
+  },
 }, {
   defaultScope: {
     attributes: [
@@ -67,6 +73,8 @@ const EmbedModel = database.define('embed', {
       'audioUrl',
       'imageUrl',
       'videoUrl',
+      'width',
+      'height',
     ],
   },
 });

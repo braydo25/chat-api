@@ -45,6 +45,8 @@ const AttachmentModel = database.define('attachment', {
       'bytes',
       'url',
       'mimetype',
+      'width',
+      'height',
     ],
   },
   scopes: {

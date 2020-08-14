@@ -26,6 +26,7 @@ const ConversationMessageModel = database.define('conversationMessage', {
   nonce: {
     type: Sequelize.STRING,
     allowNull: false,
+    unique: true,
   },
   text: {
     type: Sequelize.TEXT,
