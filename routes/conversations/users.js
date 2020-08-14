@@ -24,6 +24,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
   const { conversation } = request;
   const conversationUsers = await ConversationUserModel.findAll({
     where: { conversationId: conversation.id },
+    limit: 5,
   });
 
   response.success(conversationUsers);
