@@ -83,7 +83,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
     throw new Error('A phone number must be provided.');
   }
 
-  let user = await UserModel.scope('complete').findOne({ where: { phone } });
+  let user = await UserModel.scope('login').findOne({ where: { phone } });
 
   if (!user) {
     user = await UserModel.create({ phone });

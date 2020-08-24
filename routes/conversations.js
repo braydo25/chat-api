@@ -4,6 +4,7 @@
 
 const ConversationModel = rootRequire('/models/ConversationModel');
 const ConversationImpressionModel = rootRequire('/models/ConversationImpressionModel');
+const UserModel = rootRequire('/models/UserModel');
 const conversationAssociate = rootRequire('/middlewares/conversations/associate');
 const conversationAuthorize = rootRequire('/middlewares/conversations/authorize');
 const userAuthorize = rootRequire('/middlewares/users/authorize');
@@ -20,7 +21,7 @@ const router = express.Router({
 router.get('/', userAuthorize);
 router.get('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
-  const { accessLevels, feed, privateUserIds, before, after, staler, fresher, search, limit } = request.query;
+  const { accessLevels, feed, privateUserIds, privatePhones, before, after, staler, fresher, search, limit } = request.query;
   const where = {};
 
   if (before) {
@@ -68,10 +69,20 @@ router.get('/', asyncMiddleware(async (request, response) => {
     return response.success(conversations);
   }
 
-  if (privateUserIds) {
+  if (privateUserIds || privatePhones) {
+    const privatePhoneUsers = (Array.isArray(privatePhones)) ? await UserModel.unscoped().findAll({
+      attributes: [ 'id' ],
+      where: { phone: privatePhones },
+    }) : [];
+
     const privateConversation = await ConversationModel.findOneWithUsers({
       authUserId: user.id,
-      userIds: [ ...new Set([ user.id, ...privateUserIds.map(id => +id) ]) ],
+      userIds: [ ...new Set([
+        user.id,
+        ...((privateUserIds ) ? privateUserIds.map(id => +id) : []),
+        ...privatePhoneUsers.map(privatePhoneUser => privatePhoneUser.id),
+      ]) ],
+
       where: {
         accessLevel: 'private',
         ...where,

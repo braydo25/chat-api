@@ -105,6 +105,12 @@ describe('Users', () => {
           response.should.have.status(200);
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
+          response.body.forEach(user => {
+            user.should.be.an('object');
+            user.should.not.have.property('accessToken');
+            user.should.not.have.property('eventsTopic');
+            user.should.not.have.property('phone');
+          });
           done();
         });
     });

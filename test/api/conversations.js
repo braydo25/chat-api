@@ -366,6 +366,18 @@ describe('Conversations', () => {
         });
     });
 
+    it('200s with conversation object when provided phone numbers of user ids that are a part of existing conversation that includes authenticated user', done => {
+      chai.request(server)
+        .get(`/conversations?privatePhones=${encodeURIComponent(JSON.stringify([ testUserTwo.phone, testUserThree.phone ]))}`)
+        .set('X-Access-Token', testUserOne.accessToken)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('object');
+          done();
+        });
+    });
+
     it('200s with an array of relevant conversations for the authenticated user', done => {
       chai.request(server)
         .get('/conversations')

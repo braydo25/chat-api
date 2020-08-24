@@ -91,6 +91,22 @@ const UserModel = database.define('user', {
       ],
     }),
     complete: () => ({
+      attributes: [
+        'id',
+        'username',
+        'name',
+        'about',
+        'followersCount',
+        'lastActiveAt',
+      ],
+      include: [
+        {
+          model: AttachmentModel.scope('avatar'),
+          as: 'avatarAttachment',
+        },
+      ],
+    }),
+    login: () => ({
       include: [
         {
           model: AttachmentModel.scope('avatar'),
