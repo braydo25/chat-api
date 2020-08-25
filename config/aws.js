@@ -24,3 +24,4 @@ module.exports.iotEndpoint = process.env.AWS_IOT_ENDPOINT;
 
 module.exports.snsFcmPlatformApplicationArn = process.env.AWS_SNS_FCM_PLATFORM_APPLICATION_ARN;
 module.exports.snsApnsPlatformApplicationArn = process.env.AWS_SNS_APNS_PLATFORM_APPLICATION_ARN;
+module.exports.snsSmsTestNumbers = process.env.AWS_SNS_SMS_TEST_NUMBERS.split(',');

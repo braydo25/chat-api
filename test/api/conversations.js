@@ -80,6 +80,30 @@ describe('Conversations', () => {
         });
     });
 
+    it('200s with created conversation object and creates new user when provided phones', done => {
+      const fields = {
+        accessLevel: 'private',
+        title: 'test invite',
+        message: {
+          text: 'hihi',
+          nonce: 'bebebe',
+        },
+        phones: [ '12535487443' ],
+      };
+
+      chai.request(server)
+        .post('/conversations')
+        .set('X-Access-Token', testUserOne.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.should.have.status(200);
+          response.body.should.be.an('object');
+          response.body.userId.should.equal(testUserOne.id);
+          done();
+        });
+    });
+
     it('400s when not provided title for protected or public conversation', done => {
       const fields = {
         accessLevel: 'public',

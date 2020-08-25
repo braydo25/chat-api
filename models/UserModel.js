@@ -121,6 +121,17 @@ const UserModel = database.define('user', {
  * Class Methods
  */
 
+UserModel.createWithInvite = async function ({ phone, inviteMessage }) {
+  const user = await UserModel.create({ phone });
+
+  awsHelpers.sendTextMessage({
+    phoneNumber: phone,
+    message: inviteMessage,
+  }).then(r => console.log(`r is: ${JSON.stringify(r)}`));
+
+  return user;
+};
+
 UserModel.getEventsTopic = async function(userId) {
   const user = await UserModel.findOne({
     attributes: [ 'eventsTopic' ],
@@ -137,12 +148,10 @@ UserModel.getEventsTopic = async function(userId) {
 UserModel.prototype.updateAndSendPhoneLoginCode = async function() {
   const phoneLoginCode = (process.env.NODE_ENV !== 'local') ? Math.floor(Math.random() * 900000) + 100000 : '000000';
 
-  if (process.env.NODE_ENV !== 'local') {
-    await awsHelpers.sendTextMessage({
-      phoneNumber: this.phone,
-      message: `Hey, this is Babble! Your one-time passcode is: ${phoneLoginCode}`,
-    });
-  }
+  await awsHelpers.sendTextMessage({
+    phoneNumber: this.phone,
+    message: `${phoneLoginCode} is your one-time Babble passcode.`,
+  });
 
   await this.update({ phoneLoginCode });
 };

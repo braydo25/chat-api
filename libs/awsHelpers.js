@@ -23,6 +23,12 @@ async function uploadFileToS3(buffer, filename) {
  */
 
 async function sendTextMessage({ phoneNumber, message }) {
+  if (process.env.NODE_ENV === 'local' && !awsConfig.snsSmsTestNumbers.includes(phoneNumber)) {
+    console.log(`SMS: In Local Mode, Not Sending Text Message To ${phoneNumber} "${message}"`);
+
+    return;
+  }
+
   const sns = new aws.SNS();
 
   phoneNumber = (phoneNumber[0] !== '+') ? `+${phoneNumber}` : phoneNumber;

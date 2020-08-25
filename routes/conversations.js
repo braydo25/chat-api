@@ -70,17 +70,29 @@ router.get('/', asyncMiddleware(async (request, response) => {
   }
 
   if (privateUserIds || privatePhones) {
-    const privatePhoneUsers = (Array.isArray(privatePhones)) ? await UserModel.unscoped().findAll({
-      attributes: [ 'id' ],
-      where: { phone: privatePhones },
-    }) : [];
+    const privatePhoneUserIds = [];
+
+    if (Array.isArray(privatePhones)) {
+      const privatePhoneUsers = await UserModel.unscoped().findAll({
+        attributes: [ 'id' ],
+        where: { phone: privatePhones },
+      });
+
+      if (privatePhoneUsers.length !== privatePhones.length) {
+        return response.success();
+      }
+
+      privatePhoneUsers.forEach(privatePhoneUser => {
+        privatePhoneUserIds.push(privatePhoneUser.id);
+      });
+    }
 
     const privateConversation = await ConversationModel.findOneWithUsers({
       authUserId: user.id,
       userIds: [ ...new Set([
         user.id,
-        ...((privateUserIds ) ? privateUserIds.map(id => +id) : []),
-        ...privatePhoneUsers.map(privatePhoneUser => privatePhoneUser.id),
+        ...((privateUserIds) ? privateUserIds.map(id => +id) : []),
+        ...privatePhoneUserIds,
       ]) ],
 
       where: {
@@ -149,13 +161,41 @@ router.get('/:conversationId', asyncMiddleware(async (request, response) => {
 router.post('/', userAuthorize);
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
-  const { accessLevel, title, userIds } = request.body;
+  const { accessLevel, title, userIds, phones } = request.body;
   const message = request.body.message || {};
+  const phoneUserIds = [];
+
+  if (Array.isArray(phones)) {
+    const phoneUsers = await UserModel.unscoped().findAll({
+      attributes: [ 'id', 'phone' ],
+      where: { phone: phones },
+    });
+
+    for (let i = 0; i < phones.length; i++) {
+      const phone = phones[i];
+      const existingPhoneUser = phoneUsers.find(phoneUser => phoneUser.phone === phone);
+
+      if (existingPhoneUser) {
+        phoneUserIds.push(existingPhoneUser.id);
+      } else {
+        const newUser = await UserModel.createWithInvite({
+          phone,
+          inviteMessage: `${user.name} sent you a message on Babble! Start chatting with them, download the Babble app: https://www.todo.com/`,
+        });
+
+        phoneUserIds.push(newUser.id);
+      }
+    }
+  }
 
   if (accessLevel === 'private') {
     const existingConversation = await ConversationModel.findOneWithUsers({
       authUserId: user.id,
-      userIds: [ ...new Set([ user.id, ...userIds.map(userId => +userId) ]) ],
+      userIds: [ ...new Set([
+        user.id,
+        ...phoneUserIds,
+        ...((userIds) ? userIds.map(userId => +userId) : []),
+      ]) ],
       where: { accessLevel: 'private' },
     });
 

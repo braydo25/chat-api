@@ -8,7 +8,7 @@ describe('Users', () => {
   describe('POST /users', () => {
     it('204s when provided phone number ands sends phone login code via text message', done => {
       const fields = {
-        phone: '12535487443',
+        phone: '12535487444',
       };
 
       chai.request(server)
@@ -23,7 +23,7 @@ describe('Users', () => {
 
     it('200s with user object when provided phone number and login code', done => {
       const fields = {
-        phone: '12535487443',
+        phone: '12535487444',
         phoneLoginCode: '000000',
       };
 
@@ -42,7 +42,7 @@ describe('Users', () => {
 
     it('400s when phone login code is invalid', done => {
       const fields = {
-        phone: '12535487443',
+        phone: '12535487444',
         phoneLoginCode: '123456',
       };
 
