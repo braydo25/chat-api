@@ -161,25 +161,27 @@ router.get('/:conversationId', asyncMiddleware(async (request, response) => {
 router.post('/', userAuthorize);
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
-  const { accessLevel, title, phones } = request.body;
+  const { accessLevel, title, phoneUsers } = request.body;
   const userIds = request.body.userIds || [];
   const message = request.body.message || {};
 
-  if (Array.isArray(phones)) {
-    const phoneUsers = await UserModel.unscoped().findAll({
+  if (Array.isArray(phoneUsers)) {
+    const phoneUserPhones = phoneUsers.map(phoneUser => phoneUser.phone);
+    const existingUsers = await UserModel.unscoped().findAll({
       attributes: [ 'id', 'phone' ],
-      where: { phone: phones },
+      where: { phone: phoneUserPhones },
     });
 
-    for (let i = 0; i < phones.length; i++) {
-      const phone = phones[i];
-      const existingPhoneUser = phoneUsers.find(phoneUser => phoneUser.phone === phone);
+    for (let i = 0; i < phoneUsers.length; i++) {
+      const phoneUser = phoneUsers[i];
+      const existingUser = existingUsers.find(existingUser => existingUser.phone === phoneUser.phone);
 
-      if (existingPhoneUser) {
-        userIds.push(existingPhoneUser.id);
+      if (existingUser) {
+        userIds.push(existingUser.id);
       } else {
         const newUser = await UserModel.createWithInvite({
-          phone,
+          name: phoneUser.name,
+          phone: phoneUser.phone,
           inviteMessage: `${user.name} sent you a message on Babble! Start chatting with them, download the Babble app: https://www.todo.com/`,
         });
 

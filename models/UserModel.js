@@ -121,10 +121,11 @@ const UserModel = database.define('user', {
  * Class Methods
  */
 
-UserModel.createWithInvite = async function ({ phone, inviteMessage }) {
+UserModel.createWithInvite = async function ({ name, phone, inviteMessage }) {
   const user = await UserModel.create({ phone });
 
   awsHelpers.sendTextMessage({
+    name,
     phoneNumber: phone,
     message: inviteMessage,
   });

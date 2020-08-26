@@ -80,7 +80,7 @@ describe('Conversations', () => {
         });
     });
 
-    it('200s with created conversation object and creates new user when provided phones', done => {
+    it('200s with created conversation object and creates new user when provided phone users', done => {
       const fields = {
         accessLevel: 'private',
         title: 'test invite',
@@ -88,7 +88,12 @@ describe('Conversations', () => {
           text: 'hihi',
           nonce: 'bebebe',
         },
-        phones: [ '12535487443' ],
+        phoneUsers: [
+          {
+            name: 'Braydon Batungbacal',
+            phone: '12535487443',
+          },
+        ],
       };
 
       chai.request(server)
