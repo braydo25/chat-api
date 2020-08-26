@@ -88,8 +88,8 @@ module.exports = payload => {
         permissions: Joi.array().items(Joi.string()),
         user: Joi.object({
           id: Joi.number(),
-          username: Joi.string(),
-          name: Joi.string(),
+          username: Joi.string().allow(null),
+          name: Joi.string().allow(null),
           lastActiveAt: Joi.date(),
           avatarAttachment: Joi.object({
             id: Joi.number(),

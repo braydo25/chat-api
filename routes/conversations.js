@@ -161,9 +161,9 @@ router.get('/:conversationId', asyncMiddleware(async (request, response) => {
 router.post('/', userAuthorize);
 router.post('/', asyncMiddleware(async (request, response) => {
   const { user } = request;
-  const { accessLevel, title, userIds, phones } = request.body;
+  const { accessLevel, title, phones } = request.body;
+  const userIds = request.body.userIds || [];
   const message = request.body.message || {};
-  const phoneUserIds = [];
 
   if (Array.isArray(phones)) {
     const phoneUsers = await UserModel.unscoped().findAll({
@@ -176,14 +176,14 @@ router.post('/', asyncMiddleware(async (request, response) => {
       const existingPhoneUser = phoneUsers.find(phoneUser => phoneUser.phone === phone);
 
       if (existingPhoneUser) {
-        phoneUserIds.push(existingPhoneUser.id);
+        userIds.push(existingPhoneUser.id);
       } else {
         const newUser = await UserModel.createWithInvite({
           phone,
           inviteMessage: `${user.name} sent you a message on Babble! Start chatting with them, download the Babble app: https://www.todo.com/`,
         });
 
-        phoneUserIds.push(newUser.id);
+        userIds.push(newUser.id);
       }
     }
   }
@@ -193,8 +193,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
       authUserId: user.id,
       userIds: [ ...new Set([
         user.id,
-        ...phoneUserIds,
-        ...((userIds) ? userIds.map(userId => +userId) : []),
+        ...userIds.map(userId => +userId),
       ]) ],
       where: { accessLevel: 'private' },
     });

@@ -127,7 +127,7 @@ UserModel.createWithInvite = async function ({ phone, inviteMessage }) {
   awsHelpers.sendTextMessage({
     phoneNumber: phone,
     message: inviteMessage,
-  }).then(r => console.log(`r is: ${JSON.stringify(r)}`));
+  });
 
   return user;
 };
