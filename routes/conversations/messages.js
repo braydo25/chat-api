@@ -120,6 +120,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
       sendingUserId: user.id,
       title: conversation.title,
       message: (text) ? `${user.name}: ${text}` : `${user.name} sent an attachment(s).`,
+      data: { conversationId: conversation.id },
     });
   }
 

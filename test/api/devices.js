@@ -55,6 +55,7 @@ describe('Devices', () => {
       const fields = {
         idfv: '1234',
         fcmRegistrationId: 'bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1',
+        details: androidDetails,
       };
 
       chai.request(server)
