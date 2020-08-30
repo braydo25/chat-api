@@ -118,6 +118,21 @@ const UserModel = database.define('user', {
 });
 
 /*
+ * Hooks
+ */
+
+UserModel.addHook('afterCreate', (user, options) => {
+  const UserFollowerModel = database.models.userFollower;
+
+  return UserFollowerModel.create({
+    userId: 1, // Babble account
+    followerUserId: user.id,
+  }, {
+    transaction: options.transaction,
+  });
+});
+
+/*
  * Class Methods
  */
 
