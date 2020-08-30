@@ -2,6 +2,7 @@
  * This controls test execution order.
  */
 
+require('./api/health');
 require('./api/users');
 require('./api/users/conversations');
 require('./api/users/conversations/data');
