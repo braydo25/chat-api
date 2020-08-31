@@ -55,6 +55,10 @@ const ConversationModel = database.define('conversation', {
     type: Sequelize.INTEGER(10),
     defaultValue: 1,
   },
+  lastMessageAt: {
+    type: Sequelize.DATE(4),
+    defaultValue: Sequelize.NOW,
+  },
 }, {
   defaultScope: {
     attributes: [
@@ -64,6 +68,7 @@ const ConversationModel = database.define('conversation', {
       'accessLevel',
       'title',
       'impressionsCount',
+      'lastMessageAt',
       'usersCount',
       'createdAt',
     ],
@@ -77,6 +82,7 @@ const ConversationModel = database.define('conversation', {
         'title',
         'impressionsCount',
         'usersCount',
+        'lastMessageAt',
         'updatedAt',
         'createdAt',
       ],
@@ -125,6 +131,7 @@ const ConversationModel = database.define('conversation', {
         'title',
         'impressionsCount',
         'usersCount',
+        'lastMessageAt',
         'updatedAt',
         'createdAt',
       ],
@@ -231,6 +238,7 @@ ConversationModel.createWithAssociations = async function({ data, userIds = [], 
 
     await conversation.update({
       previewConversationMessageId: conversationMessage.id,
+      lastMessageAt: new Date(),
     }, { transaction, ignoreEvent: true });
 
     await UserConversationDataModel.create({

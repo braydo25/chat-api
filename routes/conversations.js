@@ -33,11 +33,11 @@ router.get('/', asyncMiddleware(async (request, response) => {
   }
 
   if (staler) {
-    where.updatedAt = { [Sequelize.Op.lt]: new Date(staler) };
+    where.lastMessageAt = { [Sequelize.Op.lt]: new Date(staler) };
   }
 
   if (fresher) {
-    where.updatedAt = { [Sequelize.Op.gt]: new Date(fresher) };
+    where.lastMessageAt = { [Sequelize.Op.gt]: new Date(fresher) };
   }
 
   if (search) {
@@ -51,7 +51,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
         accessLevel: accessLevels,
         ...where,
       },
-      order: [ [ 'updatedAt', 'DESC' ] ],
+      order: [ [ 'lastMessageAt', 'DESC' ] ],
       limit: (limit && limit < 25) ? limit : 5,
     });
 
@@ -110,7 +110,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
         accessLevel: [ 'public', 'protected' ],
         ...where,
       },
-      order: [ [ 'updatedAt', 'DESC' ] ],
+      order: [ [ 'lastMessageAt', 'DESC' ] ],
       limit: (limit && limit < 25) ? Math.floor(limit / 2) : 10,
     });
 
@@ -122,7 +122,7 @@ router.get('/', asyncMiddleware(async (request, response) => {
   const relevantConversations = await ConversationModel.findAllRelevantConversationsForUser({
     authUserId: user.id,
     where,
-    order: [ [ 'updatedAt', 'DESC' ] ],
+    order: [ [ 'lastMessageAt', 'DESC' ] ],
     limit: (limit && limit < 25) ? limit : 10,
   });
 

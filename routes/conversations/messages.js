@@ -107,6 +107,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
 
       await conversation.update({
         previewConversationMessageId: conversationMessage.id,
+        lastMessageAt: new Date,
       }, { transaction });
 
       await transaction.commit();

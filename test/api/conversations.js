@@ -185,6 +185,7 @@ describe('Conversations', () => {
           response.body.should.have.property('id');
           response.body.should.have.property('eventsTopic');
           response.body.should.have.property('accessLevel');
+          response.body.should.have.property('lastMessageAt');
           response.body.should.have.property('createdAt');
           response.body.conversationMessages.should.be.an('array');
           response.body.conversationMessages.forEach(conversationMessage => {
@@ -346,7 +347,7 @@ describe('Conversations', () => {
     it('200s with an array of conversations updated after provided staler date', done => {
       chai.request(server)
         .get('/conversations')
-        .query({ staler: scopedConversation.updatedAt })
+        .query({ staler: scopedConversation.lastMessageAt })
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
@@ -354,7 +355,7 @@ describe('Conversations', () => {
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversation => {
-            if ((new Date(conversation.updatedAt)).getTime() >= (new Date(scopedConversation.updatedAt)).getTime()) {
+            if ((new Date(conversation.lastMessageAt)).getTime() >= (new Date(scopedConversation.lastMessageAt)).getTime()) {
               throw Error('Expected conversation updated at to be older than provided staler date.');
             }
           });
@@ -365,7 +366,7 @@ describe('Conversations', () => {
     it('200s with an array of conversations updated before provider fresher date', done => {
       chai.request(server)
         .get('/conversations')
-        .query({ fresher: testConversationOne.updatedAt })
+        .query({ fresher: testConversationOne.lastMessageAt })
         .set('X-Access-Token', testUserOne.accessToken)
         .end((error, response) => {
           helpers.logExampleResponse(response);
@@ -373,7 +374,7 @@ describe('Conversations', () => {
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
           response.body.forEach(conversation => {
-            if ((new Date(conversation.updatedAt)).getTime() <= (new Date(testConversationOne.updatedAt)).getTime()) {
+            if ((new Date(conversation.lastMessageAt)).getTime() <= (new Date(testConversationOne.lastMessageAt)).getTime()) {
               throw Error('Expected conversation updated at to be newer than provided fresher date.');
             }
           });
@@ -444,6 +445,7 @@ describe('Conversations', () => {
             conversation.should.have.property('title');
             conversation.should.have.property('impressionsCount');
             conversation.should.have.property('usersCount');
+            conversation.should.have.property('lastMessageAt');
             conversation.should.have.property('updatedAt');
             conversation.should.have.property('createdAt');
             conversation.should.have.property('previewConversationMessage');
