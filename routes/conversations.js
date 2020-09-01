@@ -182,7 +182,7 @@ router.post('/', asyncMiddleware(async (request, response) => {
         const newUser = await UserModel.createWithInvite({
           name: phoneUser.name,
           phone: phoneUser.phone,
-          inviteMessage: `${user.name} sent you a message on Babble! To start chatting with them, download the Babble app: https://www.usebabble.com/`,
+          inviteMessage: `${user.name} sent you a message on Babble! To start chatting with them, get the Babble app: https://www.usebabble.com/`,
         });
 
         userIds.push(newUser.id);

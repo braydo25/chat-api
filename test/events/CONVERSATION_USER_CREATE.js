@@ -14,14 +14,14 @@ module.exports = payload => {
       permissions: Joi.array().items(Joi.string()),
       user: Joi.object({
         id: Joi.number(),
-        username: Joi.string().allow(null),
-        name: Joi.string().allow(null),
+        username: Joi.string().optional(),
+        name: Joi.string().optional(),
         lastActiveAt: Joi.date(),
         avatarAttachment: Joi.object({
           id: Joi.number(),
           url: Joi.string(),
           mimetype: Joi.string(),
-        }).allow(null),
+        }).allow(null).optional(),
       }),
     }),
   }).validate(payload, {

@@ -8,7 +8,7 @@ describe('Conversation Users', () => {
    */
 
   describe('PUT /conversations/:conversationId/users', () => {
-    it('200s with created conversation user object', done => {
+    it('200s with created conversation user object when provided user id', done => {
       const fields = {
         userId: testUserTwo.id,
       };
@@ -25,6 +25,28 @@ describe('Conversation Users', () => {
           response.body.userId.should.equal(fields.userId);
           response.body.permissions.length.should.be.at.least(1);
           scopedConversationUser = response.body;
+          done();
+        });
+    });
+
+    it('200s with created conversation user object when provided phone user', done => {
+      const fields = {
+        phoneUser: {
+          phone: '12334456565',
+          name: 'Cool Test Guy',
+        },
+      };
+
+      chai.request(server)
+        .put(`/conversations/${testConversationThree.id}/users`)
+        .set('X-Access-Token', testUserThree.accessToken)
+        .send(fields)
+        .end((error, response) => {
+          helpers.logExampleResponse(response);
+          response.body.should.be.an('object');
+          response.body.should.be.an('object');
+          response.body.conversationId.should.equal(testConversationThree.id);
+          response.body.permissions.length.should.be.at.least(1);
           done();
         });
     });

@@ -38,8 +38,8 @@ router.put('/', userAuthorize);
 router.put('/', conversationAssociate);
 router.put('/', userConversationPermissions({ private: [ 'CONVERSATION_USERS_CREATE' ] }));
 router.put('/', asyncMiddleware(async (request, response) => {
-  const { conversation } = request;
-  const { userId } = request.body;
+  const { user, conversation } = request;
+  const { userId, phoneUser } = request.body;
   const data = {
     userId,
     conversationId: conversation.id,
@@ -49,16 +49,30 @@ router.put('/', asyncMiddleware(async (request, response) => {
     throw new Error('Please create a new conversation to add users to a private conversation.');
   }
 
-  if (!userId) {
+  if (!userId && !phoneUser) {
     throw new Error('A user must be provided.');
   }
 
-  const user = await UserModel.findOne({
-    where: { id: userId },
-  });
+  let invitedUser = null;
 
-  if (!user) {
-    throw new Error('The user provided does not exist.');
+  if (phoneUser) {
+    invitedUser = await UserModel.findOne({
+      where: { phone: phoneUser.phone },
+    });
+
+    if (!invitedUser) {
+      invitedUser = await UserModel.createWithInvite({
+        name: phoneUser.name,
+        phone: phoneUser.phone,
+        inviteMessage: `${user.name} invited you to join a conversation on Babble! To start chatting, get the Babble app: https://www.usebabble.com/`,
+      });
+    }
+
+    data.userId = invitedUser.id;
+  } else {
+    invitedUser = await UserModel.findOne({
+      where: { id: userId },
+    });
   }
 
   let conversationUser = await ConversationUserModel.findOne({ where: data });
@@ -69,15 +83,13 @@ router.put('/', asyncMiddleware(async (request, response) => {
       'CONVERSATION_MESSAGE_REACTIONS_CREATE',
       'CONVERSATION_MESSAGE_REACTIONS_READ',
       'CONVERSATION_USERS_READ',
-      ...((conversation.accessLevel !== 'protected') ? [
-        'CONVERSATION_MESSAGES_CREATE',
-        'CONVERSATION_USERS_CREATE',
-      ] : []),
+      'CONVERSATION_MESSAGES_CREATE',
+      'CONVERSATION_USERS_CREATE',
     ];
 
     conversationUser = await ConversationUserModel.create(data, {
       eventsTopic: conversation.eventsTopic,
-      setDataValues: { user },
+      setDataValues: { user: invitedUser },
     });
   }
 
