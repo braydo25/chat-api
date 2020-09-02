@@ -45,8 +45,8 @@ router.put('/', asyncMiddleware(async (request, response) => {
     conversationId: conversation.id,
   };
 
-  if (conversation.accessLevel === 'private') {
-    throw new Error('Please create a new conversation to add users to a private conversation.');
+  if (conversation.accessLevel === 'private' && conversation.usersCount <= 2) {
+    throw new Error('Please create a new private group conversation. Users cannot be invited to private direct messages.');
   }
 
   if (!userId && !phoneUser) {
@@ -56,6 +56,8 @@ router.put('/', asyncMiddleware(async (request, response) => {
   let invitedUser = null;
 
   if (phoneUser) {
+    const inviteMessage = `${user.name} invited you to join a group conversation on Babble! To start chatting, get the Babble app: https://www.usebabble.com/`;
+
     invitedUser = await UserModel.findOne({
       where: { phone: phoneUser.phone },
     });
@@ -64,8 +66,10 @@ router.put('/', asyncMiddleware(async (request, response) => {
       invitedUser = await UserModel.createWithInvite({
         name: phoneUser.name,
         phone: phoneUser.phone,
-        inviteMessage: `${user.name} invited you to join a conversation on Babble! To start chatting, get the Babble app: https://www.usebabble.com/`,
+        inviteMessage,
       });
+    } else if (!invitedUser.username) {
+      invitedUser.sendInviteTextMessage(inviteMessage);
     }
 
     data.userId = invitedUser.id;
@@ -73,6 +77,10 @@ router.put('/', asyncMiddleware(async (request, response) => {
     invitedUser = await UserModel.findOne({
       where: { id: userId },
     });
+  }
+
+  if (!invitedUser) {
+    throw new Error('Invited user does not exist.');
   }
 
   let conversationUser = await ConversationUserModel.findOne({ where: data });

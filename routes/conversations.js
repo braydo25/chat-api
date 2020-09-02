@@ -168,21 +168,26 @@ router.post('/', asyncMiddleware(async (request, response) => {
   if (Array.isArray(phoneUsers)) {
     const phoneUserPhones = phoneUsers.map(phoneUser => phoneUser.phone);
     const existingUsers = await UserModel.unscoped().findAll({
-      attributes: [ 'id', 'phone' ],
+      attributes: [ 'id', 'phone', 'username' ],
       where: { phone: phoneUserPhones },
     });
 
     for (let i = 0; i < phoneUsers.length; i++) {
       const phoneUser = phoneUsers[i];
+      const inviteMessage = `${user.name} sent you a message on Babble! To start chatting with them, get the Babble app: https://www.usebabble.com/`;
       const existingUser = existingUsers.find(existingUser => existingUser.phone === phoneUser.phone);
 
       if (existingUser) {
+        if (!existingUser.username) {
+          existingUser.sendInviteTextMessage(inviteMessage);
+        }
+
         userIds.push(existingUser.id);
       } else {
         const newUser = await UserModel.createWithInvite({
           name: phoneUser.name,
           phone: phoneUser.phone,
-          inviteMessage: `${user.name} sent you a message on Babble! To start chatting with them, get the Babble app: https://www.usebabble.com/`,
+          inviteMessage,
         });
 
         userIds.push(newUser.id);

@@ -171,6 +171,13 @@ UserModel.prototype.updateAndSendPhoneLoginCode = async function() {
   await this.update({ phoneLoginCode });
 };
 
+UserModel.prototype.sendInviteTextMessage = async function(message) {
+  awsHelpers.sendTextMessage({
+    phoneNumber: this.phone,
+    message,
+  });
+};
+
 /*
  * Export
  */

@@ -97,14 +97,14 @@ describe('Conversation Users', () => {
         });
     });
 
-    it('400s when adding user to private conversation', done => {
+    it('400s when adding user to private conversation with 2 or less users', done => {
       const fields = {
         userId: testUserFour.id,
       };
 
       chai.request(server)
-        .put(`/conversations/${testPermissionsPrivateConversation.id}/users`)
-        .set('X-Access-Token', testPermissionsPrivateConversationGeneralUser.accessToken)
+        .put(`/conversations/${testConversationTwo.id}/users`)
+        .set('X-Access-Token', testUserTwo.accessToken)
         .send(fields)
         .end((error, response) => {
           helpers.logExampleResponse(response);
