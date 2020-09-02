@@ -220,6 +220,13 @@ router.post('/', asyncMiddleware(async (request, response) => {
     message,
   });
 
+  conversation.sendNotificationToConversationUsers({
+    sendingUserId: user.id,
+    title: conversation.title || 'New Conversation',
+    message: (message.text) ? `${user.name}: ${message.text}` : `${user.name}: sent an attachment(s).`,
+    data: { conversationId: conversation.id },
+  });
+
   response.success(conversation);
 }));
 
