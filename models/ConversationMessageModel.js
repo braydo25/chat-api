@@ -50,8 +50,11 @@ const ConversationMessageModel = database.define('conversationMessage', {
     ],
     include: [
       AttachmentModel,
-      ConversationUserModel,
       EmbedModel,
+      {
+        model: ConversationUserModel,
+        paranoid: false,
+      },
     ],
   },
   scopes: {
