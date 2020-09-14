@@ -47,7 +47,7 @@ global.testUserFour = {
   username: '@larry',
 };
 
-global.testConversationOne = {
+global.testRoomOne = {
   accessLevel: 'public',
   title: 'This is a wendys',
   message: {
@@ -56,7 +56,7 @@ global.testConversationOne = {
   },
 };
 
-global.testConversationTwo = {
+global.testRoomTwo = {
   accessLevel: 'private',
   message: {
     text: 'testing private',
@@ -65,7 +65,7 @@ global.testConversationTwo = {
   userIds: [ 1 ],
 };
 
-global.testConversationThree = {
+global.testRoomThree = {
   accessLevel: 'public',
   title: 'Just testing this out',
   message: {
@@ -75,20 +75,20 @@ global.testConversationThree = {
   userIds: [ 1 ],
 };
 
-global.testConversationOneUserOne = {};
+global.testRoomOneUserOne = {};
 
-global.testConversationOneMessageOne = {
+global.testRoomOneMessageOne = {
   text: 'This is a test',
   nonce: '73773711',
 };
 
-global.testConversationOneMessageOneReactionOne = {
+global.testRoomOneMessageOneReactionOne = {
   reaction: '🐻',
 };
 
-global.testConversationOneRepostOne = {};
+global.testRoomOneRepostOne = {};
 
-global.testPermissionsPublicConversation = {
+global.testPermissionsPublicRoom = {
   accessLevel: 'public',
   title: 'Lets talk public convo',
   message: {
@@ -97,15 +97,15 @@ global.testPermissionsPublicConversation = {
   },
   userIds: [ 1, 2, 3 ],
 };
-global.testPermissionsPublicConversationMessageOne = {};
-global.testPermissionsPublicConversationAdminUser = {};
-global.testPermissionsPublicConversationGeneralUser = {};
-global.testPermissionsPublicConversationPermissionlessUser = {};
-global.testPermissionsPublicConversationAdminConversationUser = {};
-global.testPermissionsPublicConversationGeneralConversationUser = {};
-global.testPermissionsPublicConversationPermissionlessConversationUser = {};
+global.testPermissionsPublicRoomMessageOne = {};
+global.testPermissionsPublicRoomAdminUser = {};
+global.testPermissionsPublicRoomGeneralUser = {};
+global.testPermissionsPublicRoomPermissionlessUser = {};
+global.testPermissionsPublicRoomAdminRoomUser = {};
+global.testPermissionsPublicRoomGeneralRoomUser = {};
+global.testPermissionsPublicRoomPermissionlessRoomUser = {};
 
-global.testPermissionsProtectedConversation = {
+global.testPermissionsProtectedRoom = {
   accessLevel: 'protected',
   title: 'Testing protected convos',
   message: {
@@ -114,15 +114,15 @@ global.testPermissionsProtectedConversation = {
   },
   userIds: [ 1, 2, 3 ],
 };
-global.testPermissionsProtectedConversationMessageOne = {};
-global.testPermissionsProtectedConversationAdminUser = {};
-global.testPermissionsProtectedConversationGeneralUser = {};
-global.testPermissionsProtectedConversationPermissionlessUser = {};
-global.testPermissionsProtectedConversationAdminConversationUser = {};
-global.testPermissionsProtectedConversationGeneralConversationUser = {};
-global.testPermissionsProtectedConversationPermissionlessConversationUser = {};
+global.testPermissionsProtectedRoomMessageOne = {};
+global.testPermissionsProtectedRoomAdminUser = {};
+global.testPermissionsProtectedRoomGeneralUser = {};
+global.testPermissionsProtectedRoomPermissionlessUser = {};
+global.testPermissionsProtectedRoomAdminRoomUser = {};
+global.testPermissionsProtectedRoomGeneralRoomUser = {};
+global.testPermissionsProtectedRoomPermissionlessRoomUser = {};
 
-global.testPermissionsPrivateConversation = {
+global.testPermissionsPrivateRoom = {
   accessLevel: 'private',
   message: {
     text: 'this is a private convo!',
@@ -130,13 +130,13 @@ global.testPermissionsPrivateConversation = {
   },
   userIds: [ 1, 2, 3 ],
 };
-global.testPermissionsPrivateConversationMessageOne = {};
-global.testPermissionsPrivateConversationAdminUser = {};
-global.testPermissionsPrivateConversationGeneralUser = {};
-global.testPermissionsPrivateConversationPermissionlessUser = {};
-global.testPermissionsPrivateConversationAdminConversationUser = {};
-global.testPermissionsPrivateConversationGeneralConversationUser = {};
-global.testPermissionsPrivateConversationPermissionlessConversationUser = {};
+global.testPermissionsPrivateRoomMessageOne = {};
+global.testPermissionsPrivateRoomAdminUser = {};
+global.testPermissionsPrivateRoomGeneralUser = {};
+global.testPermissionsPrivateRoomPermissionlessUser = {};
+global.testPermissionsPrivateRoomAdminRoomUser = {};
+global.testPermissionsPrivateRoomGeneralRoomUser = {};
+global.testPermissionsPrivateRoomPermissionlessRoomUser = {};
 
 global.testAttachmentOne = {};
 global.testEmbedOne = { url: 'https://www.youtube.com/watch?v=ac8lSE-7Jqs' };
@@ -280,155 +280,155 @@ before(done => {
       .set('X-Access-Token', testUserOne.accessToken)
       .send({ name: 'braydon' });
 
-    fatLog('Creating global test conversation one...');
-    const createdTestConversationOne = await chai.request(server)
-      .post('/conversations')
+    fatLog('Creating global test room one...');
+    const createdTestRoomOne = await chai.request(server)
+      .post('/rooms')
       .set('X-Access-Token', testUserOne.accessToken)
-      .send(testConversationOne);
-    Object.assign(testConversationOne, createdTestConversationOne.body);
-    mqttConnection.subscribe(testConversationOne.eventsTopic);
+      .send(testRoomOne);
+    Object.assign(testRoomOne, createdTestRoomOne.body);
+    mqttConnection.subscribe(testRoomOne.eventsTopic);
 
-    fatLog('Creating global test conversation two...');
-    const createdTestConversationTwo = await chai.request(server)
-      .post('/conversations')
+    fatLog('Creating global test room two...');
+    const createdTestRoomTwo = await chai.request(server)
+      .post('/rooms')
       .set('X-Access-Token', testUserTwo.accessToken)
-      .send(testConversationTwo);
-    Object.assign(testConversationTwo, createdTestConversationTwo.body);
-    mqttConnection.subscribe(testConversationTwo.eventsTopic);
+      .send(testRoomTwo);
+    Object.assign(testRoomTwo, createdTestRoomTwo.body);
+    mqttConnection.subscribe(testRoomTwo.eventsTopic);
 
-    fatLog('Creating global test conversation three...');
-    const createdTestConversationThree = await chai.request(server)
-      .post('/conversations')
+    fatLog('Creating global test room three...');
+    const createdTestRoomThree = await chai.request(server)
+      .post('/rooms')
       .set('X-Access-Token', testUserThree.accessToken)
-      .send(testConversationThree);
-    Object.assign(testConversationThree, createdTestConversationThree.body);
-    mqttConnection.subscribe(testConversationThree.eventsTopic);
+      .send(testRoomThree);
+    Object.assign(testRoomThree, createdTestRoomThree.body);
+    mqttConnection.subscribe(testRoomThree.eventsTopic);
 
-    fatLog('Creating global test conversation one user one...');
-    const createdTestConversationOneUserOne = await chai.request(server)
-      .put(`/conversations/${testConversationOne.id}/users`)
+    fatLog('Creating global test room one user one...');
+    const createdTestRoomOneUserOne = await chai.request(server)
+      .put(`/rooms/${testRoomOne.id}/users`)
       .set('X-Access-Token', testUserOne.accessToken)
       .send({ userId: testUserTwo.id });
-    Object.assign(testConversationOneUserOne, createdTestConversationOneUserOne.body);
+    Object.assign(testRoomOneUserOne, createdTestRoomOneUserOne.body);
 
-    fatLog('Creating global test conversation one message one...');
-    const createdTestConversationOneMessageOne = await chai.request(server)
-      .post(`/conversations/${testConversationOne.id}/messages`)
+    fatLog('Creating global test room one message one...');
+    const createdTestRoomOneMessageOne = await chai.request(server)
+      .post(`/rooms/${testRoomOne.id}/messages`)
       .set('X-Access-Token', testUserOne.accessToken)
-      .send(testConversationOneMessageOne);
-    Object.assign(testConversationOneMessageOne, createdTestConversationOneMessageOne.body);
+      .send(testRoomOneMessageOne);
+    Object.assign(testRoomOneMessageOne, createdTestRoomOneMessageOne.body);
 
-    fatLog('Creating global test conversation one message one reaction one...');
-    const createdTestConversationOneMessageOneReactionOne = await chai.request(server)
-      .put(`/conversations/${testConversationOne.id}/messages/${testConversationOneMessageOne.id}/reactions`)
+    fatLog('Creating global test room one message one reaction one...');
+    const createdTestRoomOneMessageOneReactionOne = await chai.request(server)
+      .put(`/rooms/${testRoomOne.id}/messages/${testRoomOneMessageOne.id}/reactions`)
       .set('X-Access-Token', testUserOne.accessToken)
-      .send(testConversationOneMessageOneReactionOne);
-    Object.assign(testConversationOneMessageOneReactionOne, createdTestConversationOneMessageOneReactionOne.body);
+      .send(testRoomOneMessageOneReactionOne);
+    Object.assign(testRoomOneMessageOneReactionOne, createdTestRoomOneMessageOneReactionOne.body);
 
-    fatLog('Creating global test conversation one repost one...');
-    const createdTestConversationOneRepostOne = await chai.request(server)
-      .put(`/conversations/${testConversationOne.id}/reposts`)
+    fatLog('Creating global test room one repost one...');
+    const createdTestRoomOneRepostOne = await chai.request(server)
+      .put(`/rooms/${testRoomOne.id}/reposts`)
       .set('X-Access-Token', testUserThree.accessToken);
-    Object.assign(testConversationOneRepostOne, createdTestConversationOneRepostOne.body);
+    Object.assign(testRoomOneRepostOne, createdTestRoomOneRepostOne.body);
 
-    fatLog('Creating global test permissions public conversation');
-    const createdTestPermissionsPublicConversation = await chai.request(server)
-      .post('/conversations')
+    fatLog('Creating global test permissions public room');
+    const createdTestPermissionsPublicRoom = await chai.request(server)
+      .post('/rooms')
       .set('X-Access-Token', testUserOne.accessToken)
-      .send(testPermissionsPublicConversation);
-    Object.assign(testPermissionsPublicConversation, createdTestPermissionsPublicConversation.body);
+      .send(testPermissionsPublicRoom);
+    Object.assign(testPermissionsPublicRoom, createdTestPermissionsPublicRoom.body);
 
-    fatLog('Setting global test permissions public conversation message one...');
-    Object.assign(testPermissionsPublicConversationMessageOne, testPermissionsPublicConversation.conversationMessages[0]);
+    fatLog('Setting global test permissions public room message one...');
+    Object.assign(testPermissionsPublicRoomMessageOne, testPermissionsPublicRoom.roomMessages[0]);
 
-    fatLog('Setting global test permissions public conversation admin user...');
-    Object.assign(testPermissionsPublicConversationAdminUser, testUserOne);
-    testPermissionsPublicConversationAdminConversationUser = testPermissionsPublicConversation.previewConversationUsers.find(conversationUser => {
-      return conversationUser.user.id === testUserOne.id;
+    fatLog('Setting global test permissions public room admin user...');
+    Object.assign(testPermissionsPublicRoomAdminUser, testUserOne);
+    testPermissionsPublicRoomAdminRoomUser = testPermissionsPublicRoom.previewRoomUsers.find(roomUser => {
+      return roomUser.user.id === testUserOne.id;
     });
 
-    fatLog('Setting global test permissions public conversation general user...');
-    Object.assign(testPermissionsPublicConversationGeneralUser, testUserTwo);
-    testPermissionsPublicConversationGeneralConversationUser = testPermissionsPublicConversation.previewConversationUsers.find(conversationUser => {
-      return conversationUser.user.id === testUserTwo.id;
+    fatLog('Setting global test permissions public room general user...');
+    Object.assign(testPermissionsPublicRoomGeneralUser, testUserTwo);
+    testPermissionsPublicRoomGeneralRoomUser = testPermissionsPublicRoom.previewRoomUsers.find(roomUser => {
+      return roomUser.user.id === testUserTwo.id;
     });
 
-    fatLog('Setting global test permissions public conversation permissionless user...');
-    Object.assign(testPermissionsPublicConversationPermissionlessUser, testUserThree);
-    testPermissionsPublicConversationPermissionlessConversationUser = testPermissionsPublicConversation.previewConversationUsers.find(conversationUser => {
-      return conversationUser.user.id === testUserThree.id;
+    fatLog('Setting global test permissions public room permissionless user...');
+    Object.assign(testPermissionsPublicRoomPermissionlessUser, testUserThree);
+    testPermissionsPublicRoomPermissionlessRoomUser = testPermissionsPublicRoom.previewRoomUsers.find(roomUser => {
+      return roomUser.user.id === testUserThree.id;
     });
 
     await chai.request(server)
-      .patch(`/conversations/${testPermissionsPublicConversation.id}/users/${testPermissionsPublicConversationPermissionlessConversationUser.id}`)
+      .patch(`/rooms/${testPermissionsPublicRoom.id}/users/${testPermissionsPublicRoomPermissionlessRoomUser.id}`)
       .set('X-Access-Token', testUserOne.accessToken)
       .send({ permissions: [] });
 
 
-    fatLog('Creating global test permissions protected conversation');
-    const createdTestPermissionsProtectedConversation = await chai.request(server)
-      .post('/conversations')
+    fatLog('Creating global test permissions protected room');
+    const createdTestPermissionsProtectedRoom = await chai.request(server)
+      .post('/rooms')
       .set('X-Access-Token', testUserOne.accessToken)
-      .send(testPermissionsProtectedConversation);
-    Object.assign(testPermissionsProtectedConversation, createdTestPermissionsProtectedConversation.body);
+      .send(testPermissionsProtectedRoom);
+    Object.assign(testPermissionsProtectedRoom, createdTestPermissionsProtectedRoom.body);
 
-    fatLog('Setting global test permissions protected conversation message one...');
-    Object.assign(testPermissionsProtectedConversationMessageOne, testPermissionsProtectedConversation.conversationMessages[0]);
+    fatLog('Setting global test permissions protected room message one...');
+    Object.assign(testPermissionsProtectedRoomMessageOne, testPermissionsProtectedRoom.roomMessages[0]);
 
-    fatLog('Setting global test permissions protected conversation admin user...');
-    Object.assign(testPermissionsProtectedConversationAdminUser, testUserOne);
-    testPermissionsProtectedConversationAdminConversationUser = testPermissionsProtectedConversation.previewConversationUsers.find(conversationUser => {
-      return conversationUser.user.id === testUserOne.id;
+    fatLog('Setting global test permissions protected room admin user...');
+    Object.assign(testPermissionsProtectedRoomAdminUser, testUserOne);
+    testPermissionsProtectedRoomAdminRoomUser = testPermissionsProtectedRoom.previewRoomUsers.find(roomUser => {
+      return roomUser.user.id === testUserOne.id;
     });
 
-    fatLog('Setting global test permissions protected conversation general user...');
-    Object.assign(testPermissionsProtectedConversationGeneralUser, testUserTwo);
-    testPermissionsProtectedConversationGeneralConversationUser = testPermissionsProtectedConversation.previewConversationUsers.find(conversationUser => {
-      return conversationUser.user.id === testUserTwo.id;
+    fatLog('Setting global test permissions protected room general user...');
+    Object.assign(testPermissionsProtectedRoomGeneralUser, testUserTwo);
+    testPermissionsProtectedRoomGeneralRoomUser = testPermissionsProtectedRoom.previewRoomUsers.find(roomUser => {
+      return roomUser.user.id === testUserTwo.id;
     });
 
-    fatLog('Setting global test permissions protected conversation permissionless user...');
-    Object.assign(testPermissionsProtectedConversationPermissionlessUser, testUserThree);
-    testPermissionsProtectedConversationPermissionlessConversationUser = testPermissionsProtectedConversation.previewConversationUsers.find(conversationUser => {
-      return conversationUser.user.id === testUserThree.id;
+    fatLog('Setting global test permissions protected room permissionless user...');
+    Object.assign(testPermissionsProtectedRoomPermissionlessUser, testUserThree);
+    testPermissionsProtectedRoomPermissionlessRoomUser = testPermissionsProtectedRoom.previewRoomUsers.find(roomUser => {
+      return roomUser.user.id === testUserThree.id;
     });
 
     await chai.request(server)
-      .patch(`/conversations/${testPermissionsProtectedConversation.id}/users/${testPermissionsProtectedConversationPermissionlessConversationUser.id}`)
+      .patch(`/rooms/${testPermissionsProtectedRoom.id}/users/${testPermissionsProtectedRoomPermissionlessRoomUser.id}`)
       .set('X-Access-Token', testUserOne.accessToken)
       .send({ permissions: [] });
 
 
-    fatLog('Creating global test permissions private conversation');
-    const createdTestPermissionsPrivateConversation = await chai.request(server)
-      .post('/conversations')
+    fatLog('Creating global test permissions private room');
+    const createdTestPermissionsPrivateRoom = await chai.request(server)
+      .post('/rooms')
       .set('X-Access-Token', testUserOne.accessToken)
-      .send(testPermissionsPrivateConversation);
-    Object.assign(testPermissionsPrivateConversation, createdTestPermissionsPrivateConversation.body);
+      .send(testPermissionsPrivateRoom);
+    Object.assign(testPermissionsPrivateRoom, createdTestPermissionsPrivateRoom.body);
 
-    fatLog('Setting global test permissions private conversation message one...');
-    Object.assign(testPermissionsPrivateConversationMessageOne, testPermissionsPrivateConversation.conversationMessages[0]);
+    fatLog('Setting global test permissions private room message one...');
+    Object.assign(testPermissionsPrivateRoomMessageOne, testPermissionsPrivateRoom.roomMessages[0]);
 
-    fatLog('Setting global test permissions private conversation admin user...');
-    Object.assign(testPermissionsPrivateConversationAdminUser, testUserOne);
-    testPermissionsPrivateConversationAdminConversationUser = testPermissionsPrivateConversation.previewConversationUsers.find(conversationUser => {
-      return conversationUser.user.id === testUserOne.id;
+    fatLog('Setting global test permissions private room admin user...');
+    Object.assign(testPermissionsPrivateRoomAdminUser, testUserOne);
+    testPermissionsPrivateRoomAdminRoomUser = testPermissionsPrivateRoom.previewRoomUsers.find(roomUser => {
+      return roomUser.user.id === testUserOne.id;
     });
 
-    fatLog('Setting global test permissions private conversation general user...');
-    Object.assign(testPermissionsPrivateConversationGeneralUser, testUserTwo);
-    testPermissionsPrivateConversationGeneralConversationUser = testPermissionsPrivateConversation.previewConversationUsers.find(conversationUser => {
-      return conversationUser.user.id === testUserTwo.id;
+    fatLog('Setting global test permissions private room general user...');
+    Object.assign(testPermissionsPrivateRoomGeneralUser, testUserTwo);
+    testPermissionsPrivateRoomGeneralRoomUser = testPermissionsPrivateRoom.previewRoomUsers.find(roomUser => {
+      return roomUser.user.id === testUserTwo.id;
     });
 
-    fatLog('Setting global test permissions private conversation permissionless user...');
-    Object.assign(testPermissionsPrivateConversationPermissionlessUser, testUserThree);
-    testPermissionsPrivateConversationPermissionlessConversationUser = testPermissionsPrivateConversation.previewConversationUsers.find(conversationUser => {
-      return conversationUser.user.id === testUserThree.id;
+    fatLog('Setting global test permissions private room permissionless user...');
+    Object.assign(testPermissionsPrivateRoomPermissionlessUser, testUserThree);
+    testPermissionsPrivateRoomPermissionlessRoomUser = testPermissionsPrivateRoom.previewRoomUsers.find(roomUser => {
+      return roomUser.user.id === testUserThree.id;
     });
 
     await chai.request(server)
-      .patch(`/conversations/${testPermissionsPrivateConversation.id}/users/${testPermissionsPrivateConversationPermissionlessConversationUser.id}`)
+      .patch(`/rooms/${testPermissionsPrivateRoom.id}/users/${testPermissionsPrivateRoomPermissionlessRoomUser.id}`)
       .set('X-Access-Token', testUserOne.accessToken)
       .send({ permissions: [] });
 

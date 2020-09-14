@@ -1,4 +1,4 @@
-const ConversationRepostModel = rootRequire('/models/ConversationRepostModel');
+const RoomRepostModel = rootRequire('/models/RoomRepostModel');
 const UserFollowerModel = rootRequire('/models/UserFollowerModel');
 const events = rootRequire('/libs/events');
 
@@ -16,7 +16,7 @@ const UserActivityModel = database.define('userActivity', {
     type: Sequelize.INTEGER(10).UNSIGNED,
     allowNull: false,
   },
-  conversationRepostId: {
+  roomRepostId: {
     type: Sequelize.INTEGER(10).UNSIGNED,
   },
   userFollowerId: {
@@ -30,7 +30,7 @@ const UserActivityModel = database.define('userActivity', {
     ],
     include: [
       {
-        model: ConversationRepostModel.scope('activityPreview'),
+        model: RoomRepostModel.scope('activityPreview'),
         required: false,
       },
       {
@@ -40,7 +40,7 @@ const UserActivityModel = database.define('userActivity', {
     ],
     having: {
       [Sequelize.Op.or]: {
-        'conversationRepost.id': { [Sequelize.Op.ne]: null },
+        'roomRepost.id': { [Sequelize.Op.ne]: null },
         'userFollower.id': { [Sequelize.Op.ne]: null },
       },
     },

@@ -26,12 +26,12 @@ module.exports = payload => {
           }).allow(null),
         }),
       }).optional(),
-      conversationRepost: Joi.object({
+      roomRepost: Joi.object({
         id: Joi.number(),
         userId: Joi.number(),
-        conversationId: Joi.number(),
+        roomId: Joi.number(),
         createdAt: Joi.date(),
-        conversation: Joi.object({
+        room: Joi.object({
           id: Joi.number(),
           title: Joi.string(),
         }),

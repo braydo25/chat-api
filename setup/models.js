@@ -1,63 +1,63 @@
 const AttachmentModel = rootRequire('/models/AttachmentModel');
-const ConversationModel = rootRequire('/models/ConversationModel');
-const ConversationMessageModel = rootRequire('/models/ConversationMessageModel');
-const ConversationImpressionModel = rootRequire('/models/ConversationImpressionModel');
-const ConversationMessageAttachmentModel = rootRequire('/models/ConversationMessageAttachmentModel');
-const ConversationMessageEmbedModel = rootRequire('/models/ConversationMessageEmbedModel');
-const ConversationMessageReactionModel = rootRequire('/models/ConversationMessageReactionModel');
-const ConversationRepostModel = rootRequire('/models/ConversationRepostModel');
-const ConversationUserModel = rootRequire('/models/ConversationUserModel');
+const RoomModel = rootRequire('/models/RoomModel');
+const RoomMessageModel = rootRequire('/models/RoomMessageModel');
+const RoomImpressionModel = rootRequire('/models/RoomImpressionModel');
+const RoomMessageAttachmentModel = rootRequire('/models/RoomMessageAttachmentModel');
+const RoomMessageEmbedModel = rootRequire('/models/RoomMessageEmbedModel');
+const RoomMessageReactionModel = rootRequire('/models/RoomMessageReactionModel');
+const RoomRepostModel = rootRequire('/models/RoomRepostModel');
+const RoomUserModel = rootRequire('/models/RoomUserModel');
 const EmbedModel = rootRequire('/models/EmbedModel');
 const UserActivityModel = rootRequire('/models/UserActivityModel');
-const UserConversationDataModel = rootRequire('/models/UserConversationDataModel');
+const UserRoomDataModel = rootRequire('/models/UserRoomDataModel');
 const UserDeviceModel = rootRequire('/models/UserDeviceModel');
 const UserModel = rootRequire('/models/UserModel');
 const UserFollowerModel = rootRequire('/models/UserFollowerModel');
 
-ConversationModel.belongsTo(UserModel);
-ConversationModel.belongsTo(ConversationMessageModel, { as: 'previewConversationMessage', constraints: false });
-ConversationModel.hasMany(ConversationImpressionModel);
-ConversationModel.hasMany(ConversationMessageModel);
-ConversationModel.hasMany(ConversationMessageModel, { as: 'pinnedConversationMessages' });
-ConversationModel.hasMany(ConversationUserModel);
-ConversationModel.hasMany(ConversationUserModel, { as: 'previewConversationUsers' });
-ConversationModel.hasOne(ConversationRepostModel, { as: 'authUserConversationRepost', foreignKey: 'conversationId' });
-ConversationModel.hasOne(ConversationUserModel, { as: 'authConversationUser', foreignKey: 'conversationId' });
-ConversationModel.hasOne(UserConversationDataModel, { as: 'authUserConversationData', foreignKey: 'conversationId' });
+RoomModel.belongsTo(UserModel);
+RoomModel.belongsTo(RoomMessageModel, { as: 'previewRoomMessage', constraints: false });
+RoomModel.hasMany(RoomImpressionModel);
+RoomModel.hasMany(RoomMessageModel);
+RoomModel.hasMany(RoomMessageModel, { as: 'pinnedRoomMessages' });
+RoomModel.hasMany(RoomUserModel);
+RoomModel.hasMany(RoomUserModel, { as: 'previewRoomUsers' });
+RoomModel.hasOne(RoomRepostModel, { as: 'authUserRoomRepost', foreignKey: 'roomId' });
+RoomModel.hasOne(RoomUserModel, { as: 'authRoomUser', foreignKey: 'roomId' });
+RoomModel.hasOne(UserRoomDataModel, { as: 'authUserRoomData', foreignKey: 'roomId' });
 
-ConversationMessageModel.belongsToMany(AttachmentModel, { through: ConversationMessageAttachmentModel });
-ConversationMessageModel.belongsToMany(EmbedModel, { through: ConversationMessageEmbedModel });
-ConversationMessageModel.hasMany(ConversationMessageReactionModel);
-ConversationMessageModel.hasMany(ConversationMessageReactionModel, { as: 'authUserConversationMessageReactions' });
-ConversationMessageModel.belongsTo(ConversationUserModel);
+RoomMessageModel.belongsToMany(AttachmentModel, { through: RoomMessageAttachmentModel });
+RoomMessageModel.belongsToMany(EmbedModel, { through: RoomMessageEmbedModel });
+RoomMessageModel.hasMany(RoomMessageReactionModel);
+RoomMessageModel.hasMany(RoomMessageReactionModel, { as: 'authUserRoomMessageReactions' });
+RoomMessageModel.belongsTo(RoomUserModel);
 
-ConversationMessageReactionModel.belongsTo(UserModel);
+RoomMessageReactionModel.belongsTo(UserModel);
 
-ConversationRepostModel.belongsTo(ConversationModel);
-ConversationRepostModel.belongsTo(UserModel);
+RoomRepostModel.belongsTo(RoomModel);
+RoomRepostModel.belongsTo(UserModel);
 
-ConversationUserModel.belongsTo(ConversationModel);
-ConversationUserModel.belongsTo(UserModel);
+RoomUserModel.belongsTo(RoomModel);
+RoomUserModel.belongsTo(UserModel);
 
 UserModel.belongsTo(AttachmentModel, { as: 'avatarAttachment' });
 UserModel.hasMany(AttachmentModel, { constraints: false });
-UserModel.hasMany(ConversationModel);
-UserModel.hasMany(ConversationImpressionModel);
+UserModel.hasMany(RoomModel);
+UserModel.hasMany(RoomImpressionModel);
 UserModel.hasMany(EmbedModel);
 UserModel.hasMany(UserActivityModel);
-UserModel.hasMany(UserConversationDataModel);
+UserModel.hasMany(UserRoomDataModel);
 UserModel.hasMany(UserDeviceModel);
 UserModel.hasMany(UserFollowerModel);
 UserModel.hasOne(UserFollowerModel, { as: 'authUserFollower', foreignKey: 'userId' });
 
-UserActivityModel.belongsTo(ConversationRepostModel);
+UserActivityModel.belongsTo(RoomRepostModel);
 UserActivityModel.belongsTo(UserFollowerModel);
 
-UserConversationDataModel.belongsTo(ConversationModel);
+UserRoomDataModel.belongsTo(RoomModel);
 
 UserDeviceModel.belongsTo(UserModel);
 
 UserFollowerModel.belongsTo(UserModel);
 UserFollowerModel.belongsTo(UserModel, { as: 'followerUser' });
 
-module.exports = database.sync();
+module.exports = database.sync({ force: true });

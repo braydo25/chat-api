@@ -16,11 +16,11 @@ describe('Activity', () => {
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
           response.body.forEach(activity => {
-            if (activity.conversationRepost) {
-              activity.conversationRepost.conversation.should.be.an('object');
-              activity.conversationRepost.conversation.should.have.property('id');
-              activity.conversationRepost.conversation.should.have.property('title');
-              activity.conversationRepost.should.have.property('user');
+            if (activity.roomRepost) {
+              activity.roomRepost.room.should.be.an('object');
+              activity.roomRepost.room.should.have.property('id');
+              activity.roomRepost.room.should.have.property('title');
+              activity.roomRepost.should.have.property('user');
             }
 
             if (activity.userFollower) {
@@ -56,8 +56,8 @@ describe('Activity', () => {
           response.should.have.status(200);
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
-          response.body.forEach(conversation => {
-            conversation.id.should.be.lessThan(4);
+          response.body.forEach(room => {
+            room.id.should.be.lessThan(4);
           });
           done();
         });
@@ -73,8 +73,8 @@ describe('Activity', () => {
           response.should.have.status(200);
           response.body.should.be.an('array');
           response.body.length.should.be.at.least(1);
-          response.body.forEach(conversation => {
-            conversation.id.should.be.greaterThan(1);
+          response.body.forEach(room => {
+            room.id.should.be.greaterThan(1);
           });
           done();
         });

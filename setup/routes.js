@@ -1,38 +1,38 @@
 const activityRouter = rootRequire('/routes/activity');
 const attachmentsRouter = rootRequire('/routes/attachments');
-const conversationsRouter = rootRequire('/routes/conversations');
-const conversationMessagesRouter = rootRequire('/routes/conversations/messages');
-const conversationMessageReactionsRouter = rootRequire('/routes/conversations/messages/reactions');
-const conversationPinsRouter = rootRequire('/routes/conversations/pins');
-const conversationRepostsRouter = rootRequire('/routes/conversations/reposts');
-const conversationTypingRouter = rootRequire('/routes/conversations/typing');
-const conversationUsersRouter = rootRequire('/routes/conversations/users');
+const roomsRouter = rootRequire('/routes/rooms');
+const roomMessagesRouter = rootRequire('/routes/rooms/messages');
+const roomMessageReactionsRouter = rootRequire('/routes/rooms/messages/reactions');
+const roomPinsRouter = rootRequire('/routes/rooms/pins');
+const roomRepostsRouter = rootRequire('/routes/rooms/reposts');
+const roomTypingRouter = rootRequire('/routes/rooms/typing');
+const roomUsersRouter = rootRequire('/routes/rooms/users');
 const devicesRouter = rootRequire('/routes/devices');
 const embedsRouter = rootRequire('/routes/embeds');
 const healthRouter = rootRequire('/routes/health');
 const usersRouter = rootRequire('/routes/users');
-const userConversationsRouter = rootRequire('/routes/users/conversations');
-const userConversationDataRouter = rootRequire('/routes/users/conversations/data');
+const userRoomsRouter = rootRequire('/routes/users/rooms');
+const userRoomDataRouter = rootRequire('/routes/users/rooms/data');
 const userFollowersRouter = rootRequire('/routes/users/followers');
 
 module.exports = app => {
   // API Route Definitions
   app.use('/activity', activityRouter);
   app.use('/attachments', attachmentsRouter);
-  app.use('/conversations', conversationsRouter);
-  app.use('/conversations/:conversationId/messages/:conversationMessageId?', conversationMessagesRouter);
-  app.use('/conversations/:conversationId/messages/:conversationMessageId/reactions/:conversationMessageReactionId?', conversationMessageReactionsRouter);
-  app.use('/conversations/:conversationId/pins/:conversationMessageId', conversationPinsRouter);
-  app.use('/conversations/:conversationId/reposts/:conversationRepostId?', conversationRepostsRouter);
-  app.use('/conversations/:conversationId/typing', conversationTypingRouter);
-  app.use('/conversations/:conversationId/users/:conversationUserId?', conversationUsersRouter);
+  app.use('/rooms', roomsRouter);
+  app.use('/rooms/:roomId/messages/:roomMessageId?', roomMessagesRouter);
+  app.use('/rooms/:roomId/messages/:roomMessageId/reactions/:roomMessageReactionId?', roomMessageReactionsRouter);
+  app.use('/rooms/:roomId/pins/:roomMessageId', roomPinsRouter);
+  app.use('/rooms/:roomId/reposts/:roomRepostId?', roomRepostsRouter);
+  app.use('/rooms/:roomId/typing', roomTypingRouter);
+  app.use('/rooms/:roomId/users/:roomUserId?', roomUsersRouter);
   app.use('/devices', devicesRouter);
   app.use('/embeds', embedsRouter);
   app.use('/health', healthRouter);
   app.use('/users/:userId?', usersRouter);
-  app.use('/users/:userId/conversations', userConversationsRouter);
+  app.use('/users/:userId/rooms', userRoomsRouter);
   app.use('/users/:userId/followers', userFollowersRouter);
-  app.use('/users/:userId/conversations/:conversationId/data', userConversationDataRouter);
+  app.use('/users/:userId/rooms/:roomId/data', userRoomDataRouter);
 
   // Handle Various Errors
   app.use((error, request, response, next) => {
