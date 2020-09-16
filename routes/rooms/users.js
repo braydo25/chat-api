@@ -56,7 +56,7 @@ router.put('/', asyncMiddleware(async (request, response) => {
   let invitedUser = null;
 
   if (phoneUser) {
-    const inviteMessage = `${user.name} invited you to join a group room on Babble! To start chatting, get the Babble app: https://www.usebabble.com/`;
+    const inviteMessage = `${user.name} invited you to join a room on Babble! To start chatting, get the Babble app: https://www.usebabble.com/`;
 
     invitedUser = await UserModel.findOne({
       where: { phone: phoneUser.phone },

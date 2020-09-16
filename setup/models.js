@@ -60,4 +60,4 @@ UserDeviceModel.belongsTo(UserModel);
 UserFollowerModel.belongsTo(UserModel);
 UserFollowerModel.belongsTo(UserModel, { as: 'followerUser' });
 
-module.exports = database.sync({ force: true });
+module.exports = database.sync();
