@@ -113,6 +113,10 @@ UserDeviceModel.prototype.sendPushNotification = function({ title, message, data
       Message: JSON.stringify({
         default: message,
         GCM: JSON.stringify({
+          notification: {
+            title,
+            body: message,
+          },
           data: { title, message, data },
         }),
       }),
